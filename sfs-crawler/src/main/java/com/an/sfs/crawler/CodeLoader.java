@@ -28,7 +28,7 @@ public class CodeLoader {
     }
 
     private void init() {
-        String shEbk = FileDirUtil.getShEbk();
+        String shEbk = AppFilePath.getConfFile("SH.EBK");
         try (BufferedReader br = new BufferedReader(new FileReader(shEbk));) {
             String line = null;
             while ((line = br.readLine()) != null) {
@@ -37,10 +37,10 @@ public class CodeLoader {
                 }
             }
         } catch (IOException e) {
-            LOGGER.error("Error while parsing shEbk.");
+            LOGGER.error("Error while parsing SH.EBK.");
         }
 
-        String szEbk = FileDirUtil.getSzEbk();
+        String szEbk = AppFilePath.getConfFile("SZ.EBK");
         try (BufferedReader br = new BufferedReader(new FileReader(szEbk));) {
             String line = null;
             while ((line = br.readLine()) != null) {
@@ -49,7 +49,7 @@ public class CodeLoader {
                 }
             }
         } catch (IOException e) {
-            LOGGER.error("Error while parsing szEbk.");
+            LOGGER.error("Error while parsing SZ.EBK.");
         }
     }
 

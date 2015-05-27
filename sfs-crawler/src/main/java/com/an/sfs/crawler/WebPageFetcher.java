@@ -11,18 +11,32 @@ public class WebPageFetcher {
     }
 
     public void run() {
+        fetchGdyj();
+    }
+
+    private void fetchGdyj() {
         List<String> shCodes = new ArrayList<>();
         CodeLoader.getInst().getShCodes(shCodes);
         for (String code : shCodes) {
             String url = String.format(gdyj, "sh", code);
-            WebUtil.crawl(url, FileDirUtil.getGdyjDir() + File.separator + code + ".html");
+            String gdyjFilePath = getGdyjFilePath(code);
+            if (!FileUtil.isFileExist(gdyjFilePath)) {
+                AppUtil.download(url, gdyjFilePath);
+            }
         }
 
         List<String> szCodes = new ArrayList<>();
         CodeLoader.getInst().getSzCodes(szCodes);
         for (String code : szCodes) {
             String url = String.format(gdyj, "sz", code);
-            WebUtil.crawl(url, FileDirUtil.getGdyjDir() + File.separator + code + ".html");
+            String gdyjFilePath = getGdyjFilePath(code);
+            if (!FileUtil.isFileExist(gdyjFilePath)) {
+                AppUtil.download(url, gdyjFilePath);
+            }
         }
+    }
+
+    private String getGdyjFilePath(String code) {
+        return AppFilePath.getInputGdyjDir() + File.separator + code + ".html";
     }
 }

@@ -1,8 +1,10 @@
 package com.an.sfs.crawler;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,11 +24,31 @@ public class FileUtil {
         try (BufferedWriter out = new BufferedWriter(new FileWriter(filePath))) {
             out.write(text);
         } catch (IOException e) {
-            LOGGER.error("Error while save content to file {}", filePath, e);
+            LOGGER.error("Error, filePath {}", filePath, e);
         }
     }
 
-    public static void main(String[] args) {
-        FileUtil.writeFile("D:\\test.txt", "a\nb\nc");
+    /**
+     * @param filePath
+     * @return
+     */
+    public static boolean isFileExist(String filePath) {
+        return new File(filePath).exists();
+    }
+
+    /**
+     * @param dirPath
+     * @param outFileList
+     */
+    public static void getFilesUnderDir(String dirPath, List<File> outFileList) {
+        File dir = new File(dirPath);
+        if (dir.exists()) {
+            File[] files = dir.listFiles();
+            for (File f : files) {
+                if (f.isFile()) {
+                    outFileList.add(f);
+                }
+            }
+        }
     }
 }
