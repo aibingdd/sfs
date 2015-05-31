@@ -51,4 +51,13 @@ public class FileUtil {
             }
         }
     }
+
+    /**
+     * @param filePath
+     * @return
+     */
+    public static String getFileName(String filePath) {
+        String fileName = filePath.substring(filePath.lastIndexOf(File.separator) + 1, filePath.indexOf("."));
+        return fileName;
+    }
 }

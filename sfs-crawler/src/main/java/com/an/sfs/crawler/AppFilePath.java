@@ -56,11 +56,19 @@ public class AppFilePath {
         return getInputDir() + File.separator + "gdyj";
     }
 
-    private static String getOutputDir() {
+    public static String getOutputDir() {
         return getBaseDir() + File.separator + "output";
     }
 
-    public static String getOutputGdyjDir() {
+    private static String getOutputGdyjDir() {
         return getOutputDir() + File.separator + "gdyj";
+    }
+
+    public static String getOutputGdyjGdrsDir() {
+        return getOutputGdyjDir() + File.separator + "gdrs";
+    }
+
+    public static String getOutputGdyjLtgdDir() {
+        return getOutputGdyjDir() + File.separator + "ltgf";
     }
 }

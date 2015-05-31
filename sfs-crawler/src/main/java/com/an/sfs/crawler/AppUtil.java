@@ -8,6 +8,7 @@ import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,5 +55,30 @@ public class AppUtil {
                 LOGGER.error("Error.", e);
             }
         }
+    }
+
+    /**
+     * @param stockCodeList
+     * @param fileName
+     */
+    public static void exportHtml(List<String> stockCodeList, String fileName) {
+        StringBuilder text = new StringBuilder();
+        text.append("<html>\n");
+        text.append("<body>\n");
+        for (String code : stockCodeList) {
+            String newCode = code;
+            if (code.startsWith("6")) {
+                newCode = "sh" + code;
+            } else {
+                newCode = "sz" + code;
+            }
+            String url = "<a href=\"http://f10.eastmoney.com/f10_v2/ShareholderResearch.aspx?code=%s\">%s</a><br>";
+            text.append(String.format(url, newCode, code));
+        }
+        text.append("</body>\n");
+        text.append("</html>");
+        String filePath = AppFilePath.getOutputDir() + File.separator + fileName;
+        FileUtil.writeFile(filePath, text.toString());
+        LOGGER.info("Write file {}", filePath);
     }
 }

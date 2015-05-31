@@ -71,23 +71,30 @@ public class WebPageAnalyzer {
             fromIdx += FLAG_DATA.length();
             int toIdx = curLine.indexOf("</", fromIdx);
             String item = curLine.substring(fromIdx, toIdx);
+            if (item.indexOf(",") != -1) {
+                item = item.replaceAll(",", "");
+            }
             list.add(item);
             curLine = curLine.substring(toIdx);
         }
+        if (fileName.equals("000166")) {
+            LOGGER.error("file name {}", fileName);
+        }
         int rowCnt = 10;
-        int quarterCnt = list.size() / rowCnt;
+        int columnCnt = list.size() / rowCnt;
         StringBuilder text = new StringBuilder();
-        for (int i = 0; i < quarterCnt; i++) {
-            for (int j = 0; j < rowCnt; j++) {
-                if (j == rowCnt - 1) {
-                    text.append(list.get(i + j)).append("\n");
+        // 0*columnCnt+0,1*columnCnt+0,2*columnCnt+0
+        // 0*columnCnt+1,1*columnCnt+1,2*columnCnt+1
+        for (int colIdx = 0; colIdx < columnCnt; colIdx++) {
+            for (int rowIdx = 0; rowIdx < rowCnt; rowIdx++) {
+                if (rowIdx == rowCnt - 1) {
+                    text.append(list.get(rowIdx * columnCnt + colIdx)).append("\n");
                 } else {
-                    text.append(list.get(i + j)).append(";");
+                    text.append(list.get(rowIdx * columnCnt + colIdx)).append(";");
                 }
             }
         }
-
-        String filePath = AppFilePath.getOutputGdyjDir() + File.separator + fileName + ".txt";
+        String filePath = AppFilePath.getOutputGdyjGdrsDir() + File.separator + fileName + ".txt";
         LOGGER.info("Save file {}", filePath);
         FileUtil.writeFile(filePath, text.toString());
     }
