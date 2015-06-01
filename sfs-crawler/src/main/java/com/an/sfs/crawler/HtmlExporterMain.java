@@ -31,7 +31,8 @@ public class HtmlExporterMain {
             String line = null;
             while ((line = br.readLine()) != null) {
                 if (!line.isEmpty()) {
-                    stockCodeList.add(line.substring(1));
+                    String code = line.substring(1);
+                    stockCodeList.add(code);
                 }
             }
         } catch (IOException e) {

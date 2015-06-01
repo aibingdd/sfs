@@ -17,16 +17,6 @@ public class CodeLoader {
     private List<String> shCodes = new ArrayList<>();
     private List<String> szCodes = new ArrayList<>();
 
-    private static final CodeLoader inst = new CodeLoader();
-
-    private CodeLoader() {
-        init();
-    }
-
-    public static CodeLoader getInst() {
-        return inst;
-    }
-
     private void init() {
         String shEbk = AppFilePath.getConfFile("SH.EBK");
         try (BufferedReader br = new BufferedReader(new FileReader(shEbk));) {
@@ -65,5 +55,20 @@ public class CodeLoader {
      */
     public void getSzCodes(List<String> result) {
         result.addAll(szCodes);
+    }
+
+    //
+
+    public static CodeLoader getInst() {
+        if (inst == null) {
+            inst = new CodeLoader();
+            inst.init();
+        }
+        return inst;
+    }
+
+    private static CodeLoader inst = null;
+
+    private CodeLoader() {
     }
 }

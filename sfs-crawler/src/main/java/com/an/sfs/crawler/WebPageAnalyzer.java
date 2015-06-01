@@ -8,7 +8,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,12 +24,25 @@ public class WebPageAnalyzer {
     private static final Logger LOGGER = LoggerFactory.getLogger(WebPageAnalyzer.class);
     private static final String FLAG_GDRS = "<strong>股东人数</strong>";
     private static final String FLAG_DATA = "tips-dataL\">";
-
-    public WebPageAnalyzer() {
-    }
+    private Map<String, String> stockCodeNameMap = new HashMap<>();
 
     public void run() {
         analyzeGdyj();
+
+        saveCodeName();
+    }
+
+    private void saveCodeName() {
+        StringBuilder text = new StringBuilder();
+        List<String> codeList = new ArrayList<>();
+        codeList.addAll(stockCodeNameMap.keySet());
+        Collections.sort(codeList);
+        for (String code : codeList) {
+            text.append(code).append(";").append(stockCodeNameMap.get(code)).append("\n");
+        }
+
+        FileUtil.writeFile(AppFilePath.getOutputDir() + File.separator + StockCodeNameLoader.FILE_STOCK_CODE_NAME,
+                text.toString());
     }
 
     private void analyzeGdyj() {
@@ -35,20 +51,30 @@ public class WebPageAnalyzer {
         FileUtil.getFilesUnderDir(dirPath, fileList);
         for (File f : fileList) {
             LOGGER.info("Process file {}", f.getPath());
-            String fileName = f.getName();
-            fileName = fileName.substring(0, fileName.indexOf("."));
+            String stockCode = f.getName();
+            stockCode = stockCode.substring(0, stockCode.indexOf("."));
 
             boolean beginGdrs = false;
             boolean finishGdrs = false;
+            boolean finishName = false;
             try (BufferedReader br = new BufferedReader(new FileReader(f))) {
                 String line = null;
                 while ((line = br.readLine()) != null) {
+                    if (!finishName) {
+                        int idx = line.indexOf("(" + stockCode + ")");
+                        if (idx != -1) {
+                            String name = line.substring(0, idx).trim();
+                            stockCodeNameMap.put(stockCode, name);
+                            finishName = true;
+                        }
+                    }
+
                     if (!finishGdrs && line.indexOf(FLAG_GDRS) != -1) {
                         beginGdrs = true;
                         continue;
                     }
                     if (!finishGdrs && beginGdrs && line.indexOf("<table") != -1) {
-                        processGdrs(line, fileName);
+                        processGdrs(line, stockCode);
                         finishGdrs = true;
                     }
                 }
@@ -58,7 +84,7 @@ public class WebPageAnalyzer {
         }
     }
 
-    private void processGdrs(String line, String fileName) {
+    private void processGdrs(String line, String stockCode) {
         List<String> list = new ArrayList<>();
         String curLine = line;
         while (true) {
@@ -77,8 +103,8 @@ public class WebPageAnalyzer {
             list.add(item);
             curLine = curLine.substring(toIdx);
         }
-        if (fileName.equals("000166")) {
-            LOGGER.error("file name {}", fileName);
+        if (stockCode.equals("000166")) {
+            LOGGER.error("file name {}", stockCode);
         }
         int rowCnt = 10;
         int columnCnt = list.size() / rowCnt;
@@ -94,7 +120,7 @@ public class WebPageAnalyzer {
                 }
             }
         }
-        String filePath = AppFilePath.getOutputGdyjGdrsDir() + File.separator + fileName + ".txt";
+        String filePath = AppFilePath.getOutputGdyjGdrsDir() + File.separator + stockCode + ".txt";
         LOGGER.info("Save file {}", filePath);
         FileUtil.writeFile(filePath, text.toString());
     }

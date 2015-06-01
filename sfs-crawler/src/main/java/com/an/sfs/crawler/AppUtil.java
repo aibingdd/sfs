@@ -64,7 +64,9 @@ public class AppUtil {
     public static void exportHtml(List<String> stockCodeList, String fileName) {
         StringBuilder text = new StringBuilder();
         text.append("<html>\n");
+        text.append("<head><meta charset=\"utf-8\"></head>\n");
         text.append("<body>\n");
+        StockCodeNameLoader inst = StockCodeNameLoader.getInst();
         for (String code : stockCodeList) {
             String newCode = code;
             if (code.startsWith("6")) {
@@ -72,8 +74,10 @@ public class AppUtil {
             } else {
                 newCode = "sz" + code;
             }
-            String url = "<a href=\"http://f10.eastmoney.com/f10_v2/ShareholderResearch.aspx?code=%s\">%s</a><br>";
+            String url = "<a href=\"http://f10.eastmoney.com/f10_v2/ShareholderResearch.aspx?code=%s\">%s</a>    ";
             text.append(String.format(url, newCode, code));
+            String name = inst.getName(code);
+            text.append(name + "<br>");
         }
         text.append("</body>\n");
         text.append("</html>");
