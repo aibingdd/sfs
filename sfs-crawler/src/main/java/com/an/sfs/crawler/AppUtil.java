@@ -8,13 +8,18 @@ import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class AppUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(AppUtil.class);
+    public static final String INVALID = "--";
+    public static final String UNIT_WAN = "万";
+    public static final String UNIT_YI = "亿";
 
     /**
      * Crawl URL and save content to file.
@@ -94,5 +99,61 @@ public class AppUtil {
         String filePath = AppFilePath.getOutputDir() + File.separator + fileName;
         FileUtil.writeFile(filePath, text.toString());
         LOGGER.info("Write file {}", filePath);
+    }
+
+    /**
+     * @param list
+     * @param rowCnt
+     * @param filePath
+     */
+    public static void convertListToFile(List<String> list, int rowCnt, String filePath) {
+        int columnCnt = list.size() / rowCnt;
+        StringBuilder text = new StringBuilder();
+        // 0*columnCnt+0,1*columnCnt+0,2*columnCnt+0
+        // 0*columnCnt+1,1*columnCnt+1,2*columnCnt+1
+        for (int colIdx = 0; colIdx < columnCnt; colIdx++) {
+            for (int rowIdx = 0; rowIdx < rowCnt; rowIdx++) {
+                if (rowIdx == rowCnt - 1) {
+                    text.append(list.get(rowIdx * columnCnt + colIdx)).append("\n");
+                } else {
+                    text.append(list.get(rowIdx * columnCnt + colIdx)).append(";");
+                }
+            }
+        }
+        LOGGER.info("Save file {}", filePath);
+        FileUtil.writeFile(filePath, text.toString());
+    }
+
+    private static Set<String> seasonDate = new HashSet<>();
+    static {
+        seasonDate.add("2015-03-31");
+        seasonDate.add("2014-12-31");
+        seasonDate.add("2014-09-30");
+        seasonDate.add("2014-06-30");
+        seasonDate.add("2014-03-31");
+        seasonDate.add("2013-12-31");
+        seasonDate.add("2013-09-30");
+        seasonDate.add("2013-06-30");
+        seasonDate.add("2013-03-31");
+        seasonDate.add("2012-12-31");
+        seasonDate.add("2012-09-30");
+        seasonDate.add("2012-06-30");
+        seasonDate.add("2012-03-31");
+        seasonDate.add("2011-12-31");
+        seasonDate.add("2011-09-30");
+        seasonDate.add("2011-06-30");
+        seasonDate.add("2011-03-31");
+        seasonDate.add("2010-12-31");
+        seasonDate.add("2010-09-30");
+        seasonDate.add("2010-06-30");
+        seasonDate.add("2010-03-31");
+    }
+
+    /**
+     * @param date
+     * @return
+     */
+    public static boolean isValidDate(String date) {
+        return seasonDate.contains(date);
     }
 }

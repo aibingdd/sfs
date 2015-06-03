@@ -12,8 +12,11 @@ import org.slf4j.LoggerFactory;
 
 public class CwfxAnalyzer {
     private static final Logger LOGGER = LoggerFactory.getLogger(CwfxAnalyzer.class);
-    private static final String FLAG_GDRS = "<strong>股东人数</strong>";
-    private static final String FLAG_GDRS_DATA = "tips-dataL\">";
+    private static final String FLAG_TIME = "成长能力指标";
+    private static final String FLAG_INCOME = "营业收入(元)";
+    private static final String FLAG_NET_PROFIT = "扣非净利润(元)";
+    private static final String FLAG_START_DATA = "<span>";
+    private static final String FLAG_END_DATA = "</span>";
 
     public void run() {
         analyzeGdrs();
@@ -28,64 +31,79 @@ public class CwfxAnalyzer {
             String stockCode = f.getName();
             stockCode = stockCode.substring(0, stockCode.indexOf("."));
 
-            boolean beginGdrs = false;
-            boolean finishGdrs = false;
+            List<String> list = new ArrayList<>();
+            boolean finishTime = false;
+            boolean beginTime = false;
+            boolean finishIncome = false;
+            boolean beginIncome = false;
+            boolean finishNetProfit = false;
+            boolean beginNetProfit = false;
             try (BufferedReader br = new BufferedReader(new FileReader(f))) {
                 String line = null;
                 while ((line = br.readLine()) != null) {
-                    if (!finishGdrs && line.indexOf(FLAG_GDRS) != -1) {
-                        beginGdrs = true;
+                    // Handle time
+                    if (!finishTime && line.indexOf(FLAG_TIME) != -1) {
+                        beginTime = true;
                         continue;
                     }
-                    if (!finishGdrs && beginGdrs && line.indexOf("<table") != -1) {
-                        processGdrs(line, stockCode);
-                        finishGdrs = true;
+                    if (!finishTime && beginTime) {
+                        int timeFromIdx = line.indexOf(FLAG_START_DATA);
+                        if (timeFromIdx != -1) {
+                            timeFromIdx = timeFromIdx + FLAG_START_DATA.length();
+                            int timeToIdx = line.indexOf(FLAG_END_DATA);
+                            String time = line.substring(timeFromIdx, timeToIdx);
+                            list.add(time);
+                        }
+                        if (line.contains("</tr>")) {
+                            finishTime = true;
+                        }
+                    }
+                    // Handle income
+                    if (!finishIncome && line.indexOf(FLAG_INCOME) != -1) {
+                        beginIncome = true;
+                        continue;
+                    }
+                    if (!finishIncome && beginIncome) {
+                        int incomeFromIdx = line.indexOf(FLAG_START_DATA);
+                        if (incomeFromIdx != -1) {
+                            incomeFromIdx = incomeFromIdx + FLAG_START_DATA.length();
+                            int incomeToIdx = line.indexOf(FLAG_END_DATA);
+                            String income = line.substring(incomeFromIdx, incomeToIdx);
+                            list.add(income);
+                        }
+                        if (line.contains("</tr>")) {
+                            finishIncome = true;
+                        }
+                    }
+                    // Handle net profit
+                    if (!finishNetProfit && line.indexOf(FLAG_NET_PROFIT) != -1) {
+                        beginNetProfit = true;
+                        continue;
+                    }
+                    if (!finishNetProfit && beginNetProfit) {
+                        int netProfitFromIdx = line.indexOf(FLAG_START_DATA);
+                        if (netProfitFromIdx != -1) {
+                            netProfitFromIdx = netProfitFromIdx + FLAG_START_DATA.length();
+                            int netProfitToIdx = line.indexOf(FLAG_END_DATA);
+                            String netProfit = line.substring(netProfitFromIdx, netProfitToIdx);
+                            list.add(netProfit);
+                        }
+                        if (line.contains("</tr>")) {
+                            finishNetProfit = true;
+                        }
+                    }
+
+                    // Finish all
+                    if (finishTime && finishIncome && finishNetProfit) {
+                        break;
                     }
                 }
+
+                String filePath = AppFilePath.getOutputCwfxYearDir() + File.separator + stockCode + ".txt";
+                AppUtil.convertListToFile(list, 3, filePath);
             } catch (IOException e) {
                 LOGGER.error("Error while analyzing file {}", f.getPath());
             }
         }
-    }
-
-    private void processGdrs(String line, String stockCode) {
-        List<String> list = new ArrayList<>();
-        String curLine = line;
-        while (true) {
-
-            int fromIdx = curLine.indexOf(FLAG_GDRS_DATA);
-            if (fromIdx == -1) {
-                break;
-            }
-
-            fromIdx += FLAG_GDRS_DATA.length();
-            int toIdx = curLine.indexOf("</", fromIdx);
-            String item = curLine.substring(fromIdx, toIdx);
-            if (item.indexOf(",") != -1) {
-                item = item.replaceAll(",", "");
-            }
-            list.add(item);
-            curLine = curLine.substring(toIdx);
-        }
-        if (stockCode.equals("000166")) {
-            LOGGER.error("file name {}", stockCode);
-        }
-        int rowCnt = 10;
-        int columnCnt = list.size() / rowCnt;
-        StringBuilder text = new StringBuilder();
-        // 0*columnCnt+0,1*columnCnt+0,2*columnCnt+0
-        // 0*columnCnt+1,1*columnCnt+1,2*columnCnt+1
-        for (int colIdx = 0; colIdx < columnCnt; colIdx++) {
-            for (int rowIdx = 0; rowIdx < rowCnt; rowIdx++) {
-                if (rowIdx == rowCnt - 1) {
-                    text.append(list.get(rowIdx * columnCnt + colIdx)).append("\n");
-                } else {
-                    text.append(list.get(rowIdx * columnCnt + colIdx)).append(";");
-                }
-            }
-        }
-        String filePath = AppFilePath.getOutputGdyjGdrsDir() + File.separator + stockCode + ".txt";
-        LOGGER.info("Save file {}", filePath);
-        FileUtil.writeFile(filePath, text.toString());
     }
 }

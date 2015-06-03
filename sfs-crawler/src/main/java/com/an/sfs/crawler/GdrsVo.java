@@ -6,9 +6,9 @@ public class GdrsVo implements Comparable<GdrsVo> {
     private int count;
     private float countChangeRate;
     private int floatStock;
-    private float fsChangeRate;
+    private float floatStockChangeRate;
     private float stockPrice;
-    private int holdStockPrice;
+    private long holdStockPrice;
     private float top10StockRate;
     private float top10FloatStockRate;
 
@@ -26,64 +26,9 @@ public class GdrsVo implements Comparable<GdrsVo> {
     @Override
     public String toString() {
         return "GdrsVo [code=" + code + ", date=" + date + ", count=" + count + ", countChangeRate=" + countChangeRate
-                + ", floatStock=" + floatStock + ", fsChangeRate=" + fsChangeRate + ", stockPrice=" + stockPrice
-                + ", holdStockPrice=" + holdStockPrice + ", top10StockRate=" + top10StockRate
+                + ", floatStock=" + floatStock + ", floatStockChangeRate=" + floatStockChangeRate + ", stockPrice="
+                + stockPrice + ", holdStockPrice=" + holdStockPrice + ", top10StockRate=" + top10StockRate
                 + ", top10FloatStockRate=" + top10FloatStockRate + "]";
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((code == null) ? 0 : code.hashCode());
-        result = prime * result + count;
-        result = prime * result + Float.floatToIntBits(countChangeRate);
-        result = prime * result + ((date == null) ? 0 : date.hashCode());
-        result = prime * result + floatStock;
-        result = prime * result + Float.floatToIntBits(fsChangeRate);
-        result = prime * result + holdStockPrice;
-        result = prime * result + Float.floatToIntBits(stockPrice);
-        result = prime * result + Float.floatToIntBits(top10FloatStockRate);
-        result = prime * result + Float.floatToIntBits(top10StockRate);
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        GdrsVo other = (GdrsVo) obj;
-        if (code == null) {
-            if (other.code != null)
-                return false;
-        } else if (!code.equals(other.code))
-            return false;
-        if (count != other.count)
-            return false;
-        if (Float.floatToIntBits(countChangeRate) != Float.floatToIntBits(other.countChangeRate))
-            return false;
-        if (date == null) {
-            if (other.date != null)
-                return false;
-        } else if (!date.equals(other.date))
-            return false;
-        if (floatStock != other.floatStock)
-            return false;
-        if (Float.floatToIntBits(fsChangeRate) != Float.floatToIntBits(other.fsChangeRate))
-            return false;
-        if (holdStockPrice != other.holdStockPrice)
-            return false;
-        if (Float.floatToIntBits(stockPrice) != Float.floatToIntBits(other.stockPrice))
-            return false;
-        if (Float.floatToIntBits(top10FloatStockRate) != Float.floatToIntBits(other.top10FloatStockRate))
-            return false;
-        if (Float.floatToIntBits(top10StockRate) != Float.floatToIntBits(other.top10StockRate))
-            return false;
-        return true;
     }
 
     public String getCode() {
@@ -126,12 +71,12 @@ public class GdrsVo implements Comparable<GdrsVo> {
         this.floatStock = floatStock;
     }
 
-    public float getFsChangeRate() {
-        return fsChangeRate;
+    public float getFloatStockChangeRate() {
+        return floatStockChangeRate;
     }
 
-    public void setFsChangeRate(float fsChangeRate) {
-        this.fsChangeRate = fsChangeRate;
+    public void setFloatStockChangeRate(float floatStockChangeRate) {
+        this.floatStockChangeRate = floatStockChangeRate;
     }
 
     public float getStockPrice() {
@@ -142,11 +87,11 @@ public class GdrsVo implements Comparable<GdrsVo> {
         this.stockPrice = stockPrice;
     }
 
-    public int getHoldStockPrice() {
+    public long getHoldStockPrice() {
         return holdStockPrice;
     }
 
-    public void setHoldStockPrice(int holdStockPrice) {
+    public void setHoldStockPrice(long holdStockPrice) {
         this.holdStockPrice = holdStockPrice;
     }
 

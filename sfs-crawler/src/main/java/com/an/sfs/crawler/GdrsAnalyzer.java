@@ -87,7 +87,6 @@ public class GdrsAnalyzer {
         List<String> list = new ArrayList<>();
         String curLine = line;
         while (true) {
-
             int fromIdx = curLine.indexOf(FLAG_GDRS_DATA);
             if (fromIdx == -1) {
                 break;
@@ -102,25 +101,9 @@ public class GdrsAnalyzer {
             list.add(item);
             curLine = curLine.substring(toIdx);
         }
-        if (stockCode.equals("000166")) {
-            LOGGER.error("file name {}", stockCode);
-        }
-        int rowCnt = 10;
-        int columnCnt = list.size() / rowCnt;
-        StringBuilder text = new StringBuilder();
-        // 0*columnCnt+0,1*columnCnt+0,2*columnCnt+0
-        // 0*columnCnt+1,1*columnCnt+1,2*columnCnt+1
-        for (int colIdx = 0; colIdx < columnCnt; colIdx++) {
-            for (int rowIdx = 0; rowIdx < rowCnt; rowIdx++) {
-                if (rowIdx == rowCnt - 1) {
-                    text.append(list.get(rowIdx * columnCnt + colIdx)).append("\n");
-                } else {
-                    text.append(list.get(rowIdx * columnCnt + colIdx)).append(";");
-                }
-            }
-        }
+
         String filePath = AppFilePath.getOutputGdyjGdrsDir() + File.separator + stockCode + ".txt";
         LOGGER.info("Save file {}", filePath);
-        FileUtil.writeFile(filePath, text.toString());
+        AppUtil.convertListToFile(list, 10, filePath);
     }
 }
