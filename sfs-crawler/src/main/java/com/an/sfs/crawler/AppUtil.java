@@ -58,29 +58,39 @@ public class AppUtil {
     }
 
     /**
-     * @param stockCodeList
+     * @param ebkStockCodeList
      * @param fileName
      */
-    public static void exportHtml(List<String> stockCodeList, String fileName) {
+    public static void exportHtml(List<String> ebkStockCodeList, String fileName) {
         StringBuilder text = new StringBuilder();
         text.append("<html>\n");
         text.append("<head><meta charset=\"utf-8\"></head>\n");
         text.append("<body>\n");
         StockCodeNameLoader inst = StockCodeNameLoader.getInst();
-        for (String code : stockCodeList) {
+        for (String code : ebkStockCodeList) {
             String newCode = code;
             if (code.startsWith("6")) {
                 newCode = "sh" + code;
             } else {
                 newCode = "sz" + code;
             }
-            String url = "<a href=\"http://f10.eastmoney.com/f10_v2/ShareholderResearch.aspx?code=%s\">%s</a>    ";
+            String url = "<a href=\"http://f10.eastmoney.com/f10_v2/ShareholderResearch.aspx?code=%s\">%s</a>";
             text.append(String.format(url, newCode, code));
             String name = inst.getName(code);
-            text.append(name + "<br>");
+            text.append(name + "<br>\n");
         }
         text.append("</body>\n");
         text.append("</html>");
+        String filePath = AppFilePath.getOutputDir() + File.separator + fileName;
+        FileUtil.writeFile(filePath, text.toString());
+        LOGGER.info("Write file {}", filePath);
+    }
+
+    public static void exportTxt(List<String> stockCodeList, String fileName) {
+        StringBuilder text = new StringBuilder();
+        for (String code : stockCodeList) {
+            text.append(code + "\n");
+        }
         String filePath = AppFilePath.getOutputDir() + File.separator + fileName;
         FileUtil.writeFile(filePath, text.toString());
         LOGGER.info("Write file {}", filePath);

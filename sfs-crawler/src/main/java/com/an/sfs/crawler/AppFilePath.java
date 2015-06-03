@@ -22,8 +22,12 @@ public class AppFilePath {
         dirNames.add(getConfDir());
         dirNames.add(getInputDir());
         dirNames.add(getInputGdyjDir());
+        dirNames.add(getInputCwfxDir());
         dirNames.add(getOutputDir());
-        dirNames.add(getOutputGdyjDir());
+        dirNames.add(getOutputGdyjGdrsDir());
+        dirNames.add(getOutputGdyjLtgdDir());
+        dirNames.add(getOutputCwfxDir());
+        dirNames.add(getOutputCwfxYearDir());
         for (String dirName : dirNames) {
             File dir = new File(dirName);
             if (!dir.exists()) {
@@ -40,20 +44,20 @@ public class AppFilePath {
         return getBaseDir() + File.separator + "conf";
     }
 
-    /**
-     * @param fileName
-     * @return
-     */
-    public static String getConfFile(String fileName) {
-        return getConfDir() + File.separator + fileName;
-    }
-
     private static String getInputDir() {
         return getBaseDir() + File.separator + "input";
     }
 
     public static String getInputGdyjDir() {
         return getInputDir() + File.separator + "gdyj";
+    }
+
+    public static String getInputCwfxDir() {
+        return getInputDir() + File.separator + "cwfx";
+    }
+
+    public static String getInputCwfxYearDir() {
+        return getInputDir() + File.separator + "cwfx_year";
     }
 
     public static String getOutputDir() {
@@ -70,5 +74,18 @@ public class AppFilePath {
 
     public static String getOutputGdyjLtgdDir() {
         return getOutputGdyjDir() + File.separator + "ltgf";
+    }
+
+    public static String getOutputCwfxDir() {
+        return getOutputDir() + File.separator + "cwfx";
+    }
+
+    public static String getOutputCwfxYearDir() {
+        return getOutputDir() + File.separator + "cwfx_year";
+    }
+
+    //
+    public static String getConfFile(String fileName) {
+        return getConfDir() + File.separator + fileName;
     }
 }

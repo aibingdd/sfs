@@ -14,17 +14,20 @@ import org.slf4j.LoggerFactory;
  * @author Anthony
  *
  */
-public class GdrsSeacherMain {
-    private static final Logger LOGGER = LoggerFactory.getLogger(GdrsSeacherMain.class);
+public class GdrsDecrementStockMain {
+    private static final Logger LOGGER = LoggerFactory.getLogger(GdrsDecrementStockMain.class);
     private static final String START_DATE = "2014-06-30";
-    private static final String OUTPUT_FILE = "DecrementStock.html";
+    private static final String OUTPUT_HTML_FILE = "Stock_Gdrs_Decrement.html";
+    private static final String OUTPUT_TXT_FILE = "Stock_Gdrs_Decrement.txt";
 
     public static void main(String[] args) {
-        List<String> stockCodeList = new ArrayList<>();
-        new GdrsSeacherMain().getDecrement(stockCodeList);
-        Collections.sort(stockCodeList);
-        AppUtil.exportHtml(stockCodeList, OUTPUT_FILE);
-        LOGGER.info("Save file {}", OUTPUT_FILE);
+        List<String> ebkStockCodeList = new ArrayList<>();
+        new GdrsDecrementStockMain().getDecrement(ebkStockCodeList);
+        Collections.sort(ebkStockCodeList);
+        AppUtil.exportHtml(ebkStockCodeList, OUTPUT_HTML_FILE);
+        LOGGER.info("Save file {}", OUTPUT_HTML_FILE);
+        AppUtil.exportTxt(ebkStockCodeList, OUTPUT_TXT_FILE);
+        LOGGER.info("Save file {}", OUTPUT_TXT_FILE);
     }
 
     /*

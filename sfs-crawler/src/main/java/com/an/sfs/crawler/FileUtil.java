@@ -1,7 +1,9 @@
 package com.an.sfs.crawler;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
@@ -41,12 +43,27 @@ public class FileUtil {
      * @param outFileList
      */
     public static void getFilesUnderDir(String dirPath, List<File> outFileList) {
+        getFilesUnderDir(dirPath, null, outFileList);
+    }
+
+    /**
+     * @param dirPath
+     * @param type
+     * @param outFileList
+     */
+    public static void getFilesUnderDir(String dirPath, String type, List<File> outFileList) {
         File dir = new File(dirPath);
         if (dir.exists()) {
             File[] files = dir.listFiles();
             for (File f : files) {
                 if (f.isFile()) {
-                    outFileList.add(f);
+                    if (type != null) {
+                        if (f.getPath().endsWith(type)) {
+                            outFileList.add(f);
+                        }
+                    } else {
+                        outFileList.add(f);
+                    }
                 }
             }
         }
@@ -59,5 +76,24 @@ public class FileUtil {
     public static String getFileName(String filePath) {
         String fileName = filePath.substring(filePath.lastIndexOf(File.separator) + 1, filePath.indexOf("."));
         return fileName;
+    }
+
+    /**
+     * Format html file
+     * 
+     * @param filePath
+     */
+    public static void formatHtmlFile(String filePath) {
+        StringBuilder text = new StringBuilder();
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            String line = null;
+            while ((line = br.readLine()) != null) {
+                line = line.replaceAll("><", ">\n<");
+                text.append(line).append("\n");
+            }
+        } catch (IOException e) {
+            LOGGER.error("Error ", e);
+        }
+        FileUtil.writeFile(filePath, text.toString());
     }
 }

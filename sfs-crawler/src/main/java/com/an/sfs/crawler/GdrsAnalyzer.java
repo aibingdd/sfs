@@ -20,15 +20,14 @@ import org.slf4j.LoggerFactory;
  * @author Anthony
  *
  */
-public class WebPageAnalyzer {
-    private static final Logger LOGGER = LoggerFactory.getLogger(WebPageAnalyzer.class);
+public class GdrsAnalyzer {
+    private static final Logger LOGGER = LoggerFactory.getLogger(GdrsAnalyzer.class);
     private static final String FLAG_GDRS = "<strong>股东人数</strong>";
-    private static final String FLAG_DATA = "tips-dataL\">";
+    private static final String FLAG_GDRS_DATA = "tips-dataL\">";
     private Map<String, String> stockCodeNameMap = new HashMap<>();
 
     public void run() {
-        analyzeGdyj();
-
+        analyzeGdrs();
         saveCodeName();
     }
 
@@ -45,7 +44,7 @@ public class WebPageAnalyzer {
                 text.toString());
     }
 
-    private void analyzeGdyj() {
+    private void analyzeGdrs() {
         List<File> fileList = new ArrayList<>();
         String dirPath = AppFilePath.getInputGdyjDir();
         FileUtil.getFilesUnderDir(dirPath, fileList);
@@ -89,12 +88,12 @@ public class WebPageAnalyzer {
         String curLine = line;
         while (true) {
 
-            int fromIdx = curLine.indexOf(FLAG_DATA);
+            int fromIdx = curLine.indexOf(FLAG_GDRS_DATA);
             if (fromIdx == -1) {
                 break;
             }
 
-            fromIdx += FLAG_DATA.length();
+            fromIdx += FLAG_GDRS_DATA.length();
             int toIdx = curLine.indexOf("</", fromIdx);
             String item = curLine.substring(fromIdx, toIdx);
             if (item.indexOf(",") != -1) {
