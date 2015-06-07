@@ -43,7 +43,7 @@ public class FileUtil {
      * @param outFileList
      */
     public static void getFilesUnderDir(String dirPath, List<File> outFileList) {
-        getFilesUnderDir(dirPath, null, outFileList);
+        getFilesUnderDir(dirPath, null, null, outFileList);
     }
 
     /**
@@ -51,19 +51,21 @@ public class FileUtil {
      * @param type
      * @param outFileList
      */
-    public static void getFilesUnderDir(String dirPath, String type, List<File> outFileList) {
+    public static void getFilesUnderDir(String dirPath, String start, String end, List<File> outFileList) {
         File dir = new File(dirPath);
         if (dir.exists()) {
             File[] files = dir.listFiles();
             for (File f : files) {
                 if (f.isFile()) {
-                    if (type != null) {
-                        if (f.getPath().endsWith(type)) {
-                            outFileList.add(f);
-                        }
-                    } else {
-                        outFileList.add(f);
+                    String filePath = f.getPath();
+                    String fileNameName = FileUtil.getFileNameFull(filePath);
+                    if (start != null && !fileNameName.startsWith(start)) {
+                        continue;
                     }
+                    if (end != null && !fileNameName.endsWith(end)) {
+                        continue;
+                    }
+                    outFileList.add(f);
                 }
             }
         }
@@ -71,10 +73,33 @@ public class FileUtil {
 
     /**
      * @param filePath
-     * @return
+     * @return File name without suffix.
      */
     public static String getFileName(String filePath) {
-        String fileName = filePath.substring(filePath.lastIndexOf(File.separator) + 1, filePath.indexOf("."));
+        int beginIndex = filePath.lastIndexOf(File.separator);
+        String fileName = filePath.substring(beginIndex + 1, filePath.indexOf("."));
+        return fileName;
+    }
+
+    /**
+     * @param filePath
+     * @return File name with suffix.
+     */
+    public static String getFileNameFull(String filePath) {
+        int beginIndex = filePath.lastIndexOf(File.separator);
+        String fileName = filePath.substring(beginIndex + 1);
+        return fileName;
+    }
+
+    public static String getHttpUrlFileName(String httpUrl) {
+        int beginIndex = httpUrl.lastIndexOf("/");
+        String fileName = httpUrl.substring(beginIndex + 1, httpUrl.lastIndexOf("."));
+        return fileName;
+    }
+
+    public static String getHttpUrlFileNameFull(String httpUrl) {
+        int beginIndex = httpUrl.lastIndexOf("/");
+        String fileName = httpUrl.substring(beginIndex + 1);
         return fileName;
     }
 

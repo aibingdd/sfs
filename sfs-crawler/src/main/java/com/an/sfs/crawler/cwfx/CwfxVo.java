@@ -1,4 +1,4 @@
-package com.an.sfs.crawler;
+package com.an.sfs.crawler.cwfx;
 
 public class CwfxVo implements Comparable<CwfxVo> {
     private String code;

@@ -10,6 +10,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -42,7 +43,7 @@ public class AppUtil {
             conn.setRequestProperty("User-Agent", "Nutch");
             is = url.openStream();
             Files.copy(is, path, StandardCopyOption.REPLACE_EXISTING);
-            LOGGER.info("Save file {}", path.toString());
+            LOGGER.info("Save web page {}", path.toString());
         } catch (IOException e) {
             LOGGER.error("Error while fetching web page by URL {}", httpUrl, e);
         } finally {
@@ -82,7 +83,82 @@ public class AppUtil {
             String url = "<a href=\"http://f10.eastmoney.com/f10_v2/ShareholderResearch.aspx?code=%s\">%s</a>";
             text.append(String.format(url, newCode, code));
             String name = inst.getName(code);
-            text.append(name + "<br>\n");
+            text.append(name);
+            text.append("<br>\n");
+        }
+        text.append("</body>\n");
+        text.append("</html>");
+        String filePath = AppFilePath.getOutputDir() + File.separator + fileName;
+        FileUtil.writeFile(filePath, text.toString());
+        LOGGER.info("Write file {}", filePath);
+    }
+
+    /**
+     * @param ebkStockCodeList
+     * @param rzMap
+     * @param fileName
+     */
+    public static void exportRzHtml(List<String> ebkStockCodeList, Map<String, String> rzMap, String fileName) {
+        StringBuilder text = new StringBuilder();
+        text.append("<html>\n");
+        text.append("<head><meta charset=\"utf-8\"></head>\n");
+        text.append("<body>\n");
+        StockCodeNameLoader inst = StockCodeNameLoader.getInst();
+        for (String code : ebkStockCodeList) {
+            String newCode = code;
+            if (code.startsWith("6")) {
+                newCode = "sh" + code;
+            } else {
+                newCode = "sz" + code;
+            }
+            String url = "<a href=\"http://f10.eastmoney.com/f10_v2/ShareholderResearch.aspx?code=%s\">%s</a>";
+            text.append(String.format(url, newCode, code));
+            String name = inst.getName(code);
+            text.append(name);
+            if (rzMap != null) {
+                if (rzMap.containsKey(code)) {
+                    String info = rzMap.get(code);
+                    text.append(" ").append(info);
+                }
+            }
+            text.append("<br>\n");
+        }
+        text.append("</body>\n");
+        text.append("</html>");
+        String filePath = AppFilePath.getOutputDir() + File.separator + fileName;
+        FileUtil.writeFile(filePath, text.toString());
+        LOGGER.info("Write file {}", filePath);
+    }
+
+    /**
+     * @param ebkStockCodeList
+     * @param tfpggMap
+     * @param fileName
+     */
+    public static void exportTfpHtml(List<String> ebkStockCodeList, Map<String, String> tfpggMap, String fileName) {
+        StringBuilder text = new StringBuilder();
+        text.append("<html>\n");
+        text.append("<head><meta charset=\"utf-8\"></head>\n");
+        text.append("<body>\n");
+        StockCodeNameLoader inst = StockCodeNameLoader.getInst();
+        for (String code : ebkStockCodeList) {
+            String newCode = code;
+            if (code.startsWith("6")) {
+                newCode = "sh" + code;
+            } else {
+                newCode = "sz" + code;
+            }
+            String url = "<a href=\"http://f10.eastmoney.com/f10_v2/ShareholderResearch.aspx?code=%s\">%s</a>";
+            text.append(String.format(url, newCode, code));
+            String name = inst.getName(code);
+            text.append(name);
+            if (tfpggMap != null) {
+                if (tfpggMap.containsKey(code)) {
+                    String info = tfpggMap.get(code);
+                    text.append(" ").append(info);
+                }
+            }
+            text.append("<br>\n");
         }
         text.append("</body>\n");
         text.append("</html>");

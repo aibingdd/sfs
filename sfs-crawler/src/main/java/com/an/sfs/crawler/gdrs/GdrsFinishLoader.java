@@ -1,4 +1,4 @@
-package com.an.sfs.crawler;
+package com.an.sfs.crawler.gdrs;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -10,11 +10,13 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class GdrsFinishJumpLoader {
-    private static final Logger LOGGER = LoggerFactory.getLogger(GdrsFinishJumpLoader.class);
+import com.an.sfs.crawler.AppFilePath;
+
+public class GdrsFinishLoader {
+    private static final Logger LOGGER = LoggerFactory.getLogger(GdrsFinishLoader.class);
     private List<String> codeList = new ArrayList<>();
 
-    public GdrsFinishJumpLoader() {
+    public GdrsFinishLoader() {
         init();
     }
 

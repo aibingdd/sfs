@@ -17,18 +17,37 @@ public class AppFilePath {
             System.exit(1);
         }
 
-        List<String> dirNames = new ArrayList<>();
-        dirNames.add(baseDir);
-        dirNames.add(getConfDir());
-        dirNames.add(getInputDir());
-        dirNames.add(getInputGdyjDir());
-        dirNames.add(getInputCwfxDir());
-        dirNames.add(getOutputDir());
-        dirNames.add(getOutputGdyjGdrsDir());
-        dirNames.add(getOutputGdyjLtgdDir());
-        dirNames.add(getOutputCwfxDir());
-        dirNames.add(getOutputCwfxYearDir());
-        for (String dirName : dirNames) {
+        List<String> dirs = new ArrayList<>();
+        dirs.add(baseDir);
+        dirs.add(getConfDir());
+        dirs.add(getInputDir());
+        dirs.add(getOutputDir());
+
+        dirs.add(getInputGdyjDir());
+        dirs.add(getOutputGdyjDir());
+
+        dirs.add(getInputGdyjGdrsDir());
+        dirs.add(getOutputGdyjGdrsDir());
+
+        dirs.add(getInputCwfxYearDir());
+        dirs.add(getOutputCwfxYearDir());
+
+        dirs.add(getInputGgdqDir());
+        dirs.add(getOutputGgdqDir());
+
+        dirs.add(getInputGgdqPnDir());
+        dirs.add(getOutputGgdqPnDir());
+
+        dirs.add(getInputTfpggDir());
+        dirs.add(getOutputTfpggDir());
+
+        dirs.add(getInputFhrzDir());
+        dirs.add(getInputFhrzRawDir());
+        dirs.add(getInputFhrzFhyxDir());
+        dirs.add(getInputFhrzZfmxDir());
+        dirs.add(getOutputFhrzDir());
+
+        for (String dirName : dirs) {
             File dir = new File(dirName);
             if (!dir.exists()) {
                 dir.mkdirs();
@@ -48,40 +67,84 @@ public class AppFilePath {
         return getBaseDir() + File.separator + "input";
     }
 
-    public static String getInputGdyjDir() {
-        return getInputDir() + File.separator + "gdyj";
-    }
-
-    public static String getInputCwfxDir() {
-        return getInputDir() + File.separator + "cwfx";
-    }
-
-    public static String getInputCwfxYearDir() {
-        return getInputDir() + File.separator + "cwfx_year";
-    }
-
     public static String getOutputDir() {
         return getBaseDir() + File.separator + "output";
+    }
+
+    public static String getInputGdyjDir() {
+        return getInputDir() + File.separator + "gdyj";
     }
 
     private static String getOutputGdyjDir() {
         return getOutputDir() + File.separator + "gdyj";
     }
 
+    public static String getInputGdyjGdrsDir() {
+        return getInputGdyjDir() + File.separator + "gdrs";
+    }
+
     public static String getOutputGdyjGdrsDir() {
         return getOutputGdyjDir() + File.separator + "gdrs";
     }
 
-    public static String getOutputGdyjLtgdDir() {
-        return getOutputGdyjDir() + File.separator + "ltgf";
+    public static String getInputCwfxDir() {
+        return getInputDir() + File.separator + "cwfx";
     }
 
     public static String getOutputCwfxDir() {
         return getOutputDir() + File.separator + "cwfx";
     }
 
+    public static String getInputCwfxYearDir() {
+        return getInputDir() + File.separator + "cwfx_year";
+    }
+
     public static String getOutputCwfxYearDir() {
         return getOutputDir() + File.separator + "cwfx_year";
+    }
+
+    public static String getInputGgdqDir() {
+        return getInputDir() + File.separator + "ggdq";
+    }
+
+    public static String getOutputGgdqDir() {
+        return getOutputDir() + File.separator + "ggdq";
+    }
+
+    public static String getInputGgdqPnDir() {
+        return getInputDir() + File.separator + "ggdq_pn";
+    }
+
+    public static String getOutputGgdqPnDir() {
+        return getOutputDir() + File.separator + "ggdq_pn";
+    }
+
+    public static String getInputTfpggDir() {
+        return getInputDir() + File.separator + "tfpgg";
+    }
+
+    public static String getOutputTfpggDir() {
+        return getOutputDir() + File.separator + "tfpgg";
+    }
+
+    public static String getInputFhrzDir() {
+        return getInputDir() + File.separator + "fhrz";
+    }
+
+    public static String getInputFhrzRawDir() {
+        return getInputFhrzDir() + File.separator + "raw";
+    }
+
+    public static String getInputFhrzFhyxDir() {
+        return getInputFhrzDir() + File.separator + "fhyx";
+    }
+
+    public static String getInputFhrzZfmxDir() {
+        return getInputFhrzDir() + File.separator + "zfmx";
+    }
+
+    public static String getOutputFhrzDir() {
+        return getOutputDir() + File.separator + "fhrz";
     }
 
     //

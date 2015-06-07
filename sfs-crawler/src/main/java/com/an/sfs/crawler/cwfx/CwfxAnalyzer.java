@@ -1,4 +1,4 @@
-package com.an.sfs.crawler;
+package com.an.sfs.crawler.cwfx;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -9,6 +9,10 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.an.sfs.crawler.AppFilePath;
+import com.an.sfs.crawler.AppUtil;
+import com.an.sfs.crawler.FileUtil;
 
 public class CwfxAnalyzer {
     private static final Logger LOGGER = LoggerFactory.getLogger(CwfxAnalyzer.class);

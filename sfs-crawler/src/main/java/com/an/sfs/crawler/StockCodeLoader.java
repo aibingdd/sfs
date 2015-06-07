@@ -9,11 +9,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CodeLoader {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CodeLoader.class);
-    /**
-     * Shanghai stock codes
-     */
+public class StockCodeLoader {
+    private static final Logger LOGGER = LoggerFactory.getLogger(StockCodeLoader.class);
     private List<String> shCodes = new ArrayList<>();
     private List<String> szCodes = new ArrayList<>();
 
@@ -59,16 +56,16 @@ public class CodeLoader {
 
     //
 
-    public static CodeLoader getInst() {
+    public static StockCodeLoader getInst() {
         if (inst == null) {
-            inst = new CodeLoader();
+            inst = new StockCodeLoader();
             inst.init();
         }
         return inst;
     }
 
-    private static CodeLoader inst = null;
+    private static StockCodeLoader inst = null;
 
-    private CodeLoader() {
+    private StockCodeLoader() {
     }
 }
