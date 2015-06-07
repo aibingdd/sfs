@@ -8,6 +8,10 @@ public class TfpVo implements Comparable<TfpVo> {
     private String period;
     private String reason;
 
+    public boolean isFp() {
+        return this.period.contains("取消");
+    }
+
     public String getDisplayStr() {
         String st = stopTime;
         String rt = resumeTime;
@@ -28,11 +32,10 @@ public class TfpVo implements Comparable<TfpVo> {
 
     @Override
     public int compareTo(TfpVo o) {
-        int v = this.stopTime.compareTo(o.stopTime);
-        if (v == 0) {
+        if (this.stopTime.equals(o.stopTime)) {
             return this.code.compareTo(o.code);
         }
-        return v;
+        return this.stopTime.compareTo(o.stopTime) * -1;
     }
 
     @Override

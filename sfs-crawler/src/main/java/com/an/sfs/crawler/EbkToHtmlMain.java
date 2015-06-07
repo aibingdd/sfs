@@ -43,8 +43,7 @@ public class EbkToHtmlMain {
         }
 
         Collections.sort(stockCodeList);
-        AppUtil.exportHtml(stockCodeList, fileName + ".html");
+        AppUtil.exportHtml(stockCodeList, null, fileName + ".html");
         AppUtil.exportTxt(stockCodeList, fileName + ".txt");
-        LOGGER.error("Save file {}", fileName);
     }
 }

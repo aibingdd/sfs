@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,16 +17,34 @@ import com.an.sfs.crawler.FileUtil;
 
 public class FhrzLoader {
     private static final Logger LOGGER = LoggerFactory.getLogger(FhrzLoader.class);
-    private Map<String, List<RzVo>> zfmxMap = new HashMap<>();
+    private Map<String, List<ZfmxVo>> zfmxMap = new HashMap<>();
 
     /**
-     * @param rzMap
+     * @param allCodeList
+     * @param outCodeList
      */
-    public void getRzMap(Map<String, String> rzMap) {
+    public void getZfmxCodes(List<String> allCodeList, List<String> outCodeList) {
+        List<ZfmxVo> voList = new ArrayList<>();
+        for (String code : allCodeList) {
+            if (zfmxMap.containsKey(code)) {
+                List<ZfmxVo> list = zfmxMap.get(code);
+                if (!list.isEmpty()) {
+                    voList.add(list.get(0));
+                }
+            }
+        }
+
+        Collections.sort(voList);
+        for (ZfmxVo vo : voList) {
+            outCodeList.add(vo.getCode());
+        }
+    }
+
+    public void getZfmxMap(Map<String, String> outZfmxMap) {
         for (String code : zfmxMap.keySet()) {
-            RzVo vo = getRzVo(code);
+            ZfmxVo vo = getRzVo(code);
             if (vo != null) {
-                rzMap.put(code, vo.getDisplayStr());
+                outZfmxMap.put(code, vo.getDisplayStr());
             }
         }
     }
@@ -34,8 +53,8 @@ public class FhrzLoader {
      * @param code
      * @return
      */
-    public RzVo getRzVo(String code) {
-        List<RzVo> list = zfmxMap.get(code);
+    public ZfmxVo getRzVo(String code) {
+        List<ZfmxVo> list = zfmxMap.get(code);
         if (!list.isEmpty()) {
             return list.get(0);
         }
@@ -47,19 +66,24 @@ public class FhrzLoader {
         FileUtil.getFilesUnderDir(AppFilePath.getInputFhrzZfmxDir(), files);
         for (File f : files) {
             String stockCode = FileUtil.getFileName(f.getPath());
-            List<RzVo> voList = new ArrayList<>();
+            List<ZfmxVo> voList = new ArrayList<>();
             try (BufferedReader br = new BufferedReader(new FileReader(f.getPath()))) {
                 int cnt = 0;
-                RzVo vo = null;
+                ZfmxVo vo = null;
                 String line = null;
                 while ((line = br.readLine()) != null) {
                     if (line.startsWith("<td")) {
                         String val = getVal(line);
                         if (!val.equals("--")) {
                             if (cnt % 8 == 0) {
-                                vo = new RzVo();
+                                vo = new ZfmxVo();
                                 vo.setCode(stockCode);
-                                vo.setIncreasetime(val);
+                                if (val.startsWith("9")) {
+                                    val = "19" + val;
+                                } else {
+                                    val = "20" + val;
+                                }
+                                vo.setIncreaseTime(val);
                             } else if (cnt % 8 == 1) {
                                 val = val.replaceAll(",", "");
                                 float tmp = Float.parseFloat(val);
@@ -76,6 +100,11 @@ public class FhrzLoader {
                             } else if (cnt % 8 == 4) {
                                 vo.setType(val);
                             } else if (cnt % 8 == 6) {
+                                if (val.startsWith("9")) {
+                                    val = "19" + val;
+                                } else {
+                                    val = "20" + val;
+                                }
                                 vo.setOnSaleTime(val);
                                 voList.add(vo);
                             }

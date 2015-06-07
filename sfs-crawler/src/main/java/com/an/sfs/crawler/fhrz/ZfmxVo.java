@@ -1,8 +1,8 @@
 package com.an.sfs.crawler.fhrz;
 
-public class RzVo {
+public class ZfmxVo implements Comparable<ZfmxVo> {
     private String code;
-    private String increasetime;
+    private String increaseTime;
     private String onSaleTime;
     private long num;
     private long amount;
@@ -10,16 +10,24 @@ public class RzVo {
     private String type;
 
     public String getDisplayStr() {
-        return increasetime + " " + type + " ￥" + price + " " + (amount / 10000) + "万";
+        return increaseTime + " " + type + " ￥" + price + " " + (amount / 10000) + "万";
     }
 
-    public RzVo() {
+    public ZfmxVo() {
+    }
+
+    @Override
+    public int compareTo(ZfmxVo o) {
+        if (this.increaseTime.equals(o.increaseTime)) {
+            return this.code.compareTo(o.code);
+        }
+        return this.increaseTime.compareTo(o.increaseTime) * -1;
     }
 
     @Override
     public String toString() {
-        return "RzVo [code=" + code + ", increasetime=" + increasetime + ", onSaleTime=" + onSaleTime + ", num=" + num
-                + ", amount=" + amount + ", price=" + price + ", type=" + type + "]";
+        return "ZfmxVo [code=" + code + ", increaseTime=" + increaseTime + ", onSaleTime=" + onSaleTime + ", num="
+                + num + ", amount=" + amount + ", price=" + price + ", type=" + type + "]";
     }
 
     public String getCode() {
@@ -30,12 +38,12 @@ public class RzVo {
         this.code = code;
     }
 
-    public String getIncreasetime() {
-        return increasetime;
+    public String getIncreaseTime() {
+        return increaseTime;
     }
 
-    public void setIncreasetime(String increasetime) {
-        this.increasetime = increasetime;
+    public void setIncreaseTime(String increaseTime) {
+        this.increaseTime = increaseTime;
     }
 
     public String getOnSaleTime() {

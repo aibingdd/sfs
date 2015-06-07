@@ -19,24 +19,57 @@ public class TfpLoader {
     private static final Logger LOGGER = LoggerFactory.getLogger(TfpLoader.class);
 
     // code -> List<TfpggVo>
-    private Map<String, List<TfpVo>> stockDateTfpMap = new HashMap<String, List<TfpVo>>();
+    private Map<String, List<TfpVo>> tfpMap = new HashMap<String, List<TfpVo>>();
 
     public void getStockCodeList(List<String> codeList) {
-        codeList.addAll(stockDateTfpMap.keySet());
+        codeList.addAll(tfpMap.keySet());
         Collections.sort(codeList);
     }
 
     /**
-     * @param tfpMap
+     * @param allCodeList
+     * @param outCodeList
      */
-    public void getTfpMap(Map<String, String> tfpMap) {
-        for (String code : stockDateTfpMap.keySet()) {
-            List<TfpVo> voList = stockDateTfpMap.get(code);
+    public void getTfpCodes(List<String> allCodeList, List<String> outCodeList) {
+        List<TfpVo> tpVoList = new ArrayList<>();
+        List<TfpVo> fpVoList = new ArrayList<>();
+        for (String code : allCodeList) {
+            if (tfpMap.containsKey(code)) {
+                List<TfpVo> list = tfpMap.get(code);
+                if (!list.isEmpty()) {
+                    TfpVo vo = list.get(0);
+                    if (vo.isFp()) {
+                        fpVoList.add(vo);
+                    } else {
+                        tpVoList.add(vo);
+                    }
+                }
+            }
+        }
+
+        Collections.sort(fpVoList);
+        Collections.sort(tpVoList);
+        for (TfpVo vo : fpVoList) {
+            outCodeList.add(vo.getCode());
+        }
+        for (TfpVo vo : tpVoList) {
+            outCodeList.add(vo.getCode());
+        }
+    }
+
+    /**
+     * @param outTfpMap
+     */
+    public void getTfpMap(Map<String, String> outTfpMap) {
+        for (String code : tfpMap.keySet()) {
+            List<TfpVo> voList = tfpMap.get(code);
+            Collections.sort(voList);
+
             String val = "";
             for (TfpVo vo : voList) {
                 val += (vo.getDisplayStr() + "; ");
             }
-            tfpMap.put(code, val);
+            outTfpMap.put(code, val);
         }
     }
 
@@ -70,10 +103,10 @@ public class TfpLoader {
                     vo.setPeriod(period);
                     vo.setReason(reason);
 
-                    if (!stockDateTfpMap.containsKey(code)) {
-                        stockDateTfpMap.put(code, new ArrayList<TfpVo>());
+                    if (!tfpMap.containsKey(code)) {
+                        tfpMap.put(code, new ArrayList<TfpVo>());
                     }
-                    stockDateTfpMap.get(code).add(vo);
+                    tfpMap.get(code).add(vo);
                 }
             }
 

@@ -17,10 +17,10 @@ public class GdrsVo implements Comparable<GdrsVo> {
 
     @Override
     public int compareTo(GdrsVo o) {
-        if (!code.equals(code)) {
-            return this.getCode().compareTo(o.getCode());
+        if (this.date.equals(o.date)) {
+            return this.code.compareTo(o.code);
         }
-        return this.getDate().compareTo(o.getDate()) * -1;
+        return this.date.compareTo(o.date) * -1;
     }
 
     @Override
