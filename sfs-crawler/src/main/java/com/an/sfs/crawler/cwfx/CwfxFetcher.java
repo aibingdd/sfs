@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import com.an.sfs.crawler.AppFilePath;
 import com.an.sfs.crawler.AppUtil;
 import com.an.sfs.crawler.FileUtil;
-import com.an.sfs.crawler.StockCodeLoader;
+import com.an.sfs.crawler.code.StockCodeLoader;
 
 public class CwfxFetcher {
     private static final Logger LOGGER = LoggerFactory.getLogger(CwfxFetcher.class);

@@ -3,9 +3,12 @@ package com.an.sfs.crawler;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -32,10 +35,33 @@ public class FileUtil {
 
     /**
      * @param filePath
+     * @param text
+     * @param append
+     */
+    public static void writeFile(String filePath, String text, boolean append) {
+        try (BufferedWriter out = new BufferedWriter(new FileWriter(filePath, append))) {
+            out.write(text);
+        } catch (IOException e) {
+            LOGGER.error("Error, filePath {}", filePath, e);
+        }
+    }
+
+    /**
+     * @param filePath
      * @return
      */
     public static boolean isFileExist(String filePath) {
         return new File(filePath).exists();
+    }
+
+    /**
+     * @param filePath
+     */
+    public static void deleteFile(String filePath) {
+        File file = new File(filePath);
+        if (file.exists()) {
+            file.delete();
+        }
     }
 
     /**
@@ -120,5 +146,36 @@ public class FileUtil {
             LOGGER.error("Error ", e);
         }
         FileUtil.writeFile(filePath, text.toString());
+    }
+
+    /**
+     * @param outputDir
+     * @param filePath
+     * @param encoding
+     */
+    public static void formatHtmlFile(String outputDir, String outputFileType, String filePath, String encoding) {
+        StringBuilder text = new StringBuilder();
+        BufferedReader br = null;
+        try {
+            FileInputStream fis = new FileInputStream(new File(filePath));
+            Reader isr = new InputStreamReader(fis, encoding);
+            br = new BufferedReader(isr);
+            String line = null;
+            while ((line = br.readLine()) != null) {
+                line = line.replaceAll("  ", "");
+                line = line.replaceAll("><", ">\n<");
+                text.append(line).append("\n");
+            }
+        } catch (IOException e) {
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                }
+            }
+        }
+        String fn = FileUtil.getFileName(filePath);
+        FileUtil.writeFile(outputDir + File.separator + fn + outputFileType, text.toString());
     }
 }

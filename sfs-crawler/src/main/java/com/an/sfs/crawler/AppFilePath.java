@@ -47,6 +47,21 @@ public class AppFilePath {
         dirs.add(getInputFhrzZfmxDir());
         dirs.add(getOutputFhrzDir());
 
+        dirs.add(getInputJjmcDir());
+        dirs.add(getOutputJjmcDir());
+
+        dirs.add(getInputJjccDir());
+        dirs.add(getInputJjccRawDir());
+        dirs.add(getInputJjccTxtDir());
+
+        dirs.add(getInputJjmcRawDir());
+        dirs.add(getInputJjmcTxtDir());
+        dirs.add(getOutputJjccDir());
+
+        for (String season : AppUtil.seasonList) {
+            dirs.add(getInputJjccRawDir(season));
+            dirs.add(getInputJjccTxtDir(season));
+        }
         for (String dirName : dirs) {
             File dir = new File(dirName);
             if (!dir.exists()) {
@@ -145,6 +160,46 @@ public class AppFilePath {
 
     public static String getOutputFhrzDir() {
         return getOutputDir() + File.separator + "fhrz";
+    }
+
+    public static String getInputJjmcDir() {
+        return getInputDir() + File.separator + "jjmc";
+    }
+
+    public static String getInputJjmcRawDir() {
+        return getInputJjmcDir() + File.separator + "raw";
+    }
+
+    public static String getInputJjmcTxtDir() {
+        return getInputJjmcDir() + File.separator + "txt";
+    }
+
+    public static String getOutputJjmcDir() {
+        return getOutputDir() + File.separator + "jjmc";
+    }
+
+    public static String getInputJjccDir() {
+        return getInputDir() + File.separator + "jjcc";
+    }
+
+    public static String getInputJjccRawDir() {
+        return getInputJjccDir() + File.separator + "raw";
+    }
+
+    public static String getInputJjccTxtDir() {
+        return getInputJjccDir() + File.separator + "txt";
+    }
+
+    public static String getInputJjccRawDir(String season) {
+        return getInputJjccRawDir() + File.separator + season;
+    }
+
+    public static String getInputJjccTxtDir(String season) {
+        return getInputJjccTxtDir() + File.separator + season;
+    }
+
+    public static String getOutputJjccDir() {
+        return getOutputDir() + File.separator + "jjcc";
     }
 
     //

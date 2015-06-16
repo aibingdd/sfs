@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 import com.an.sfs.crawler.AppFilePath;
 import com.an.sfs.crawler.AppUtil;
 import com.an.sfs.crawler.FileUtil;
-import com.an.sfs.crawler.StockCodeNameLoader;
+import com.an.sfs.crawler.code.StockCodeNameLoader;
 
 /**
  * @author Anthony

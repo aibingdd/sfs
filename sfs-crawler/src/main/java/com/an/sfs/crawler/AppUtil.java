@@ -1,20 +1,24 @@
 package com.an.sfs.crawler;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.an.sfs.crawler.code.StockCodeNameLoader;
 
 public class AppUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(AppUtil.class);
@@ -23,13 +27,54 @@ public class AppUtil {
     public static final String UNIT_YI = "亿";
 
     /**
-     * Crawl URL and save content to file.
-     * 
      * @param httpUrl
-     *            the URL to be crawled.
      * @param filePath
-     *            saved file path.
      */
+    public static void download_rest(String httpUrl, String filePath) {
+        BufferedReader br = null;
+        FileWriter fw = null;
+        try {
+            URL url = new URL(httpUrl);
+            URLConnection conn = url.openConnection();
+            conn.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.0; Windows NT; DigExt)");
+            String contentType = conn.getContentType();
+            int contentLength = conn.getContentLength();
+            System.out.println(contentType);
+            System.out.println(contentLength);
+            InputStream is = conn.getInputStream();
+            br = new BufferedReader(new InputStreamReader(is, "bg2312"));
+
+            StringBuilder text = new StringBuilder();
+            String line = null;
+            while ((line = br.readLine()) != null) {
+                String newLine = line.replaceAll("><", ">\n<");
+                text.append(newLine);
+            }
+            fw = new FileWriter(filePath);
+            fw.write(text.toString());
+        } catch (Exception e) {
+            LOGGER.error("Error ", e);
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                }
+            }
+            if (fw != null) {
+                try {
+                    fw.close();
+                } catch (IOException e) {
+                }
+            }
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                LOGGER.error("Error.", e);
+            }
+        }
+    }
+
     /**
      * @param httpUrl
      * @param filePath
@@ -136,29 +181,79 @@ public class AppUtil {
         FileUtil.writeFile(filePath, text.toString());
     }
 
-    private static Set<String> seasonDate = new HashSet<>();
+    public static List<String> seasonList = new ArrayList<>();
     static {
-        seasonDate.add("2015-03-31");
-        seasonDate.add("2014-12-31");
-        seasonDate.add("2014-09-30");
-        seasonDate.add("2014-06-30");
-        seasonDate.add("2014-03-31");
-        seasonDate.add("2013-12-31");
-        seasonDate.add("2013-09-30");
-        seasonDate.add("2013-06-30");
-        seasonDate.add("2013-03-31");
-        seasonDate.add("2012-12-31");
-        seasonDate.add("2012-09-30");
-        seasonDate.add("2012-06-30");
-        seasonDate.add("2012-03-31");
-        seasonDate.add("2011-12-31");
-        seasonDate.add("2011-09-30");
-        seasonDate.add("2011-06-30");
-        seasonDate.add("2011-03-31");
-        seasonDate.add("2010-12-31");
-        seasonDate.add("2010-09-30");
-        seasonDate.add("2010-06-30");
-        seasonDate.add("2010-03-31");
+        seasonList.add("2015-03-31");
+
+        seasonList.add("2014-12-31");
+        seasonList.add("2014-09-30");
+        seasonList.add("2014-06-30");
+        seasonList.add("2014-03-31");
+
+        seasonList.add("2013-12-31");
+        seasonList.add("2013-09-30");
+        seasonList.add("2013-06-30");
+        seasonList.add("2013-03-31");
+
+        seasonList.add("2012-12-31");
+        seasonList.add("2012-09-30");
+        seasonList.add("2012-06-30");
+        seasonList.add("2012-03-31");
+
+        seasonList.add("2011-12-31");
+        seasonList.add("2011-09-30");
+        seasonList.add("2011-06-30");
+        seasonList.add("2011-03-31");
+
+        seasonList.add("2010-12-31");
+        seasonList.add("2010-09-30");
+        seasonList.add("2010-06-30");
+        seasonList.add("2010-03-31");
+
+        seasonList.add("2009-12-31");
+        seasonList.add("2009-09-30");
+        seasonList.add("2009-06-30");
+        seasonList.add("2009-03-31");
+
+        seasonList.add("2008-12-31");
+        seasonList.add("2008-09-30");
+        seasonList.add("2008-06-30");
+        seasonList.add("2008-03-31");
+
+        seasonList.add("2007-12-31");
+        seasonList.add("2007-09-30");
+        seasonList.add("2007-06-30");
+        seasonList.add("2007-03-31");
+
+        seasonList.add("2006-12-31");
+        seasonList.add("2006-09-30");
+        seasonList.add("2006-06-30");
+        seasonList.add("2006-03-31");
+
+        seasonList.add("2005-12-31");
+        seasonList.add("2005-09-30");
+        seasonList.add("2005-06-30");
+        seasonList.add("2005-03-31");
+
+        seasonList.add("2004-12-31");
+        seasonList.add("2004-09-30");
+        seasonList.add("2004-06-30");
+        seasonList.add("2004-03-31");
+
+        seasonList.add("2003-12-31");
+        seasonList.add("2003-09-30");
+        seasonList.add("2003-06-30");
+        seasonList.add("2003-03-31");
+
+        seasonList.add("2002-12-31");
+        seasonList.add("2002-09-30");
+        seasonList.add("2002-06-30");
+        seasonList.add("2002-03-31");
+
+        seasonList.add("2001-12-31");
+        seasonList.add("2001-09-30");
+        seasonList.add("2001-06-30");
+        seasonList.add("2001-03-31");
     }
 
     /**
@@ -166,6 +261,6 @@ public class AppUtil {
      * @return
      */
     public static boolean isValidDate(String date) {
-        return seasonDate.contains(date);
+        return seasonList.contains(date);
     }
 }
