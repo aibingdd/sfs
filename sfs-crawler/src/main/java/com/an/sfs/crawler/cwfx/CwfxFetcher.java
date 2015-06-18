@@ -1,7 +1,6 @@
 package com.an.sfs.crawler.cwfx;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -10,7 +9,8 @@ import org.slf4j.LoggerFactory;
 import com.an.sfs.crawler.AppFilePath;
 import com.an.sfs.crawler.AppUtil;
 import com.an.sfs.crawler.FileUtil;
-import com.an.sfs.crawler.code.StockCodeLoader;
+import com.an.sfs.crawler.name.StockLoader;
+import com.an.sfs.crawler.name.StockVo;
 
 public class CwfxFetcher {
     private static final Logger LOGGER = LoggerFactory.getLogger(CwfxFetcher.class);
@@ -29,24 +29,20 @@ public class CwfxFetcher {
     private static final String XWGG_QBGG_PAGE = "http://data.eastmoney.com/Notice/NoticeStock.aspx?type=0&stockcode=%s&pn=%s";
 
     public void run() {
+        LOGGER.info("Fetch Html.");
         fetchHtml(CWFX_URL, AppFilePath.getInputCwfxDir());
 
+        LOGGER.info("Fetch CWFX.");
         fetchCwfxData(CWFX_YEAR_URL, AppFilePath.getInputCwfxYearDir());
 
+        LOGGER.info("Fetch GGDQ.");
         fetchGgdqData(XWGG_QBGG_PAGE, AppFilePath.getInputGgdqDir());
     }
 
     private void fetchGgdqData(String url, String fileDir) {
-        List<String> shCodes = new ArrayList<>();
-        StockCodeLoader.getInst().getShCodes(shCodes);
-        for (String code : shCodes) {
-            downloadGgdq(url, 1, fileDir, code);
-        }
-
-        List<String> szCodes = new ArrayList<>();
-        StockCodeLoader.getInst().getSzCodes(szCodes);
-        for (String code : szCodes) {
-            downloadGgdq(url, 1, fileDir, code);
+        List<StockVo> stocks = StockLoader.getInst().getStocks();
+        for (StockVo vo : stocks) {
+            downloadGgdq(url, 1, fileDir, vo.getCode());
         }
     }
 
@@ -59,44 +55,30 @@ public class CwfxFetcher {
     }
 
     private void fetchCwfxData(String url, String fileDir) {
-        List<String> shCodes = new ArrayList<>();
-        StockCodeLoader.getInst().getShCodes(shCodes);
-        for (String code : shCodes) {
-            String httpUrl = String.format(url, code, "01", num, "sh", code, n);
-            String filePath = fileDir + File.separator + code + ".txt";
-            if (!FileUtil.isFileExist(filePath)) {
-                AppUtil.download(httpUrl, filePath);
+        List<StockVo> stocks = StockLoader.getInst().getStocks();
+        for (StockVo vo : stocks) {
+            String code = vo.getCode();
+            String str = "";
+            if (vo.isSh()) {
+                str = "01";
+            } else if (vo.isSz()) {
+                str = "02";
             }
-            FileUtil.formatHtmlFile(filePath);
-        }
-
-        List<String> szCodes = new ArrayList<>();
-        StockCodeLoader.getInst().getSzCodes(szCodes);
-        for (String code : szCodes) {
-            String httpUrl = String.format(url, code, "02", num, "sz", code, n);
-            String filePath = fileDir + File.separator + code + ".txt";
-            if (!FileUtil.isFileExist(filePath)) {
-                AppUtil.download(httpUrl, filePath);
-                FileUtil.formatHtmlFile(filePath);
+            String httpUrl = String.format(url, code, str, num, vo.getTypeStr(), code, n);
+            String fp = fileDir + File.separator + code + ".txt";
+            if (!FileUtil.isFileExist(fp)) {
+                AppUtil.download(httpUrl, fp);
             }
+            FileUtil.formatHtmlFile(fp);
         }
     }
 
     private void fetchHtml(String url, String fileDir) {
-        List<String> shCodes = new ArrayList<>();
-        StockCodeLoader.getInst().getShCodes(shCodes);
-        for (String code : shCodes) {
-            String httpUrl = String.format(url, "sh", code);
-            String filePath = fileDir + File.separator + code + ".html";
-            if (!FileUtil.isFileExist(filePath)) {
-                AppUtil.download(httpUrl, filePath);
-            }
-        }
-
-        List<String> szCodes = new ArrayList<>();
-        StockCodeLoader.getInst().getSzCodes(szCodes);
-        for (String code : szCodes) {
-            String httpUrl = String.format(url, "sz", code);
+        List<StockVo> stocks = StockLoader.getInst().getStocks();
+        for (StockVo vo : stocks) {
+            String typeStr = vo.getTypeStr();
+            String code = vo.getCode();
+            String httpUrl = String.format(url, typeStr, code);
             String filePath = fileDir + File.separator + code + ".html";
             if (!FileUtil.isFileExist(filePath)) {
                 AppUtil.download(httpUrl, filePath);

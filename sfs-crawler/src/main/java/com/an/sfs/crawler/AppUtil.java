@@ -18,7 +18,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.an.sfs.crawler.code.StockCodeNameLoader;
+import com.an.sfs.crawler.name.StockLoader;
 
 public class AppUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(AppUtil.class);
@@ -119,7 +119,7 @@ public class AppUtil {
         text.append("<html>\n");
         text.append("<head><meta charset=\"utf-8\"></head>\n");
         text.append("<body>\n");
-        StockCodeNameLoader inst = StockCodeNameLoader.getInst();
+        StockLoader inst = StockLoader.getInst();
         for (String code : stockCodeList) {
             String newCode = code;
             if (code.startsWith("6")) {
@@ -181,6 +181,11 @@ public class AppUtil {
         FileUtil.writeFile(filePath, text.toString());
     }
 
+    /**
+     * Current YJYG season
+     */
+    public static final String SEASON_YJYG = "2015-06-30";
+
     public static List<String> seasonList = new ArrayList<>();
     static {
         seasonList.add("2015-03-31");
@@ -234,26 +239,6 @@ public class AppUtil {
         seasonList.add("2005-09-30");
         seasonList.add("2005-06-30");
         seasonList.add("2005-03-31");
-
-        seasonList.add("2004-12-31");
-        seasonList.add("2004-09-30");
-        seasonList.add("2004-06-30");
-        seasonList.add("2004-03-31");
-
-        seasonList.add("2003-12-31");
-        seasonList.add("2003-09-30");
-        seasonList.add("2003-06-30");
-        seasonList.add("2003-03-31");
-
-        seasonList.add("2002-12-31");
-        seasonList.add("2002-09-30");
-        seasonList.add("2002-06-30");
-        seasonList.add("2002-03-31");
-
-        seasonList.add("2001-12-31");
-        seasonList.add("2001-09-30");
-        seasonList.add("2001-06-30");
-        seasonList.add("2001-03-31");
     }
 
     /**

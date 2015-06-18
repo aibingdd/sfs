@@ -17,8 +17,8 @@ import org.slf4j.LoggerFactory;
 import com.an.sfs.crawler.AppFilePath;
 import com.an.sfs.crawler.AppUtil;
 import com.an.sfs.crawler.FileUtil;
-import com.an.sfs.crawler.jjmc.JjmcLoader;
-import com.an.sfs.crawler.jjmc.JjmcVo;
+import com.an.sfs.crawler.name.FundLoader;
+import com.an.sfs.crawler.name.FundVo;
 
 public class JjccFetcher {
     private static final Logger LOGGER = LoggerFactory.getLogger(JjccFetcher.class);
@@ -79,8 +79,8 @@ public class JjccFetcher {
     }
 
     private void download() {
-        List<JjmcVo> jjvos = JjmcLoader.getInst().getJjs();
-        for (JjmcVo vo : jjvos) {
+        List<FundVo> funds = FundLoader.getInst().getFunds();
+        for (FundVo vo : funds) {
             boolean finished = false;
             String code = vo.getCode();
 
@@ -145,57 +145,5 @@ public class JjccFetcher {
 
     private String getEarliestSeaonFile() {
         return AppFilePath.getOutputJjccDir() + File.separator + "earliestSeason.txt";
-    }
-
-    private void extractFhyx() {
-        List<File> files = new ArrayList<>();
-        FileUtil.getFilesUnderDir(AppFilePath.getInputFhrzRawDir(), files);
-        for (File f : files) {
-            String filePath = f.getPath();
-            String fileName = FileUtil.getFileName(filePath);
-            try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
-                String line = null;
-                while ((line = br.readLine()) != null) {
-                    if (line.contains("BonusDetailsTable")) {
-                        String text = line.trim().replaceAll("><", ">\n<");
-                        FileUtil.writeFile(AppFilePath.getInputFhrzFhyxDir() + File.separator + fileName + ".txt", text);
-                    }
-                }
-            } catch (IOException e) {
-                LOGGER.error("Error ", e);
-            }
-        }
-    }
-
-    private void extractZfmx() {
-        List<File> files = new ArrayList<>();
-        FileUtil.getFilesUnderDir(AppFilePath.getInputFhrzRawDir(), files);
-        for (File f : files) {
-            String filePath = f.getPath();
-            String fileName = FileUtil.getFileName(filePath);
-            try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
-                String line = null;
-                String text = null;
-                while ((line = br.readLine()) != null) {
-                    if (line.contains("增发时间")) {
-                        text = line.trim().replaceAll("><", ">\n<");
-                        if (text.endsWith("</table>")) {
-                            break;
-                        }
-                    }
-                    if (text != null) {
-                        text = text + line.trim();
-                        if (text.endsWith("</table>")) {
-                            break;
-                        }
-                    }
-                }
-                if (text != null) {
-                    FileUtil.writeFile(AppFilePath.getInputFhrzZfmxDir() + File.separator + fileName + ".txt", text);
-                }
-            } catch (IOException e) {
-                LOGGER.error("Error ", e);
-            }
-        }
     }
 }

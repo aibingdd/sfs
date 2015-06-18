@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 import com.an.sfs.crawler.AppFilePath;
 import com.an.sfs.crawler.AppUtil;
 import com.an.sfs.crawler.FileUtil;
-import com.an.sfs.crawler.code.StockCodeNameLoader;
+import com.an.sfs.crawler.name.StockLoader;
 
 /**
  * @author Anthony
@@ -29,34 +29,33 @@ public class GdrsAnalyzer {
     private static final Logger LOGGER = LoggerFactory.getLogger(GdrsAnalyzer.class);
     private static final String FLAG_GDRS = "<strong>股东人数</strong>";
     private static final String FLAG_GDRS_DATA = "tips-dataL\">";
-    private Map<String, String> stockCodeNameMap = new HashMap<>();
+    private Map<String, String> stockNameMap = new HashMap<>();
 
     public void run() {
         analyzeGdrs();
-        saveCodeName();
+        saveStockName();
     }
 
-    private void saveCodeName() {
+    private void saveStockName() {
         StringBuilder text = new StringBuilder();
         List<String> codeList = new ArrayList<>();
-        codeList.addAll(stockCodeNameMap.keySet());
+        codeList.addAll(stockNameMap.keySet());
         Collections.sort(codeList);
+
         for (String code : codeList) {
-            text.append(code).append(";").append(stockCodeNameMap.get(code)).append("\n");
+            text.append(code).append(";").append(stockNameMap.get(code)).append("\n");
         }
 
-        FileUtil.writeFile(AppFilePath.getOutputDir() + File.separator + StockCodeNameLoader.FILE_STOCK_CODE_NAME,
-                text.toString());
+        String fn = StockLoader.getStockFile();
+        FileUtil.writeFile(fn, text.toString());
     }
 
     private void analyzeGdrs() {
-        List<File> fileList = new ArrayList<>();
-        String dirPath = AppFilePath.getInputGdyjDir();
-        FileUtil.getFilesUnderDir(dirPath, fileList);
-        for (File f : fileList) {
+        List<File> files = new ArrayList<>();
+        FileUtil.getFilesUnderDir(AppFilePath.getInputGdyjDir(), files);
+        for (File f : files) {
             LOGGER.info("Process file {}", f.getPath());
-            String stockCode = f.getName();
-            stockCode = stockCode.substring(0, stockCode.indexOf("."));
+            String code = FileUtil.getFileName(f.getPath());
 
             boolean beginGdrs = false;
             boolean finishGdrs = false;
@@ -65,10 +64,10 @@ public class GdrsAnalyzer {
                 String line = null;
                 while ((line = br.readLine()) != null) {
                     if (!finishName) {
-                        int idx = line.indexOf("(" + stockCode + ")");
+                        int idx = line.indexOf("(" + code + ")");
                         if (idx != -1) {
                             String name = line.substring(0, idx).trim();
-                            stockCodeNameMap.put(stockCode, name);
+                            stockNameMap.put(code, name);
                             finishName = true;
                         }
                     }
@@ -78,7 +77,7 @@ public class GdrsAnalyzer {
                         continue;
                     }
                     if (!finishGdrs && beginGdrs && line.indexOf("<table") != -1) {
-                        processGdrs(line, stockCode);
+                        processGdrs(line, code);
                         finishGdrs = true;
                     }
                 }

@@ -1,6 +1,6 @@
-package com.an.sfs.crawler.jjmc;
+package com.an.sfs.crawler.name;
 
-public class JjmcVo implements Comparable<JjmcVo> {
+public class FundVo implements Comparable<FundVo> {
     private int type;
     private String code;
     private String name;
@@ -9,10 +9,10 @@ public class JjmcVo implements Comparable<JjmcVo> {
         return this.type + "," + this.code + "," + this.name;
     }
 
-    public JjmcVo() {
+    public FundVo() {
     }
 
-    public JjmcVo(int type, String code, String name) {
+    public FundVo(int type, String code, String name) {
         this.type = type;
         this.code = code;
         this.name = name;
@@ -23,7 +23,7 @@ public class JjmcVo implements Comparable<JjmcVo> {
     }
 
     @Override
-    public int compareTo(JjmcVo o) {
+    public int compareTo(FundVo o) {
         if (this.type == o.type) {
             return this.code.compareTo(o.code);
         }
@@ -32,7 +32,7 @@ public class JjmcVo implements Comparable<JjmcVo> {
 
     @Override
     public String toString() {
-        return "JjVo [type=" + type + ", code=" + code + ", name=" + name + "]";
+        return "FundVo [type=" + type + ", code=" + code + ", name=" + name + "]";
     }
 
     public int getType() {

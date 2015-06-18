@@ -48,20 +48,32 @@ public class AppFilePath {
         dirs.add(getOutputFhrzDir());
 
         dirs.add(getInputJjmcDir());
+        dirs.add(getInputJjmcRawDir());
+        dirs.add(getInputJjmcTxtDir());
         dirs.add(getOutputJjmcDir());
 
         dirs.add(getInputJjccDir());
         dirs.add(getInputJjccRawDir());
         dirs.add(getInputJjccTxtDir());
-
-        dirs.add(getInputJjmcRawDir());
-        dirs.add(getInputJjmcTxtDir());
         dirs.add(getOutputJjccDir());
-
         for (String season : AppUtil.seasonList) {
             dirs.add(getInputJjccRawDir(season));
             dirs.add(getInputJjccTxtDir(season));
         }
+
+        dirs.add(getInputCcjgDir());
+        dirs.add(getInputCcjgRawDir());
+        dirs.add(getInputCcjgTxtDir());
+        dirs.add(getOutputCcjgDir());
+        for (String season : AppUtil.seasonList) {
+            dirs.add(getInputCcjgRawDir(season));
+            dirs.add(getInputCcjgTxtDir(season));
+        }
+
+        dirs.add(getInputYjygRawDir());
+        dirs.add(getInputYjygTxtDir());
+        dirs.add(getOutputYjygDir());
+
         for (String dirName : dirs) {
             File dir = new File(dirName);
             if (!dir.exists()) {
@@ -162,6 +174,7 @@ public class AppFilePath {
         return getOutputDir() + File.separator + "fhrz";
     }
 
+    // Ji jin ming cheng
     public static String getInputJjmcDir() {
         return getInputDir() + File.separator + "jjmc";
     }
@@ -178,6 +191,7 @@ public class AppFilePath {
         return getOutputDir() + File.separator + "jjmc";
     }
 
+    // Ji jin chi cang
     public static String getInputJjccDir() {
         return getInputDir() + File.separator + "jjcc";
     }
@@ -200,6 +214,48 @@ public class AppFilePath {
 
     public static String getOutputJjccDir() {
         return getOutputDir() + File.separator + "jjcc";
+    }
+
+    // Chi cang ji gou
+    public static String getInputCcjgDir() {
+        return getInputDir() + File.separator + "ccjg";
+    }
+
+    public static String getInputCcjgRawDir() {
+        return getInputCcjgDir() + File.separator + "raw";
+    }
+
+    public static String getInputCcjgTxtDir() {
+        return getInputCcjgDir() + File.separator + "txt";
+    }
+
+    public static String getInputCcjgRawDir(String season) {
+        return getInputCcjgRawDir() + File.separator + season;
+    }
+
+    public static String getInputCcjgTxtDir(String season) {
+        return getInputCcjgTxtDir() + File.separator + season;
+    }
+
+    public static String getOutputCcjgDir() {
+        return getOutputDir() + File.separator + "ccjg";
+    }
+
+    // Ye ji yu gao
+    private static String getInputYjygDir() {
+        return getInputDir() + File.separator + "yjyg";
+    }
+
+    public static String getInputYjygRawDir() {
+        return getInputYjygDir() + File.separator + "raw";
+    }
+
+    public static String getInputYjygTxtDir() {
+        return getInputYjygDir() + File.separator + "txt";
+    }
+
+    public static String getOutputYjygDir() {
+        return getOutputDir() + File.separator + "yjyg";
     }
 
     //

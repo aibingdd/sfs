@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import com.an.sfs.crawler.AppFilePath;
 import com.an.sfs.crawler.FileUtil;
+import com.an.sfs.crawler.name.FundVo;
 
 public class JjmcFetcher {
     private static final Logger LOGGER = LoggerFactory.getLogger(JjmcFetcher.class);
@@ -56,7 +57,7 @@ public class JjmcFetcher {
         List<File> fileList = new ArrayList<>();
         FileUtil.getFilesUnderDir(AppFilePath.getInputJjmcTxtDir(), fileList);
 
-        List<JjmcVo> jjmcList = new ArrayList<>();
+        List<FundVo> funds = new ArrayList<>();
         for (File f : fileList) {
             String fn = FileUtil.getFileName(f.getPath());
             int jjType = Integer.parseInt(fn.substring(0, fn.indexOf("-")));
@@ -72,7 +73,7 @@ public class JjmcFetcher {
                         if ((count + 1) % 3 == 1) {
                             code = val;
                         } else if ((count + 1) % 3 == 2) {
-                            jjmcList.add(new JjmcVo(jjType, code, val));
+                            funds.add(new FundVo(jjType, code, val));
                         }
                         count++;
                     }
@@ -82,16 +83,16 @@ public class JjmcFetcher {
             }
         }
 
-        Collections.sort(jjmcList);
+        Collections.sort(funds);
 
         StringBuilder text = new StringBuilder();
-        for (JjmcVo vo : jjmcList) {
+        for (FundVo vo : funds) {
             text.append(vo.getStr()).append("\n");
         }
         FileUtil.writeFile(getJjmcFile(), text.toString());
     }
 
-    public String getJjmcFile() {
+    public static String getJjmcFile() {
         return AppFilePath.getOutputJjmcDir() + File.separator + FILE_NAME;
     }
 }
