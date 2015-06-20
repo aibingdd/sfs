@@ -209,6 +209,8 @@ public class FileUtil {
         text.append("<head><meta charset=\"utf-8\"></head>\n");
         text.append("<body>\n");
         StockLoader inst = StockLoader.getInst();
+
+        int i = 1;
         for (String code : stockCodeList) {
             String newCode = code;
             if (code.startsWith("6")) {
@@ -219,6 +221,7 @@ public class FileUtil {
             String url = "<a href=\"http://f10.eastmoney.com/f10_v2/ShareholderResearch.aspx?code=%s\">%s</a>";
             text.append(String.format(url, newCode, code));
             String name = inst.getName(code);
+            text.append(" ").append(i++).append(" ");
             text.append(name);
             if (appendInfoList != null && !appendInfoList.isEmpty()) {
                 for (Map<String, String> infoMap : appendInfoList) {

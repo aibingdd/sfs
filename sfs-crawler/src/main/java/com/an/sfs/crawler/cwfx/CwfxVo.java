@@ -5,12 +5,13 @@ public class CwfxVo implements Comparable<CwfxVo> {
     private String date;
     private long income;
     private long profit;
+    // Return on net assets
+    private float rona;
+    // Return on total assets
+    private float rota;
     //
-    private float incomeRate;
-    private float profitRate;
-
-    public CwfxVo() {
-    }
+    private float incomeChangeRate;
+    private float profitChangeRate;
 
     @Override
     public int compareTo(CwfxVo o) {
@@ -22,8 +23,9 @@ public class CwfxVo implements Comparable<CwfxVo> {
 
     @Override
     public String toString() {
-        return "CwfxVo [code=" + code + ", date=" + date + ", income=" + income + ", profit=" + profit
-                + ", incomeRate=" + incomeRate + ", profitRate=" + profitRate + "]";
+        return "CwfxVo [code=" + code + ", date=" + date + ", income=" + income + ", profit=" + profit + ", rona="
+                + rona + ", rota=" + rota + ", incomeChangeRate=" + incomeChangeRate + ", profitChangeRate="
+                + profitChangeRate + "]";
     }
 
     public String getCode() {
@@ -58,19 +60,35 @@ public class CwfxVo implements Comparable<CwfxVo> {
         this.profit = profit;
     }
 
-    public float getIncomeRate() {
-        return incomeRate;
+    public float getRona() {
+        return rona;
     }
 
-    public void setIncomeRate(float incomeRate) {
-        this.incomeRate = incomeRate;
+    public void setRona(float rona) {
+        this.rona = rona;
     }
 
-    public float getProfitRate() {
-        return profitRate;
+    public float getRota() {
+        return rota;
     }
 
-    public void setProfitRate(float profitRate) {
-        this.profitRate = profitRate;
+    public void setRota(float rota) {
+        this.rota = rota;
+    }
+
+    public float getIncomeChangeRate() {
+        return incomeChangeRate;
+    }
+
+    public void setIncomeChangeRate(float incomeChangeRate) {
+        this.incomeChangeRate = incomeChangeRate;
+    }
+
+    public float getProfitChangeRate() {
+        return profitChangeRate;
+    }
+
+    public void setProfitChangeRate(float profitChangeRate) {
+        this.profitChangeRate = profitChangeRate;
     }
 }

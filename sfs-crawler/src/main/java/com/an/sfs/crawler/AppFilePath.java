@@ -29,8 +29,9 @@ public class AppFilePath {
         dirs.add(getInputGdyjGdrsDir());
         dirs.add(getOutputGdyjGdrsDir());
 
-        dirs.add(getInputCwfxYearDir());
-        dirs.add(getOutputCwfxYearDir());
+        dirs.add(getInputCwfxDir());
+        dirs.add(getInputCwfxRawDir());
+        dirs.add(getOutputCwfxDir());
 
         dirs.add(getInputGgdqDir());
         dirs.add(getOutputGgdqDir());
@@ -119,20 +120,16 @@ public class AppFilePath {
         return getOutputGdyjDir() + File.separator + "gdrs";
     }
 
-    public static String getInputCwfxDir() {
+    private static String getInputCwfxDir() {
         return getInputDir() + File.separator + "cwfx";
+    }
+
+    public static String getInputCwfxRawDir() {
+        return getInputCwfxDir() + File.separator + "raw";
     }
 
     public static String getOutputCwfxDir() {
         return getOutputDir() + File.separator + "cwfx";
-    }
-
-    public static String getInputCwfxYearDir() {
-        return getInputDir() + File.separator + "cwfx_year";
-    }
-
-    public static String getOutputCwfxYearDir() {
-        return getOutputDir() + File.separator + "cwfx_year";
     }
 
     public static String getInputGgdqDir() {

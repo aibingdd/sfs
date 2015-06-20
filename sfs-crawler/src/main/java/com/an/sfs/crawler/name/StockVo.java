@@ -6,24 +6,31 @@ public class StockVo {
     private String code;
     private String name;
 
+    public String getCodeSuffix() {
+        String codeSuffix = "";
+        if (isSh()) {
+            codeSuffix = "01";
+        } else if (isSz()) {
+            codeSuffix = "02";
+        }
+        return codeSuffix;
+    }
+
+    public String getTypeStr() {
+        if (isSh()) {
+            return "sh";
+        } else if (isSz()) {
+            return "sz";
+        }
+        return "";
+    }
+
     public boolean isSh() {
         return type == 1;
     }
 
     public boolean isSz() {
         return type == 2 || type == 3;
-    }
-
-    /**
-     * @return
-     */
-    public String getTypeStr() {
-        if (type == 1) {
-            return "sh";
-        } else if (type == 2 || type == 3) {
-            return "sz";
-        }
-        return null;
     }
 
     public StockVo() {

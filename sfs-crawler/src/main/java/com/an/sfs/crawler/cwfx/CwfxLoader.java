@@ -25,17 +25,12 @@ public class CwfxLoader {
         return cwfxMap;
     }
 
-    public void getStockCodeList(List<String> codeList) {
-        codeList.addAll(cwfxMap.keySet());
-        Collections.sort(codeList);
-    }
-
     private void init() {
-        String dir = AppFilePath.getOutputCwfxYearDir();
-        List<File> outFileList = new ArrayList<File>();
-        FileUtil.getFilesUnderDir(dir, outFileList);
+        String dir = AppFilePath.getOutputCwfxDir();
+        List<File> files = new ArrayList<File>();
+        FileUtil.getFilesUnderDir(dir, files);
 
-        for (File f : outFileList) {
+        for (File f : files) {
             String code = FileUtil.getFileName(f.toString());
             cwfxMap.put(code, new ArrayList<>());
 
@@ -43,11 +38,12 @@ public class CwfxLoader {
                 String line = null;
                 while ((line = br.readLine()) != null) {
                     if (!line.isEmpty()) {
+                        line = line.replaceAll(",", "");
                         String[] strs = line.split(";");
                         String date = "20" + strs[0];
 
                         long income = 0;
-                        if (!strs[1].equals(AppUtil.INVALID)) {
+                        if (!AppUtil.INVALID.equals(strs[1])) {
                             int idxWan = strs[1].indexOf(AppUtil.UNIT_WAN);
                             int idxYi = strs[1].indexOf(AppUtil.UNIT_YI);
                             if (idxWan != -1) {
@@ -62,7 +58,7 @@ public class CwfxLoader {
                         }
 
                         long profit = 0;
-                        if (!strs[2].equals(AppUtil.INVALID)) {
+                        if (!AppUtil.INVALID.equals(strs[2])) {
                             int idxWan = strs[2].indexOf(AppUtil.UNIT_WAN);
                             int idxYi = strs[2].indexOf(AppUtil.UNIT_YI);
                             if (idxWan != -1) {
@@ -76,11 +72,22 @@ public class CwfxLoader {
                             }
                         }
 
+                        float rona = 0f;
+                        if (!AppUtil.INVALID.equals(strs[3])) {
+                            rona = Float.parseFloat(strs[3]);
+                        }
+                        float rota = 0f;
+                        if (!AppUtil.INVALID.equals(strs[4])) {
+                            rota = Float.parseFloat(strs[4]);
+                        }
+
                         CwfxVo vo = new CwfxVo();
                         vo.setCode(code);
                         vo.setDate(date);
                         vo.setIncome(income);
                         vo.setProfit(profit);
+                        vo.setRona(rona);
+                        vo.setRota(rota);
                         cwfxMap.get(code).add(vo);
                     }
                 }
@@ -101,10 +108,12 @@ public class CwfxLoader {
                     CwfxVo last = list.get(i + 1);
                     float incomeRate = ((float) cur.getIncome()) / ((float) last.getIncome());
                     float profitRate = ((float) cur.getProfit()) / ((float) last.getProfit());
-                    cur.setIncomeRate(incomeRate);
-                    cur.setProfitRate(profitRate);
+                    cur.setIncomeChangeRate(incomeRate);
+                    cur.setProfitChangeRate(profitRate);
                 }
             }
+
+            cwfxMap.put(code, list);
         }
     }
 

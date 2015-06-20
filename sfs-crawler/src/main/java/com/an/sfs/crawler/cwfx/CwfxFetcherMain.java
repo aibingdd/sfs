@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import com.an.sfs.crawler.AppFilePath;
 
 public class CwfxFetcherMain {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(CwfxFetcherMain.class);
 
     public static void main(String[] args) {

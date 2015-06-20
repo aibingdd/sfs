@@ -14,12 +14,9 @@ import java.nio.file.StandardCopyOption;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.an.sfs.crawler.name.StockLoader;
 
 public class AppUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(AppUtil.class);
