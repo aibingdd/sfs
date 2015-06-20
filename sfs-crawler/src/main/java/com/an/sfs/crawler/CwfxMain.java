@@ -5,11 +5,15 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.an.sfs.crawler.cwfx.CwfxLoader;
 import com.an.sfs.crawler.cwfx.CwfxSortVo;
 import com.an.sfs.crawler.cwfx.CwfxVo;
+import com.an.sfs.crawler.cwfx.InvalidCwfxLoader;
 import com.an.sfs.crawler.fhrz.FhrzLoader;
+import com.an.sfs.crawler.gsgk.GsgkLoader;
+import com.an.sfs.crawler.gsgk.GsgkVo;
 import com.an.sfs.crawler.tfp.TfpLoader;
 
 /**
@@ -80,9 +84,20 @@ public class CwfxMain {
     private static void searchRona() {
         Map<String, List<CwfxVo>> cwfxMap = CwfxLoader.getInst().getCwfxMap();
 
+        Set<String> invalidSet = InvalidCwfxLoader.getInst().getStockSet();
+
         List<CwfxSortVo> voList = new ArrayList<>();
-        for (String code : cwfxMap.keySet()) {
-            List<CwfxVo> list = cwfxMap.get(code);
+        for (String stock : cwfxMap.keySet()) {
+            if (invalidSet.contains(stock)) {
+                continue;
+            }
+
+            GsgkVo gsgk = GsgkLoader.getInst().getGsgk(stock);
+            if (gsgk != null && gsgk.isPublicAfter("2012-12-31")) {
+                continue;
+            }
+
+            List<CwfxVo> list = cwfxMap.get(stock);
             if (list.size() > 2) {// At least have 3 year's data
                 float totalRona = 0f;
                 float totalRota = 0f;
@@ -93,7 +108,7 @@ public class CwfxMain {
                 float avgRona = totalRona / 3f;
                 float avgRota = totalRota / 3f;
 
-                CwfxSortVo vo = new CwfxSortVo(code, avgRona, avgRota);
+                CwfxSortVo vo = new CwfxSortVo(stock, avgRona, avgRota);
                 voList.add(vo);
             }
         }

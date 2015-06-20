@@ -7,7 +7,7 @@ import com.an.sfs.crawler.name.FundLoader;
 import com.an.sfs.crawler.name.FundVo;
 import com.an.sfs.crawler.name.StockLoader;
 
-public class FundSearchMain {
+public class FundMain {
     private static final String STOCK = "600551";
     private static final String FUND = "161825";
 

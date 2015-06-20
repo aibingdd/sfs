@@ -18,7 +18,7 @@ import com.an.sfs.crawler.tfp.TfpLoader;
  * @author Anthony
  *
  */
-public class GdrsDownMain {
+public class GdrsMain {
     private static final String START_SEASON = "2014-06-30";
     private static final String CURRENT_SEASON = "2015-03-31";
 

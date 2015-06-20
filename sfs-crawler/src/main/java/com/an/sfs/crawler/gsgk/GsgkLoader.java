@@ -27,9 +27,10 @@ public class GsgkLoader {
             while ((line = br.readLine()) != null) {
                 String[] strs = line.split(",");
                 String code = strs[0];
-                String createDate = strs[1];
-                String publicDate = strs[2];
-                GsgkVo vo = new GsgkVo(code, createDate, publicDate);
+                String industry = strs[1];
+                String createDate = strs[2];
+                String publicDate = strs[3];
+                GsgkVo vo = new GsgkVo(code, industry, createDate, publicDate);
                 gsgkList.add(vo);
                 gsgkMap.put(code, vo);
             }

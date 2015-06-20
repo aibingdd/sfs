@@ -7,7 +7,7 @@ import java.util.List;
 import com.an.sfs.crawler.yjyg.YjygLoader;
 import com.an.sfs.crawler.yjyg.YjygVo;
 
-public class YjygSearchMain {
+public class YjygMain {
     public static void main(String[] args) {
         System.out.println("Ye ji yu gao search.");
         run();

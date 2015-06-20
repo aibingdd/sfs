@@ -16,7 +16,7 @@ import com.an.sfs.crawler.gdyj.GdyjVo;
 import com.an.sfs.crawler.name.StockLoader;
 import com.an.sfs.crawler.name.StockVo;
 
-public class StockJgSearchMain {
+public class StockJgMain {
     private static final Logger LOGGER = LoggerFactory.getLogger(AppFilePath.class);
 
     public static void main(String[] args) {

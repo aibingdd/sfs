@@ -1,6 +1,6 @@
 package com.an.sfs.crawler.yjyg;
 
-import com.an.sfs.crawler.YjygSearchMain;
+import com.an.sfs.crawler.YjygMain;
 
 public class YjygVo implements Comparable<YjygVo> {
     private String code;
@@ -133,7 +133,7 @@ public class YjygVo implements Comparable<YjygVo> {
 
     @Override
     public int compareTo(YjygVo o) {
-        if (YjygSearchMain.COMPARE_BY_DATE) {
+        if (YjygMain.COMPARE_BY_DATE) {
             return this.date.compareTo(o.date) * -1;
         } else {
             if (this.type < o.type) {
