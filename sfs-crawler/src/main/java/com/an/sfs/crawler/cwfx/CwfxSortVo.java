@@ -3,14 +3,16 @@ package com.an.sfs.crawler.cwfx;
 public class CwfxSortVo implements Comparable<CwfxSortVo> {
     private String code;
     private float rona;
+    private float rota;
 
     /**
      * @param code
      * @param rona
      */
-    public CwfxSortVo(String code, float rona) {
+    public CwfxSortVo(String code, float rona, float rota) {
         this.code = code;
         this.rona = rona;
+        this.rota = rota;
     }
 
     @Override
@@ -27,7 +29,7 @@ public class CwfxSortVo implements Comparable<CwfxSortVo> {
 
     @Override
     public String toString() {
-        return "CwfxSortVo [code=" + code + ", rona=" + rona + "]";
+        return "CwfxSortVo [code=" + code + ", rona=" + rona + ", rota=" + rota + "]";
     }
 
     public String getCode() {
@@ -44,5 +46,13 @@ public class CwfxSortVo implements Comparable<CwfxSortVo> {
 
     public void setRona(float rona) {
         this.rona = rona;
+    }
+
+    public float getRota() {
+        return rota;
+    }
+
+    public void setRota(float rota) {
+        this.rota = rota;
     }
 }

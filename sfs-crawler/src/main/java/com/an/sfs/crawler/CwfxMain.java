@@ -85,11 +85,15 @@ public class CwfxMain {
             List<CwfxVo> list = cwfxMap.get(code);
             if (list.size() > 2) {// At least have 3 year's data
                 float totalRona = 0f;
+                float totalRota = 0f;
                 for (int i = 0; i < 3; i++) {
                     totalRona += list.get(i).getRona();
+                    totalRota += list.get(i).getRota();
                 }
                 float avgRona = totalRona / 3f;
-                CwfxSortVo vo = new CwfxSortVo(code, avgRona);
+                float avgRota = totalRota / 3f;
+
+                CwfxSortVo vo = new CwfxSortVo(code, avgRona, avgRota);
                 voList.add(vo);
             }
         }
@@ -97,15 +101,19 @@ public class CwfxMain {
         Collections.sort(voList);
 
         Map<String, String> ronaMap = new HashMap<>();
+        Map<String, String> rotaMap = new HashMap<>();
         List<String> stockList = new ArrayList<>();
         for (CwfxSortVo vo : voList) {
             stockList.add(vo.getCode());
             float rona = vo.getRona() / 100f;
+            float rota = vo.getRota() / 100f;
             ronaMap.put(vo.getCode(), AppUtil.FLOAT_DF.format(rona));
+            rotaMap.put(vo.getCode(), AppUtil.FLOAT_DF.format(rota));
         }
 
         List<Map<String, String>> appendList = new ArrayList<>();
         appendList.add(ronaMap);
+        appendList.add(rotaMap);
 
         FileUtil.exportTxt(stockList, "Stock_Cwfx_Rona.txt");
 

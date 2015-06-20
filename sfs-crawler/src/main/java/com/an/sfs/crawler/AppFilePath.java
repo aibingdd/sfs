@@ -29,31 +29,24 @@ public class AppFilePath {
         dirs.add(getInputGdyjGdrsDir());
         dirs.add(getOutputGdyjGdrsDir());
 
-        dirs.add(getInputCwfxDir());
         dirs.add(getInputCwfxRawDir());
         dirs.add(getOutputCwfxDir());
 
         dirs.add(getInputGgdqDir());
         dirs.add(getOutputGgdqDir());
 
-        dirs.add(getInputGgdqPnDir());
-        dirs.add(getOutputGgdqPnDir());
-
         dirs.add(getInputTfpggDir());
         dirs.add(getOutputTfpggDir());
 
-        dirs.add(getInputFhrzDir());
         dirs.add(getInputFhrzRawDir());
         dirs.add(getInputFhrzFhyxDir());
         dirs.add(getInputFhrzZfmxDir());
         dirs.add(getOutputFhrzDir());
 
-        dirs.add(getInputJjmcDir());
         dirs.add(getInputJjmcRawDir());
         dirs.add(getInputJjmcTxtDir());
         dirs.add(getOutputJjmcDir());
 
-        dirs.add(getInputJjccDir());
         dirs.add(getInputJjccRawDir());
         dirs.add(getInputJjccTxtDir());
         dirs.add(getOutputJjccDir());
@@ -62,7 +55,6 @@ public class AppFilePath {
             dirs.add(getInputJjccTxtDir(season));
         }
 
-        dirs.add(getInputCcjgDir());
         dirs.add(getInputCcjgRawDir());
         dirs.add(getInputCcjgTxtDir());
         dirs.add(getOutputCcjgDir());
@@ -75,10 +67,13 @@ public class AppFilePath {
         dirs.add(getInputYjygTxtDir());
         dirs.add(getOutputYjygDir());
 
-        dirs.add(getInputGbjgDir());
         dirs.add(getInputGbjgRawDir());
         dirs.add(getInputGbjgTxtDir());
         dirs.add(getOutputGbjgDir());
+
+        dirs.add(getInputGsgkRawDir());
+        dirs.add(getInputGsgkTxtDir());
+        dirs.add(getOutputGsgkDir());
 
         for (String dirName : dirs) {
             File dir = new File(dirName);
@@ -138,14 +133,6 @@ public class AppFilePath {
 
     public static String getOutputGgdqDir() {
         return getOutputDir() + File.separator + "ggdq";
-    }
-
-    public static String getInputGgdqPnDir() {
-        return getInputDir() + File.separator + "ggdq_pn";
-    }
-
-    public static String getOutputGgdqPnDir() {
-        return getOutputDir() + File.separator + "ggdq_pn";
     }
 
     public static String getInputTfpggDir() {
@@ -275,6 +262,23 @@ public class AppFilePath {
 
     public static String getOutputGbjgDir() {
         return getOutputDir() + File.separator + "gbjg";
+    }
+
+    // GongSiGaiKuang
+    private static String getInputGsgkDir() {
+        return getInputDir() + File.separator + "gsgk";
+    }
+
+    public static String getInputGsgkRawDir() {
+        return getInputGsgkDir() + File.separator + "raw";
+    }
+
+    public static String getInputGsgkTxtDir() {
+        return getInputGsgkDir() + File.separator + "txt";
+    }
+
+    public static String getOutputGsgkDir() {
+        return getOutputDir() + File.separator + "gsgk";
     }
 
     //
