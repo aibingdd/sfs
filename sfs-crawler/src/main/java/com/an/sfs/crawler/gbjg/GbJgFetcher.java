@@ -64,7 +64,7 @@ public class GbJgFetcher {
 
             String fp = AppFilePath.getOutputGbjgDir() + File.separator + stock + ".txt";
             StringBuilder text = new StringBuilder();
-            AppUtil.convertListToFile(valList, 4, text);
+            FileUtil.convertListToText(valList, 4, text);
             LOGGER.info("Save file {}", fp);
             FileUtil.writeFile(fp, text.toString());
         }

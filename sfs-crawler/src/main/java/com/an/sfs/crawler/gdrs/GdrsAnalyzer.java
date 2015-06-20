@@ -17,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.an.sfs.crawler.AppFilePath;
-import com.an.sfs.crawler.AppUtil;
 import com.an.sfs.crawler.FileUtil;
 import com.an.sfs.crawler.name.StockLoader;
 
@@ -108,7 +107,7 @@ public class GdrsAnalyzer {
 
         String fp = AppFilePath.getOutputGdyjGdrsDir() + File.separator + stockCode + ".txt";
         StringBuilder text = new StringBuilder();
-        AppUtil.convertListToFile(list, 10, text);
+        FileUtil.convertListToText(list, 10, text);
         LOGGER.info("Save file {}", fp);
         FileUtil.writeFile(fp, text.toString());
     }

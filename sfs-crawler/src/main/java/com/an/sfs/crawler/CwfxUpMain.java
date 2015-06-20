@@ -50,11 +50,11 @@ public class CwfxUpMain {
         List<Map<String, String>> tfpList = new ArrayList<Map<String, String>>();
         tfpList.add(tfpMap);
 
-        AppUtil.exportTxt(stockCodeList, TXT_FILE);
-        AppUtil.exportTxt(zfmxCodeList, ZF_TXT_FILE);
-        AppUtil.exportTxt(tfpCodeList, TFP_TXT_FILE);
-        AppUtil.exportHtml(zfmxCodeList, zfList, ZF_HTML_FILE);
-        AppUtil.exportHtml(tfpCodeList, tfpList, TFP_HTML_FILE);
+        FileUtil.exportTxt(stockCodeList, TXT_FILE);
+        FileUtil.exportTxt(zfmxCodeList, ZF_TXT_FILE);
+        FileUtil.exportTxt(tfpCodeList, TFP_TXT_FILE);
+        FileUtil.exportHtml(zfmxCodeList, zfList, ZF_HTML_FILE);
+        FileUtil.exportHtml(tfpCodeList, tfpList, TFP_HTML_FILE);
     }
 
     private static void find(List<String> outStockCodeList) {

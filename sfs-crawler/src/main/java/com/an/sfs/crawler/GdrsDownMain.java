@@ -53,13 +53,19 @@ public class GdrsDownMain {
         List<Map<String, String>> tfpList = new ArrayList<Map<String, String>>();
         tfpList.add(tfpMap);
 
-        AppUtil.exportTxt(stockList, TXT_FILE);
-        AppUtil.exportTxt(zfmxStockList, ZF_TXT_FILE);
-        AppUtil.exportTxt(tfpStockList, TFP_TXT_FILE);
+        List<String> list = new ArrayList<>();
+        for (String stock : stockList) {
+            if (!stock.startsWith("3")) { // Filter ChuangYeBan
+                list.add(stock);
+            }
+        }
+        FileUtil.exportTxt(list, TXT_FILE);
+        FileUtil.exportTxt(zfmxStockList, ZF_TXT_FILE);
+        FileUtil.exportTxt(tfpStockList, TFP_TXT_FILE);
 
-        AppUtil.exportHtml(stockList, appendInfoList, HTML_FILE);
-        AppUtil.exportHtml(zfmxStockList, zfList, ZF_HTML_FILE);
-        AppUtil.exportHtml(tfpStockList, tfpList, TFP_HTML_FILE);
+        FileUtil.exportHtml(list, appendInfoList, HTML_FILE);
+        FileUtil.exportHtml(zfmxStockList, zfList, ZF_HTML_FILE);
+        FileUtil.exportHtml(tfpStockList, tfpList, TFP_HTML_FILE);
     }
 
     private static final boolean SORT_BY_COUNT_DIFFERENCE = true;
@@ -114,7 +120,6 @@ public class GdrsDownMain {
 
         Collections.sort(gdrsList);
         for (GdrsSortVo vo : gdrsList) {
-            System.out.println(vo);
             outStockList.add(vo.getCode());
             String countRateStr = vo.getCountRateStr();
             appendInfoMap.put(vo.getCode(), countRateStr);

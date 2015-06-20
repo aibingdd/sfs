@@ -10,9 +10,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.an.sfs.crawler.name.StockLoader;
 
 public class FileUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(FileUtil.class);
@@ -192,5 +195,75 @@ public class FileUtil {
             return val;
         }
         return null;
+    }
+
+    /**
+     * @param stockCodeList
+     * @param appendInfoList
+     *            [ {code -> info}, {code -> info}]
+     * @param fileName
+     */
+    public static void exportHtml(List<String> stockCodeList, List<Map<String, String>> appendInfoList, String fileName) {
+        StringBuilder text = new StringBuilder();
+        text.append("<html>\n");
+        text.append("<head><meta charset=\"utf-8\"></head>\n");
+        text.append("<body>\n");
+        StockLoader inst = StockLoader.getInst();
+        for (String code : stockCodeList) {
+            String newCode = code;
+            if (code.startsWith("6")) {
+                newCode = "sh" + code;
+            } else {
+                newCode = "sz" + code;
+            }
+            String url = "<a href=\"http://f10.eastmoney.com/f10_v2/ShareholderResearch.aspx?code=%s\">%s</a>";
+            text.append(String.format(url, newCode, code));
+            String name = inst.getName(code);
+            text.append(name);
+            if (appendInfoList != null && !appendInfoList.isEmpty()) {
+                for (Map<String, String> infoMap : appendInfoList) {
+                    if (infoMap.containsKey(code)) {
+                        String info = infoMap.get(code);
+                        text.append(" | ").append(info);
+                    }
+                }
+            }
+            text.append("<br>\n");
+        }
+        text.append("</body>\n");
+        text.append("</html>");
+        String filePath = AppFilePath.getOutputDir() + File.separator + fileName;
+        FileUtil.writeFile(filePath, text.toString());
+        LOGGER.info("Write file {}", filePath);
+    }
+
+    public static void exportTxt(List<String> stockCodeList, String fileName) {
+        StringBuilder text = new StringBuilder();
+        for (String code : stockCodeList) {
+            text.append(code + "\n");
+        }
+        String filePath = AppFilePath.getOutputDir() + File.separator + fileName;
+        FileUtil.writeFile(filePath, text.toString());
+        LOGGER.info("Write file {}", filePath);
+    }
+
+    /**
+     * @param list
+     * @param rowCnt
+     * @param filePath
+     */
+    public static void convertListToText(List<String> list, int rowCnt, StringBuilder text) {
+        int columnCnt = list.size() / rowCnt;
+        // 0*columnCnt+0,1*columnCnt+0,2*columnCnt+0
+        // 0*columnCnt+1,1*columnCnt+1,2*columnCnt+1
+        for (int colIdx = 0; colIdx < columnCnt; colIdx++) {
+            for (int rowIdx = 0; rowIdx < rowCnt; rowIdx++) {
+                if (rowIdx == rowCnt - 1) {
+                    text.append(list.get(rowIdx * columnCnt + colIdx)).append("\n");
+                } else {
+                    text.append(list.get(rowIdx * columnCnt + colIdx)).append(";");
+                }
+            }
+        }
     }
 }

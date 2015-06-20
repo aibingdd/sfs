@@ -1,5 +1,8 @@
 package com.an.sfs.crawler.fhrz;
 
+/**
+ * Zeng fang ming xi
+ */
 public class ZfmxVo implements Comparable<ZfmxVo> {
     private String code;
     private String increaseTime;

@@ -38,7 +38,7 @@ public class GbJgLoader {
         FileUtil.getFilesUnderDir(AppFilePath.getOutputGbjgDir(), files);
         for (File f : files) {
             String stock = FileUtil.getFileName(f.getPath());
-            List<GbjgVo> list = new ArrayList<>();
+            List<GbjgVo> stockGbjgList = new ArrayList<>();
             try (BufferedReader br = new BufferedReader(new FileReader(f))) {
                 String line = null;
                 while ((line = br.readLine()) != null) {
@@ -63,23 +63,18 @@ public class GbJgLoader {
                         }
                         GbjgVo vo = new GbjgVo(stock, date, totalL, circulationL, restrictionL);
 
-                        list.add(vo);
+                        stockGbjgList.add(vo);
                         gbjgList.add(vo);
 
                         if (AppUtil.CUR_SEASON.equals(vo.getDate())) {
                             curSeasonGbjgMap.put(stock, vo);
-                        }
-                        if (AppUtil.LAST_SEASON.equals(vo.getDate())) {
-                            if (!curSeasonGbjgMap.containsKey(stock)) {
-                                curSeasonGbjgMap.put(stock, vo);
-                            }
                         }
                     }
                 }
             } catch (IOException e) {
                 LOGGER.error("Error ", e);
             }
-            gbjgMap.put(stock, list);
+            gbjgMap.put(stock, stockGbjgList);
         }
     }
 
