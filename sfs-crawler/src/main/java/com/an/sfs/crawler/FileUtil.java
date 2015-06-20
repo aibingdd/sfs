@@ -178,4 +178,19 @@ public class FileUtil {
         String fn = FileUtil.getFileName(filePath);
         FileUtil.writeFile(outputDir + File.separator + fn + outputFileType, text.toString());
     }
+
+    /**
+     * @param line
+     *            like <th class="tips-dataR">2015-05-13</th>
+     * @return
+     */
+    public static String extractVal(String line) {
+        int startIndex = line.indexOf(">");
+        int endIndex = line.indexOf("<", startIndex);
+        if (startIndex != -1 && endIndex != -1) {
+            String val = line.substring(startIndex + 1, endIndex);
+            return val;
+        }
+        return null;
+    }
 }

@@ -45,9 +45,9 @@ public class JjccLoader {
     }
 
     private void init() {
-        List<File> fileList = new ArrayList<>();
-        FileUtil.getFilesUnderDir(AppFilePath.getInputJjccTxtDir(CUR_SEASON), fileList);
-        for (File f : fileList) {
+        List<File> files = new ArrayList<>();
+        FileUtil.getFilesUnderDir(AppFilePath.getInputJjccTxtDir(CUR_SEASON), files);
+        for (File f : files) {
             String fund = FileUtil.getFileName(f.getPath());
             List<String> stockList = new ArrayList<>();
             try (BufferedReader br = new BufferedReader(new FileReader(f.getPath()))) {

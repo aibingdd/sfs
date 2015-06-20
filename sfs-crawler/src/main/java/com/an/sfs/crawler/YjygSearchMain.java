@@ -10,11 +10,7 @@ import com.an.sfs.crawler.yjyg.YjygVo;
 public class YjygSearchMain {
     public static void main(String[] args) {
         System.out.println("Ye ji yu gao search.");
-        try {
-            run();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        run();
     }
 
     public static final boolean COMPARE_BY_DATE = true;

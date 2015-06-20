@@ -106,8 +106,10 @@ public class GdrsAnalyzer {
             curLine = curLine.substring(toIdx);
         }
 
-        String filePath = AppFilePath.getOutputGdyjGdrsDir() + File.separator + stockCode + ".txt";
-        LOGGER.info("Save file {}", filePath);
-        AppUtil.convertListToFile(list, 10, filePath);
+        String fp = AppFilePath.getOutputGdyjGdrsDir() + File.separator + stockCode + ".txt";
+        StringBuilder text = new StringBuilder();
+        AppUtil.convertListToFile(list, 10, text);
+        LOGGER.info("Save file {}", fp);
+        FileUtil.writeFile(fp, text.toString());
     }
 }

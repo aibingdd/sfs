@@ -29,10 +29,13 @@ public class CcjgFetcher {
     private Map<String, String> earliestSeasons = new HashMap<>();
 
     public void run() {
+        LOGGER.info("Load earliest seasons.");
         loadEarliestSeasons();
 
+        LOGGER.info("Download...");
         download();
 
+        LOGGER.info("Analyze...");
         analyze();
     }
 

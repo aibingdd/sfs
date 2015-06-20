@@ -6,11 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.an.sfs.crawler.fhrz.FhrzLoader;
 import com.an.sfs.crawler.gdrs.GdrsLoader;
+import com.an.sfs.crawler.gdrs.GdrsSortVo;
 import com.an.sfs.crawler.gdrs.GdrsVo;
 import com.an.sfs.crawler.tfp.TfpLoader;
 
@@ -21,8 +19,10 @@ import com.an.sfs.crawler.tfp.TfpLoader;
  *
  */
 public class GdrsDownMain {
-    private static final Logger LOGGER = LoggerFactory.getLogger(GdrsDownMain.class);
-    private static final String START_DATE = "2014-06-30";
+    private static final String START_SEASON = "2014-06-30";
+    private static final String CURRENT_SEASON = "2015-03-31";
+
+    private static final String HTML_FILE = "Stock_Gdrs_Down.html";
     private static final String ZF_HTML_FILE = "Stock_Gdrs_Down_Zf.html";
     private static final String TFP_HTML_FILE = "Stock_Gdrs_Down_Tfp.html";
 
@@ -31,15 +31,17 @@ public class GdrsDownMain {
     private static final String TFP_TXT_FILE = "Stock_Gdrs_Down_Tfp.txt";
 
     public static void main(String[] args) {
-        List<String> stockCodeList = new ArrayList<>();
-        find(stockCodeList);
-        Collections.sort(stockCodeList);
+        List<String> stockList = new ArrayList<>();
+        Map<String, String> appendInfoMap = new HashMap<>();
+        find(stockList, appendInfoMap);
+        List<Map<String, String>> appendInfoList = new ArrayList<Map<String, String>>();
+        appendInfoList.add(appendInfoMap);
 
-        List<String> zfmxCodeList = new ArrayList<>();
-        FhrzLoader.getInst().getZfmxCodes(stockCodeList, zfmxCodeList);
+        List<String> zfmxStockList = new ArrayList<>();
+        FhrzLoader.getInst().getZfmxCodes(stockList, zfmxStockList);
 
-        List<String> tfpCodeList = new ArrayList<>();
-        TfpLoader.getInst().getTfpCodes(stockCodeList, tfpCodeList);
+        List<String> tfpStockList = new ArrayList<>();
+        TfpLoader.getInst().getTfpCodes(stockList, tfpStockList);
 
         Map<String, String> zfMap = new HashMap<>();
         FhrzLoader.getInst().getZfmxMap(zfMap);
@@ -51,29 +53,29 @@ public class GdrsDownMain {
         List<Map<String, String>> tfpList = new ArrayList<Map<String, String>>();
         tfpList.add(tfpMap);
 
-        AppUtil.exportTxt(stockCodeList, TXT_FILE);
-        AppUtil.exportTxt(zfmxCodeList, ZF_TXT_FILE);
-        AppUtil.exportTxt(tfpCodeList, TFP_TXT_FILE);
-        AppUtil.exportHtml(zfmxCodeList, zfList, ZF_HTML_FILE);
-        AppUtil.exportHtml(tfpCodeList, tfpList, TFP_HTML_FILE);
+        AppUtil.exportTxt(stockList, TXT_FILE);
+        AppUtil.exportTxt(zfmxStockList, ZF_TXT_FILE);
+        AppUtil.exportTxt(tfpStockList, TFP_TXT_FILE);
+
+        AppUtil.exportHtml(stockList, appendInfoList, HTML_FILE);
+        AppUtil.exportHtml(zfmxStockList, zfList, ZF_HTML_FILE);
+        AppUtil.exportHtml(tfpStockList, tfpList, TFP_HTML_FILE);
     }
 
-    private static void find(List<String> outStockCodeList) {
+    private static final boolean SORT_BY_COUNT_DIFFERENCE = true;
+
+    private static void find(List<String> outStockList, Map<String, String> appendInfoMap) {
+        List<String> targetStocklist = new ArrayList<>();
         Map<String, List<GdrsVo>> gdrsMap = GdrsLoader.getInst().getGdrsMap();
-        List<String> codeList = new ArrayList<>();
-        GdrsLoader.getInst().getStockCodeList(codeList);
-        for (String code : codeList) {
+        for (String code : gdrsMap.keySet()) {
             List<GdrsVo> list = gdrsMap.get(code);
             if (list.size() < 4) {
-                // At least has 4 seasons' data
-                continue;
+                continue; // At least has 4 seasons' data
             }
-
-            Collections.sort(list);
 
             boolean invalid = false;
             for (GdrsVo vo : list) {
-                if (vo.getDate().compareTo(START_DATE) >= 0) {
+                if (vo.getDate().compareTo(START_SEASON) >= 0) {
                     if (vo.getCountChangeRate() > 1) {
                         invalid = true;
                         break;
@@ -82,8 +84,40 @@ public class GdrsDownMain {
             }
 
             if (!invalid) {
-                outStockCodeList.add(code);
+                targetStocklist.add(code);
             }
+        }
+        if (!SORT_BY_COUNT_DIFFERENCE) {
+            outStockList.addAll(targetStocklist);
+            return;
+        }
+
+        List<GdrsSortVo> gdrsList = new ArrayList<>();
+        for (String code : targetStocklist) {
+            List<GdrsVo> list = gdrsMap.get(code);
+            int startCount = 0;
+            int currentCount = 0;
+            for (GdrsVo vo : list) {
+                if (vo.getDate().equals(START_SEASON)) {
+                    startCount = vo.getCount();
+                }
+                if (vo.getDate().equals(CURRENT_SEASON)) {
+                    currentCount = vo.getCount();
+                }
+            }
+            if (startCount != 0 && currentCount != 0) {
+                float diff = (float) (currentCount) / (float) startCount;
+                GdrsSortVo vo = new GdrsSortVo(code, diff);
+                gdrsList.add(vo);
+            }
+        }
+
+        Collections.sort(gdrsList);
+        for (GdrsSortVo vo : gdrsList) {
+            System.out.println(vo);
+            outStockList.add(vo.getCode());
+            String countRateStr = vo.getCountRateStr();
+            appendInfoMap.put(vo.getCode(), countRateStr);
         }
     }
 }

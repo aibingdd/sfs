@@ -103,8 +103,11 @@ public class CwfxAnalyzer {
                     }
                 }
 
-                String filePath = AppFilePath.getOutputCwfxYearDir() + File.separator + stockCode + ".txt";
-                AppUtil.convertListToFile(list, 3, filePath);
+                String fp = AppFilePath.getOutputCwfxYearDir() + File.separator + stockCode + ".txt";
+                StringBuilder text = new StringBuilder();
+                AppUtil.convertListToFile(list, 3, text);
+                LOGGER.info("Save file {}", fp);
+                FileUtil.writeFile(fp, text.toString());
             } catch (IOException e) {
                 LOGGER.error("Error while analyzing file {}", f.getPath());
             }

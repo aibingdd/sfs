@@ -67,9 +67,7 @@ public class JjmcFetcher {
                 String code = null;
                 while ((line = br.readLine()) != null) {
                     if (line.contains(FLAG)) {
-                        int startIndex = line.indexOf(">");
-                        int endIndex = line.indexOf("<", startIndex);
-                        String val = line.substring(startIndex + 1, endIndex);
+                        String val = FileUtil.extractVal(line);
                         if ((count + 1) % 3 == 1) {
                             code = val;
                         } else if ((count + 1) % 3 == 2) {

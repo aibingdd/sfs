@@ -74,6 +74,11 @@ public class AppFilePath {
         dirs.add(getInputYjygTxtDir());
         dirs.add(getOutputYjygDir());
 
+        dirs.add(getInputGbjgDir());
+        dirs.add(getInputGbjgRawDir());
+        dirs.add(getInputGbjgTxtDir());
+        dirs.add(getOutputGbjgDir());
+
         for (String dirName : dirs) {
             File dir = new File(dirName);
             if (!dir.exists()) {
@@ -258,8 +263,26 @@ public class AppFilePath {
         return getOutputDir() + File.separator + "yjyg";
     }
 
+    // Gu Ben Jie Gou
+    private static String getInputGbjgDir() {
+        return getInputDir() + File.separator + "gbjg";
+    }
+
+    public static String getInputGbjgRawDir() {
+        return getInputGbjgDir() + File.separator + "raw";
+    }
+
+    public static String getInputGbjgTxtDir() {
+        return getInputGbjgDir() + File.separator + "txt";
+    }
+
+    public static String getOutputGbjgDir() {
+        return getOutputDir() + File.separator + "gbjg";
+    }
+
     //
     public static String getConfFile(String fileName) {
         return getConfDir() + File.separator + fileName;
     }
+
 }

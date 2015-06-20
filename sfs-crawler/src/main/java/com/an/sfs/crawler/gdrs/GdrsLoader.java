@@ -18,22 +18,18 @@ import com.an.sfs.crawler.FileUtil;
 
 public class GdrsLoader {
     private static final Logger LOGGER = LoggerFactory.getLogger(GdrsLoader.class);
+    // Stock Code -> [GdrsVo]
     private Map<String, List<GdrsVo>> gdrsMap = new HashMap<>();
 
     public Map<String, List<GdrsVo>> getGdrsMap() {
         return gdrsMap;
     }
 
-    public void getStockCodeList(List<String> codeList) {
-        codeList.addAll(gdrsMap.keySet());
-        Collections.sort(codeList);
-    }
-
     private void init() {
         String dir = AppFilePath.getOutputGdyjGdrsDir();
-        List<File> outFileList = new ArrayList<File>();
-        FileUtil.getFilesUnderDir(dir, outFileList);
-        for (File f : outFileList) {
+        List<File> fileList = new ArrayList<File>();
+        FileUtil.getFilesUnderDir(dir, fileList);
+        for (File f : fileList) {
             String code = FileUtil.getFileName(f.toString());
             gdrsMap.put(code, new ArrayList<>());
             try (BufferedReader br = new BufferedReader(new FileReader(f));) {
@@ -100,10 +96,11 @@ public class GdrsLoader {
         }
     }
 
-    private void initRate() {
+    private void initCountChangeRate() {
         for (String code : gdrsMap.keySet()) {
             List<GdrsVo> list = gdrsMap.get(code);
             Collections.sort(list);
+            gdrsMap.put(code, list);
 
             if (list.size() > 1) {
                 for (int i = 0; i < list.size() - 1; i++) {
@@ -127,7 +124,7 @@ public class GdrsLoader {
         if (inst == null) {
             inst = new GdrsLoader();
             inst.init();
-            inst.initRate();
+            inst.initCountChangeRate();
         }
         return inst;
     }
