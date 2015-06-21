@@ -1,5 +1,6 @@
 package com.an.sfs.crawler;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,6 +22,7 @@ public class StockJgMain {
 
     public static void main(String[] args) {
         System.out.println("Stock Ji Gou Search.");
+        AppFilePath.initDirs();
         run();
     }
 
@@ -78,12 +80,12 @@ public class StockJgMain {
         appendInfoList.add(jgTotalMap);
         appendInfoList.add(circulationMap);
 
-        String fileName = "StockJg.txt";
-        LOGGER.info("Write file {}", fileName);
-        FileUtil.exportTxt(stockList, fileName);
+        String txt = AppFilePath.getOutputDir() + File.separator + "StockJg.txt";
+        LOGGER.info("Write file {}", txt);
+        FileUtil.exportStock(stockList, txt);
 
-        fileName = "StockJg.html";
-        LOGGER.info("Write file {}", fileName);
-        FileUtil.exportHtml(stockList, appendInfoList, fileName);
+        String html = AppFilePath.getOutputDir() + File.separator + "StockJg.html";
+        LOGGER.info("Write file {}", html);
+        FileUtil.exportHtml(stockList, appendInfoList, html);
     }
 }

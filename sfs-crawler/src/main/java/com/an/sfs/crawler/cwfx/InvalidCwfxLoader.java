@@ -32,13 +32,13 @@ public class InvalidCwfxLoader {
 
     private void init() {
         String fp = AppFilePath.getOutputDir() + File.separator + "Invalid_Cwfx_Rona_Rota.txt";
-        if (!FileUtil.isFileExist(fp)) {
-            extract(fp);
-        }
+        extract(fp);
+
         try (BufferedReader br = new BufferedReader(new FileReader(fp))) {
             String line = null;
             while ((line = br.readLine()) != null) {
-                stockList.add(line.trim());
+                String[] strs = line.split(",");
+                stockList.add(strs[0]);
             }
         } catch (IOException e) {
         }
@@ -67,10 +67,18 @@ public class InvalidCwfxLoader {
                                     text.append(code).append(",").append(line).append("\n");
                                     break;
                                 }
+                                if (rona < -50f) {
+                                    text.append(code).append(",").append(line).append("\n");
+                                    break;
+                                }
                             }
                             if (!AppUtil.INVALID.equals(strs[4])) {
                                 float rota = Float.parseFloat(strs[4]);
                                 if (rota > 100f) {
+                                    text.append(code).append(",").append(line).append("\n");
+                                    break;
+                                }
+                                if (rota < -50f) {
                                     text.append(code).append(",").append(line).append("\n");
                                     break;
                                 }
@@ -101,8 +109,8 @@ public class InvalidCwfxLoader {
     }
 
     public static void main(String[] args) {
-        for (String str : InvalidCwfxLoader.getInst().getStockList()) {
-            System.out.println(str);
+        for (String stock : InvalidCwfxLoader.getInst().getStockList()) {
+            System.out.println(stock);
         }
     }
 }

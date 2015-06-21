@@ -10,6 +10,7 @@ import com.an.sfs.crawler.yjyg.YjygVo;
 public class YjygMain {
     public static void main(String[] args) {
         System.out.println("Ye ji yu gao search.");
+        AppFilePath.initDirs();
         run();
     }
 

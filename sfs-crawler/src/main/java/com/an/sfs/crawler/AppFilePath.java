@@ -21,7 +21,6 @@ public class AppFilePath {
         dirs.add(baseDir);
         dirs.add(getConfDir());
         dirs.add(getInputDir());
-        dirs.add(getOutputDir());
 
         dirs.add(getInputGdyjDir());
         dirs.add(getOutputGdyjDir());
@@ -31,6 +30,7 @@ public class AppFilePath {
 
         dirs.add(getInputCwfxRawDir());
         dirs.add(getOutputCwfxDir());
+        dirs.add(getOutputCwfxRonaDir());
 
         dirs.add(getInputGgdqDir());
         dirs.add(getOutputGgdqDir());
@@ -97,6 +97,10 @@ public class AppFilePath {
 
     public static String getOutputDir() {
         return getBaseDir() + File.separator + "output";
+    }
+
+    public static String getOutputCwfxRonaDir() {
+        return getOutputDir() + File.separator + "cwfx_rona";
     }
 
     public static String getInputGdyjDir() {

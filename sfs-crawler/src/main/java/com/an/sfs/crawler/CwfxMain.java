@@ -1,5 +1,6 @@
 package com.an.sfs.crawler;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -8,12 +9,15 @@ import java.util.Map;
 import java.util.Set;
 
 import com.an.sfs.crawler.cwfx.CwfxLoader;
+import com.an.sfs.crawler.cwfx.CwfxProfitUpLoader;
 import com.an.sfs.crawler.cwfx.CwfxSortVo;
 import com.an.sfs.crawler.cwfx.CwfxVo;
 import com.an.sfs.crawler.cwfx.InvalidCwfxLoader;
 import com.an.sfs.crawler.fhrz.FhrzLoader;
 import com.an.sfs.crawler.gsgk.GsgkLoader;
 import com.an.sfs.crawler.gsgk.GsgkVo;
+import com.an.sfs.crawler.gsgk.StockIndustryLoader;
+import com.an.sfs.crawler.name.IndustryLoader;
 import com.an.sfs.crawler.tfp.TfpLoader;
 
 /**
@@ -23,37 +27,15 @@ import com.an.sfs.crawler.tfp.TfpLoader;
  *
  */
 public class CwfxMain {
-    private static final String START_DATE = "2012-01-01";
-
     public static void main(String[] args) {
-        searchProfit();
+        AppFilePath.initDirs();
+        exportProfitUp();
         searchRona();
+        searchRonaIndustry();
     }
 
-    private static void searchProfit() {
-        List<String> stockList = new ArrayList<>();
-
-        Map<String, List<CwfxVo>> cwfxMap = CwfxLoader.getInst().getCwfxMap();
-
-        for (String stock : cwfxMap.keySet()) {
-
-            List<CwfxVo> voList = cwfxMap.get(stock);
-
-            boolean invalid = false;
-            for (int i = 0; i < voList.size() - 1; i++) {
-                CwfxVo vo = voList.get(i);
-                if (vo.getDate().compareTo(START_DATE) > 0) {
-                    if (vo.getProfit() < 0 || vo.getProfitChangeRate() < 1f) {
-                        invalid = true;
-                        break;
-                    }
-                }
-            }
-
-            if (!invalid) {
-                stockList.add(stock);
-            }
-        }
+    private static void exportProfitUp() {
+        List<String> stockList = CwfxProfitUpLoader.getInst().getStockList();
 
         Collections.sort(stockList);
 
@@ -73,12 +55,141 @@ public class CwfxMain {
         List<Map<String, String>> tfpAppendInfoList = new ArrayList<Map<String, String>>();
         tfpAppendInfoList.add(tfpMap);
 
-        FileUtil.exportTxt(stockList, "Stock_Cwfx_Profit.txt");
-        FileUtil.exportTxt(zfmxStockList, "Stock_Cwfx_Profit_Zf.txt");
-        FileUtil.exportTxt(tfpStockList, "Stock_Cwfx_Profit_Tfp.txt");
+        String txt = AppFilePath.getOutputDir() + File.separator + "Stock_Cwfx_Profit.txt";
+        String txtZf = AppFilePath.getOutputDir() + File.separator + "Stock_Cwfx_Profit_Zf.txt";
+        String txtTfp = AppFilePath.getOutputDir() + File.separator + "Stock_Cwfx_Profit_Tfp.txt";
+        String html = AppFilePath.getOutputDir() + File.separator + "Stock_Cwfx_Profit_Zf.html";
+        String htmlTfp = AppFilePath.getOutputDir() + File.separator + "Stock_Cwfx_Profit_Tfp.html";
 
-        FileUtil.exportHtml(zfmxStockList, zfmxAppendInfoList, "Stock_Cwfx_Profit_Zf.html");
-        FileUtil.exportHtml(tfpStockList, tfpAppendInfoList, "Stock_Cwfx_Profit_Tfp.html");
+        FileUtil.exportStock(stockList, txt);
+        FileUtil.exportStock(zfmxStockList, txtZf);
+        FileUtil.exportStock(tfpStockList, txtTfp);
+        FileUtil.exportHtml(zfmxStockList, zfmxAppendInfoList, html);
+        FileUtil.exportHtml(tfpStockList, tfpAppendInfoList, htmlTfp);
+    }
+
+    private static void searchRonaIndustry() {
+        Map<String, List<CwfxVo>> cwfxMap = CwfxLoader.getInst().getCwfxMap();
+
+        Set<String> invalidCwfxSet = InvalidCwfxLoader.getInst().getStockSet();
+
+        // Industry Code -> [CwfxSortVo]
+        Map<String, List<CwfxSortVo>> industryCwfxMap = new HashMap<>();
+        for (String stock : cwfxMap.keySet()) {
+            if (invalidCwfxSet.contains(stock)) {
+                continue;
+            }
+
+            GsgkVo gsgk = GsgkLoader.getInst().getGsgk(stock);
+            if (gsgk != null && gsgk.isPublicAfter("2012-12-31")) {
+                continue;
+            }
+
+            String industryCode = StockIndustryLoader.getInst().getIndustry(stock).getCode();
+            if (!industryCwfxMap.containsKey(industryCode)) {
+                industryCwfxMap.put(industryCode, new ArrayList<>());
+            }
+
+            List<CwfxVo> list = cwfxMap.get(stock);
+            if (list.size() > 2) {// At least have 3 year's data
+                float totalRona = 0f;
+                float totalRota = 0f;
+                float totalDtar = 0f;
+                for (int i = 0; i < 3; i++) {
+                    totalRona += list.get(i).getRona();
+                    totalRota += list.get(i).getRota();
+                    totalDtar += list.get(i).getDtar();
+                }
+                float avgRona = totalRona / 3f;
+                float avgRota = totalRota / 3f;
+                float avgDtar = totalDtar / 3f;
+
+                CwfxSortVo vo = new CwfxSortVo(stock, avgRona, avgRota, avgDtar);
+                industryCwfxMap.get(industryCode).add(vo);
+            }
+        }
+
+        List<CwfxSortVo> avgIndustryVoList = new ArrayList<>();
+
+        for (String industryCode : industryCwfxMap.keySet()) {
+            List<CwfxSortVo> voList = industryCwfxMap.get(industryCode);
+
+            float totalRona = 0f;
+            float totalRota = 0f;
+            float totalDtar = 0f;
+            for (CwfxSortVo vo : voList) {
+                totalRona += vo.getRona();
+                totalRota += vo.getRota();
+                totalDtar += vo.getDtar();
+            }
+            float avgRona = totalRona / (float) voList.size();
+            float avgRota = totalRota / (float) voList.size();
+            float avgDtar = totalDtar / (float) voList.size();
+
+            // Add average values this industry
+            CwfxSortVo avgVo = new CwfxSortVo(industryCode, avgRona, avgRota, avgDtar);
+            avgIndustryVoList.add(avgVo);
+            voList.add(avgVo);
+
+            Collections.sort(voList);
+
+            Map<String, String> ronaMap = new HashMap<>();
+            Map<String, String> rotaMap = new HashMap<>();
+            Map<String, String> dtarMap = new HashMap<>();
+            List<String> stockList = new ArrayList<>();
+            for (CwfxSortVo vo : voList) {
+                stockList.add(vo.getCode());
+                float rona = vo.getRona() / 100f;
+                float rota = vo.getRota() / 100f;
+                float dtar = vo.getDtar() / 100f;
+                ronaMap.put(vo.getCode(), FileUtil.PERCENT_FORMAT.format(rona));
+                rotaMap.put(vo.getCode(), FileUtil.PERCENT_FORMAT.format(rota));
+                dtarMap.put(vo.getCode(), FileUtil.PERCENT_FORMAT.format(dtar));
+            }
+
+            List<Map<String, String>> appendList = new ArrayList<>();
+            appendList.add(ronaMap);
+            appendList.add(rotaMap);
+            appendList.add(dtarMap);
+
+            String name = IndustryLoader.getInst().getIndustryName(industryCode);
+            String txt = AppFilePath.getOutputCwfxRonaDir() + File.separator + "Stock_Cwfx_Rona_" + industryCode + name
+                    + ".txt";
+            String html = AppFilePath.getOutputCwfxRonaDir() + File.separator + "Stock_Cwfx_Rona_" + industryCode
+                    + name + ".html";
+
+            FileUtil.exportStock(stockList, txt);
+            FileUtil.exportHtml(stockList, appendList, html);
+        }
+
+        exportIndustryRona(avgIndustryVoList);
+    }
+
+    private static void exportIndustryRona(List<CwfxSortVo> avgIndustryVoList) {
+        Collections.sort(avgIndustryVoList);
+        Map<String, String> ronaMap = new HashMap<>();
+        Map<String, String> rotaMap = new HashMap<>();
+        Map<String, String> dtarMap = new HashMap<>();
+        List<String> stockList = new ArrayList<>();
+        for (CwfxSortVo vo : avgIndustryVoList) {
+            stockList.add(vo.getCode());
+            float rona = vo.getRona() / 100f;
+            float rota = vo.getRota() / 100f;
+            float dtar = vo.getDtar() / 100f;
+            ronaMap.put(vo.getCode(), FileUtil.PERCENT_FORMAT.format(rona));
+            rotaMap.put(vo.getCode(), FileUtil.PERCENT_FORMAT.format(rota));
+            dtarMap.put(vo.getCode(), FileUtil.PERCENT_FORMAT.format(dtar));
+        }
+
+        List<Map<String, String>> appendList = new ArrayList<>();
+        appendList.add(ronaMap);
+        appendList.add(rotaMap);
+        appendList.add(dtarMap);
+
+        String txt = AppFilePath.getOutputCwfxRonaDir() + File.separator + "Stock_Cwfx_Industry_Rona" + ".txt";
+        String html = AppFilePath.getOutputCwfxRonaDir() + File.separator + "Stock_Cwfx_Industry_Rona" + ".html";
+        FileUtil.exportStock(stockList, txt);
+        FileUtil.exportHtml(stockList, appendList, html);
     }
 
     private static void searchRona() {
@@ -101,14 +212,17 @@ public class CwfxMain {
             if (list.size() > 2) {// At least have 3 year's data
                 float totalRona = 0f;
                 float totalRota = 0f;
+                float totalDtar = 0f;
                 for (int i = 0; i < 3; i++) {
                     totalRona += list.get(i).getRona();
                     totalRota += list.get(i).getRota();
+                    totalDtar += list.get(i).getDtar();
                 }
                 float avgRona = totalRona / 3f;
                 float avgRota = totalRota / 3f;
+                float avgDtar = totalDtar / 3f;
 
-                CwfxSortVo vo = new CwfxSortVo(stock, avgRona, avgRota);
+                CwfxSortVo vo = new CwfxSortVo(stock, avgRona, avgRota, avgDtar);
                 voList.add(vo);
             }
         }
@@ -117,21 +231,27 @@ public class CwfxMain {
 
         Map<String, String> ronaMap = new HashMap<>();
         Map<String, String> rotaMap = new HashMap<>();
+        Map<String, String> dtarMap = new HashMap<>();
         List<String> stockList = new ArrayList<>();
         for (CwfxSortVo vo : voList) {
             stockList.add(vo.getCode());
             float rona = vo.getRona() / 100f;
             float rota = vo.getRota() / 100f;
-            ronaMap.put(vo.getCode(), AppUtil.FLOAT_DF.format(rona));
-            rotaMap.put(vo.getCode(), AppUtil.FLOAT_DF.format(rota));
+            float dtar = vo.getDtar() / 100f;
+            ronaMap.put(vo.getCode(), FileUtil.PERCENT_FORMAT.format(rona));
+            rotaMap.put(vo.getCode(), FileUtil.PERCENT_FORMAT.format(rota));
+            dtarMap.put(vo.getCode(), FileUtil.PERCENT_FORMAT.format(dtar));
         }
 
         List<Map<String, String>> appendList = new ArrayList<>();
         appendList.add(ronaMap);
         appendList.add(rotaMap);
+        appendList.add(dtarMap);
 
-        FileUtil.exportTxt(stockList, "Stock_Cwfx_Rona.txt");
+        String txt = AppFilePath.getOutputCwfxRonaDir() + File.separator + "Stock_Cwfx_Rona.txt";
+        String html = AppFilePath.getOutputCwfxRonaDir() + File.separator + "Stock_Cwfx_Rona.html";
 
-        FileUtil.exportHtml(stockList, appendList, "Stock_Cwfx_Rona.html");
+        FileUtil.exportStock(stockList, txt);
+        FileUtil.exportHtml(stockList, appendList, html);
     }
 }

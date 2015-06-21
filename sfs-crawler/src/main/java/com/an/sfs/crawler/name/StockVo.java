@@ -16,6 +16,18 @@ public class StockVo {
         return codeSuffix;
     }
 
+    /**
+     * @param stockCode
+     * @return
+     */
+    public static String getTypeStr(String stockCode) {
+        if (stockCode.startsWith("6")) {
+            return "sh";
+        } else {
+            return "sz";
+        }
+    }
+
     public String getTypeStr() {
         if (isSh()) {
             return "sh";

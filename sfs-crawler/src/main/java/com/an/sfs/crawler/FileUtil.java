@@ -9,16 +9,35 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.an.sfs.crawler.ccjg.CcjgLoader;
+import com.an.sfs.crawler.cwfx.CwfxProfitUpLoader;
+import com.an.sfs.crawler.gdrs.GdrsDownLoader;
+import com.an.sfs.crawler.name.IgnoreStockLoader;
+import com.an.sfs.crawler.name.IndustryLoader;
 import com.an.sfs.crawler.name.StockLoader;
+import com.an.sfs.crawler.name.StockVo;
 
 public class FileUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(FileUtil.class);
+    /**
+     * "##.0%"
+     */
+    public static final DecimalFormat PERCENT_FORMAT = new DecimalFormat("##.0%");
+    /**
+     * "##.0"
+     */
+    public static final DecimalFormat FLOAT_FORMAT = new DecimalFormat("##.00");
+    /**
+     * 123 -> 000123
+     */
+    public static final String INT_FORMAT = String.format("%06d", 123);
 
     /**
      * Save content to file.
@@ -203,51 +222,67 @@ public class FileUtil {
      *            [ {code -> info}, {code -> info}]
      * @param fileName
      */
-    public static void exportHtml(List<String> stockCodeList, List<Map<String, String>> appendInfoList, String fileName) {
+    public static void exportHtml(List<String> stockCodeList, List<Map<String, String>> appendInfoList, String filePath) {
         StringBuilder text = new StringBuilder();
         text.append("<html>\n");
         text.append("<head><meta charset=\"utf-8\"></head>\n");
         text.append("<body>\n");
-        StockLoader inst = StockLoader.getInst();
 
         int i = 1;
-        for (String code : stockCodeList) {
-            String newCode = code;
-            if (code.startsWith("6")) {
-                newCode = "sh" + code;
-            } else {
-                newCode = "sz" + code;
+        for (String stock : stockCodeList) {
+            String url = "<a href=\"http://f10.eastmoney.com/f10_v2/ShareholderResearch.aspx?code=%s%s\">%s</a>";
+            text.append(String.format(url, StockVo.getTypeStr(stock), stock, stock));
+
+            String name = StockLoader.getInst().getName(stock);
+            if (name == null) {
+                name = IndustryLoader.getInst().getIndustryName(stock);
             }
-            String url = "<a href=\"http://f10.eastmoney.com/f10_v2/ShareholderResearch.aspx?code=%s\">%s</a>";
-            text.append(String.format(url, newCode, code));
-            String name = inst.getName(code);
-            text.append(" ").append(i++).append(" ");
+
+            text.append(" ").append(String.format("%04d", i++)).append(" ");
             text.append(name);
             if (appendInfoList != null && !appendInfoList.isEmpty()) {
                 for (Map<String, String> infoMap : appendInfoList) {
-                    if (infoMap.containsKey(code)) {
-                        String info = infoMap.get(code);
+                    if (infoMap.containsKey(stock)) {
+                        String info = infoMap.get(stock);
                         text.append(" | ").append(info);
                     }
                 }
             }
+
+            long total = CcjgLoader.getInst().getTotal(stock);
+            text.append(" | " + FLOAT_FORMAT.format((float) total / 10000f));
+
+            if (IgnoreStockLoader.getInst().isIgnore(stock)) {
+                text.append(" | IGNORE");
+            }
+            if (GdrsDownLoader.getInst().isGdrsDown(stock)) {
+                text.append(" | GDRS");
+            }
+            if (CwfxProfitUpLoader.getInst().isProfitUp(stock)) {
+                text.append(" | PROFIT");
+            }
+
             text.append("<br>\n");
         }
         text.append("</body>\n");
         text.append("</html>");
-        String filePath = AppFilePath.getOutputDir() + File.separator + fileName;
-        FileUtil.writeFile(filePath, text.toString());
+
         LOGGER.info("Write file {}", filePath);
+        FileUtil.writeFile(filePath, text.toString());
     }
 
-    public static void exportTxt(List<String> stockCodeList, String fileName) {
+    /**
+     * @param stockList
+     * @param filePath
+     */
+    public static void exportStock(List<String> stockList, String filePath) {
         StringBuilder text = new StringBuilder();
-        for (String code : stockCodeList) {
+        for (String code : stockList) {
             text.append(code + "\n");
         }
-        String filePath = AppFilePath.getOutputDir() + File.separator + fileName;
-        FileUtil.writeFile(filePath, text.toString());
+
         LOGGER.info("Write file {}", filePath);
+        FileUtil.writeFile(filePath, text.toString());
     }
 
     /**

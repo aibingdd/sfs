@@ -80,7 +80,10 @@ public class CwfxLoader {
                         if (!AppUtil.INVALID.equals(strs[4])) {
                             rota = Float.parseFloat(strs[4]);
                         }
-
+                        float dtar = 0f;
+                        if (!AppUtil.INVALID.equals(strs[5])) {
+                            dtar = Float.parseFloat(strs[5]);
+                        }
                         CwfxVo vo = new CwfxVo();
                         vo.setCode(code);
                         vo.setDate(date);
@@ -88,6 +91,7 @@ public class CwfxLoader {
                         vo.setProfit(profit);
                         vo.setRona(rona);
                         vo.setRota(rota);
+                        vo.setDtar(dtar);
                         cwfxMap.get(code).add(vo);
                     }
                 }

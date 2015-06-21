@@ -1,6 +1,6 @@
 package com.an.sfs.crawler.gdyj;
 
-import com.an.sfs.crawler.AppUtil;
+import com.an.sfs.crawler.FileUtil;
 
 public class GdyjVo implements Comparable<GdyjVo> {
     private String code;
@@ -12,7 +12,7 @@ public class GdyjVo implements Comparable<GdyjVo> {
         if (jgRatio == 0) {
             return "0%";
         }
-        return AppUtil.FLOAT_DF.format(jgRatio);
+        return FileUtil.PERCENT_FORMAT.format(jgRatio);
     }
 
     public GdyjVo(String code, long jgTotal, long circulation) {

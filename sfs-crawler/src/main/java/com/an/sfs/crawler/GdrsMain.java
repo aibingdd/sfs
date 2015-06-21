@@ -1,5 +1,6 @@
 package com.an.sfs.crawler;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -7,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.an.sfs.crawler.fhrz.FhrzLoader;
+import com.an.sfs.crawler.gdrs.GdrsDownLoader;
 import com.an.sfs.crawler.gdrs.GdrsLoader;
 import com.an.sfs.crawler.gdrs.GdrsSortVo;
 import com.an.sfs.crawler.gdrs.GdrsVo;
@@ -19,18 +21,11 @@ import com.an.sfs.crawler.tfp.TfpLoader;
  *
  */
 public class GdrsMain {
-    private static final String START_SEASON = "2014-06-30";
-    private static final String CURRENT_SEASON = "2015-03-31";
-
-    private static final String HTML_FILE = "Stock_Gdrs_Down.html";
-    private static final String ZF_HTML_FILE = "Stock_Gdrs_Down_Zf.html";
-    private static final String TFP_HTML_FILE = "Stock_Gdrs_Down_Tfp.html";
-
-    private static final String TXT_FILE = "Stock_Gdrs_Down.txt";
-    private static final String ZF_TXT_FILE = "Stock_Gdrs_Down_Zf.txt";
-    private static final String TFP_TXT_FILE = "Stock_Gdrs_Down_Tfp.txt";
+    public static final String START_SEASON = "2014-06-30";
 
     public static void main(String[] args) {
+        AppFilePath.initDirs();
+
         List<String> stockList = new ArrayList<>();
         Map<String, String> appendInfoMap = new HashMap<>();
         find(stockList, appendInfoMap);
@@ -59,45 +54,33 @@ public class GdrsMain {
                 list.add(stock);
             }
         }
-        FileUtil.exportTxt(list, TXT_FILE);
-        FileUtil.exportTxt(zfmxStockList, ZF_TXT_FILE);
-        FileUtil.exportTxt(tfpStockList, TFP_TXT_FILE);
 
-        FileUtil.exportHtml(list, appendInfoList, HTML_FILE);
-        FileUtil.exportHtml(zfmxStockList, zfList, ZF_HTML_FILE);
-        FileUtil.exportHtml(tfpStockList, tfpList, TFP_HTML_FILE);
+        String txt = AppFilePath.getOutputDir() + File.separator + "Stock_Gdrs_Down.txt";
+        String txtZf = AppFilePath.getOutputDir() + File.separator + "Stock_Gdrs_Down_Zf.txt";
+        String tfpTxt = AppFilePath.getOutputDir() + File.separator + "Stock_Gdrs_Down_Tfp.txt";
+        String html = AppFilePath.getOutputDir() + File.separator + "Stock_Gdrs_Down.html";
+        String htmlZf = AppFilePath.getOutputDir() + File.separator + "Stock_Gdrs_Down_Zf.html";
+        String tfpHtml = AppFilePath.getOutputDir() + File.separator + "Stock_Gdrs_Down_Tfp.html";
+
+        FileUtil.exportStock(list, txt);
+        FileUtil.exportStock(zfmxStockList, txtZf);
+        FileUtil.exportStock(tfpStockList, tfpTxt);
+        FileUtil.exportHtml(list, appendInfoList, html);
+        FileUtil.exportHtml(zfmxStockList, zfList, htmlZf);
+        FileUtil.exportHtml(tfpStockList, tfpList, tfpHtml);
     }
 
     private static final boolean SORT_BY_COUNT_DIFFERENCE = true;
 
     private static void find(List<String> outStockList, Map<String, String> appendInfoMap) {
-        List<String> targetStocklist = new ArrayList<>();
-        Map<String, List<GdrsVo>> gdrsMap = GdrsLoader.getInst().getGdrsMap();
-        for (String code : gdrsMap.keySet()) {
-            List<GdrsVo> list = gdrsMap.get(code);
-            if (list.size() < 4) {
-                continue; // At least has 4 seasons' data
-            }
+        List<String> targetStocklist = GdrsDownLoader.getInst().getStockList();
 
-            boolean invalid = false;
-            for (GdrsVo vo : list) {
-                if (vo.getDate().compareTo(START_SEASON) >= 0) {
-                    if (vo.getCountChangeRate() > 1) {
-                        invalid = true;
-                        break;
-                    }
-                }
-            }
-
-            if (!invalid) {
-                targetStocklist.add(code);
-            }
-        }
         if (!SORT_BY_COUNT_DIFFERENCE) {
             outStockList.addAll(targetStocklist);
             return;
         }
 
+        Map<String, List<GdrsVo>> gdrsMap = GdrsLoader.getInst().getGdrsMap();
         List<GdrsSortVo> gdrsList = new ArrayList<>();
         for (String code : targetStocklist) {
             List<GdrsVo> list = gdrsMap.get(code);
@@ -107,7 +90,7 @@ public class GdrsMain {
                 if (vo.getDate().equals(START_SEASON)) {
                     startCount = vo.getCount();
                 }
-                if (vo.getDate().equals(CURRENT_SEASON)) {
+                if (vo.getDate().equals(AppUtil.CUR_SEASON)) {
                     currentCount = vo.getCount();
                 }
             }

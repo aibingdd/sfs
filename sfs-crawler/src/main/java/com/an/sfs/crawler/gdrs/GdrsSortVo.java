@@ -1,6 +1,6 @@
 package com.an.sfs.crawler.gdrs;
 
-import com.an.sfs.crawler.AppUtil;
+import com.an.sfs.crawler.FileUtil;
 
 public class GdrsSortVo implements Comparable<GdrsSortVo> {
     private String code;
@@ -9,7 +9,7 @@ public class GdrsSortVo implements Comparable<GdrsSortVo> {
     private long countRateL;
 
     public String getCountRateStr() {
-        return AppUtil.FLOAT_DF.format(countRatio);
+        return FileUtil.PERCENT_FORMAT.format(countRatio);
     }
 
     /**

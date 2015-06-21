@@ -37,6 +37,8 @@ public class CwfxFetcher {
     private static final String FLAG_RONA = "摊薄净资产收益率";
     // Return on Total Assets
     private static final String FLAG_ROTA = "摊薄总资产收益率";
+    // debt to assets ratio
+    private static final String FLAG_DTAR = "资产负债率";
 
     public void run() {
         LOGGER.info("Fetch CWFX.");
@@ -78,6 +80,8 @@ public class CwfxFetcher {
             boolean beginRONA = false;
             boolean finishROTA = false;
             boolean beginROTA = false;
+            boolean finishDTAR = false;
+            boolean beginDTAR = false;
             try (BufferedReader br = new BufferedReader(new FileReader(f))) {
                 String line = null;
                 while ((line = br.readLine()) != null) {
@@ -153,14 +157,29 @@ public class CwfxFetcher {
                             finishROTA = true;
                         }
                     }
+
+                    // Debt to Assets Ratio
+                    if (!finishDTAR && line.indexOf(FLAG_DTAR) != -1) {
+                        beginDTAR = true;
+                        continue;
+                    }
+                    if (!finishDTAR && beginDTAR) {
+                        if (line.contains(FLAG_VALUE)) {
+                            String dtar = FileUtil.extractVal(line);
+                            list.add(dtar);
+                        }
+                        if (line.contains("</tr>")) {
+                            finishDTAR = true;
+                        }
+                    }
                     // Finish all
-                    if (finishTime && finishIncome && finishNetProfit && finishRONA && finishROTA) {
+                    if (finishTime && finishIncome && finishNetProfit && finishRONA && finishROTA && finishDTAR) {
                         break;
                     }
                 }
 
                 StringBuilder text = new StringBuilder();
-                FileUtil.convertListToText(list, 5, text);
+                FileUtil.convertListToText(list, 6, text);
                 String fp = AppFilePath.getOutputCwfxDir() + File.separator + stock + ".txt";
                 LOGGER.info("Save file {}", fp);
                 FileUtil.writeFile(fp, text.toString());

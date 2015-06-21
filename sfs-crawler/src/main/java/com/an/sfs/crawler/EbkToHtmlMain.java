@@ -15,6 +15,7 @@ public class EbkToHtmlMain {
     private static final Logger LOGGER = LoggerFactory.getLogger(EbkToHtmlMain.class);
 
     public static void main(String[] args) {
+        AppFilePath.initDirs();
         run();
     }
 
@@ -43,7 +44,11 @@ public class EbkToHtmlMain {
         }
 
         Collections.sort(stockCodeList);
-        FileUtil.exportHtml(stockCodeList, null, fileName + ".html");
-        FileUtil.exportTxt(stockCodeList, fileName + ".txt");
+
+        String txt = AppFilePath.getOutputDir() + File.separator + fileName + ".txt";
+        String html = AppFilePath.getOutputDir() + File.separator + fileName + ".html";
+
+        FileUtil.exportStock(stockCodeList, txt);
+        FileUtil.exportHtml(stockCodeList, null, html);
     }
 }

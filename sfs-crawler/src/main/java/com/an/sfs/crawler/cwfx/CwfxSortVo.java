@@ -4,15 +4,19 @@ public class CwfxSortVo implements Comparable<CwfxSortVo> {
     private String code;
     private float rona;
     private float rota;
+    private float dtar;
 
     /**
      * @param code
      * @param rona
+     * @param rota
+     * @param dtar
      */
-    public CwfxSortVo(String code, float rona, float rota) {
+    public CwfxSortVo(String code, float rona, float rota, float dtar) {
         this.code = code;
         this.rona = rona;
         this.rota = rota;
+        this.dtar = dtar;
     }
 
     @Override
@@ -29,7 +33,7 @@ public class CwfxSortVo implements Comparable<CwfxSortVo> {
 
     @Override
     public String toString() {
-        return "CwfxSortVo [code=" + code + ", rona=" + rona + ", rota=" + rota + "]";
+        return "CwfxSortVo [code=" + code + ", rona=" + rona + ", rota=" + rota + ", dtar=" + dtar + "]";
     }
 
     public String getCode() {
@@ -54,5 +58,13 @@ public class CwfxSortVo implements Comparable<CwfxSortVo> {
 
     public void setRota(float rota) {
         this.rota = rota;
+    }
+
+    public float getDtar() {
+        return dtar;
+    }
+
+    public void setDtar(float dtar) {
+        this.dtar = dtar;
     }
 }

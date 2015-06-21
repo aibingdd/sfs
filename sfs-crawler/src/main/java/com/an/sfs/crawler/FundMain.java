@@ -12,6 +12,7 @@ public class FundMain {
     private static final String FUND = "161825";
 
     public static void main(String[] args) {
+        AppFilePath.initDirs();
         List<String> funds = JjccLoader.getInst().getFunds(STOCK);
         System.out.println("Search fund:");
         for (String fund : funds) {

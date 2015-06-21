@@ -9,7 +9,8 @@ public class CwfxVo implements Comparable<CwfxVo> {
     private float rona;
     // Return on total assets
     private float rota;
-    //
+    // debt to assets ratio
+    private float dtar;
     private float incomeChangeRate;
     private float profitChangeRate;
 
@@ -24,8 +25,8 @@ public class CwfxVo implements Comparable<CwfxVo> {
     @Override
     public String toString() {
         return "CwfxVo [code=" + code + ", date=" + date + ", income=" + income + ", profit=" + profit + ", rona="
-                + rona + ", rota=" + rota + ", incomeChangeRate=" + incomeChangeRate + ", profitChangeRate="
-                + profitChangeRate + "]";
+                + rona + ", rota=" + rota + ", dtar=" + dtar + ", incomeChangeRate=" + incomeChangeRate
+                + ", profitChangeRate=" + profitChangeRate + "]";
     }
 
     public String getCode() {
@@ -74,6 +75,14 @@ public class CwfxVo implements Comparable<CwfxVo> {
 
     public void setRota(float rota) {
         this.rota = rota;
+    }
+
+    public float getDtar() {
+        return dtar;
+    }
+
+    public void setDtar(float dtar) {
+        this.dtar = dtar;
     }
 
     public float getIncomeChangeRate() {

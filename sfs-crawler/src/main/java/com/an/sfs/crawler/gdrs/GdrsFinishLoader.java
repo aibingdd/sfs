@@ -14,14 +14,14 @@ import com.an.sfs.crawler.AppFilePath;
 
 public class GdrsFinishLoader {
     private static final Logger LOGGER = LoggerFactory.getLogger(GdrsFinishLoader.class);
-    private List<String> codeList = new ArrayList<>();
+    private List<String> stockList = new ArrayList<>();
 
     public GdrsFinishLoader() {
         init();
     }
 
     public void getCodeSet(Set<String> codeSet) {
-        codeSet.addAll(codeList);
+        codeSet.addAll(stockList);
     }
 
     private void init() {
@@ -29,7 +29,7 @@ public class GdrsFinishLoader {
             String line = null;
             while ((line = br.readLine()) != null) {
                 if (!line.isEmpty()) {
-                    codeList.add(line.trim());
+                    stockList.add(line.trim());
                 }
             }
         } catch (IOException e) {

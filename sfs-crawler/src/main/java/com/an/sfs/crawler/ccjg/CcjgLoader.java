@@ -48,6 +48,19 @@ public class CcjgLoader {
         return new ArrayList<CcjgVo>();
     }
 
+    public long getTotal(String stockCode) {
+        long total = 0L;
+
+        List<CcjgVo> list = stockJgMap.get(stockCode);
+        if (list != null) {
+            for (CcjgVo vo : list) {
+                total += vo.getCount();
+            }
+        }
+
+        return total;
+    }
+
     private void init() {
         List<File> files = new ArrayList<>();
         FileUtil.getFilesUnderDir(AppFilePath.getInputCcjgTxtDir(AppUtil.CUR_SEASON), files);

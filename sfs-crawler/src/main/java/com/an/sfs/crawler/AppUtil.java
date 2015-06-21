@@ -11,7 +11,6 @@ import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,10 +28,6 @@ public class AppUtil {
     public static final String CUR_SEASON = "2015-03-31";
     // Current YJYG season
     public static final String SEASON_YJYG = "2015-06-30";
-    /**
-     * "##.0%"
-     */
-    public static final DecimalFormat FLOAT_DF = new DecimalFormat("##.0%");
 
     /**
      * @param httpUrl
