@@ -39,6 +39,10 @@ public class CwfxFetcher {
     private static final String FLAG_ROTA = "摊薄总资产收益率";
     // debt to assets ratio
     private static final String FLAG_DTAR = "资产负债率";
+    // Primary Earnings Per Share
+    private static final String FLAG_PEPS = "基本每股收益";
+    // Net assets per share
+    private static final String FLAG_NAPS = "每股净资产";
 
     public void run() {
         LOGGER.info("Fetch CWFX.");
@@ -82,6 +86,10 @@ public class CwfxFetcher {
             boolean beginROTA = false;
             boolean finishDTAR = false;
             boolean beginDTAR = false;
+            boolean finishPEPS = false;
+            boolean beginPEPS = false;
+            boolean finishNAPS = false;
+            boolean beginNAPS = false;
             try (BufferedReader br = new BufferedReader(new FileReader(f))) {
                 String line = null;
                 while ((line = br.readLine()) != null) {
@@ -92,8 +100,8 @@ public class CwfxFetcher {
                     }
                     if (!finishTime && beginTime) {
                         if (line.contains(FLAG_VALUE)) {
-                            String time = FileUtil.extractVal(line);
-                            list.add(time);
+                            String val = FileUtil.extractVal(line);
+                            list.add(val);
                         }
                         if (line.contains("</tr>")) {
                             finishTime = true;
@@ -106,8 +114,8 @@ public class CwfxFetcher {
                     }
                     if (!finishIncome && beginIncome) {
                         if (line.contains(FLAG_VALUE)) {
-                            String income = FileUtil.extractVal(line);
-                            list.add(income);
+                            String val = FileUtil.extractVal(line);
+                            list.add(val);
                         }
                         if (line.contains("</tr>")) {
                             finishIncome = true;
@@ -120,8 +128,8 @@ public class CwfxFetcher {
                     }
                     if (!finishNetProfit && beginNetProfit) {
                         if (line.contains(FLAG_VALUE)) {
-                            String netProfit = FileUtil.extractVal(line);
-                            list.add(netProfit);
+                            String val = FileUtil.extractVal(line);
+                            list.add(val);
                         }
                         if (line.contains("</tr>")) {
                             finishNetProfit = true;
@@ -135,8 +143,8 @@ public class CwfxFetcher {
                     }
                     if (!finishRONA && beginRONA) {
                         if (line.contains(FLAG_VALUE)) {
-                            String rona = FileUtil.extractVal(line);
-                            list.add(rona);
+                            String val = FileUtil.extractVal(line);
+                            list.add(val);
                         }
                         if (line.contains("</tr>")) {
                             finishRONA = true;
@@ -150,8 +158,8 @@ public class CwfxFetcher {
                     }
                     if (!finishROTA && beginROTA) {
                         if (line.contains(FLAG_VALUE)) {
-                            String rota = FileUtil.extractVal(line);
-                            list.add(rota);
+                            String val = FileUtil.extractVal(line);
+                            list.add(val);
                         }
                         if (line.contains("</tr>")) {
                             finishROTA = true;
@@ -165,21 +173,52 @@ public class CwfxFetcher {
                     }
                     if (!finishDTAR && beginDTAR) {
                         if (line.contains(FLAG_VALUE)) {
-                            String dtar = FileUtil.extractVal(line);
-                            list.add(dtar);
+                            String val = FileUtil.extractVal(line);
+                            list.add(val);
                         }
                         if (line.contains("</tr>")) {
                             finishDTAR = true;
                         }
                     }
+
+                    // Primary Earnings Per Share
+                    if (!finishDTAR && line.indexOf(FLAG_PEPS) != -1) {
+                        beginPEPS = true;
+                        continue;
+                    }
+                    if (!finishPEPS && beginPEPS) {
+                        if (line.contains(FLAG_VALUE)) {
+                            String val = FileUtil.extractVal(line);
+                            list.add(val);
+                        }
+                        if (line.contains("</tr>")) {
+                            finishPEPS = true;
+                        }
+                    }
+
+                    // Primary Earnings Per Share
+                    if (!finishNAPS && line.indexOf(FLAG_NAPS) != -1) {
+                        beginNAPS = true;
+                        continue;
+                    }
+                    if (!finishNAPS && beginNAPS) {
+                        if (line.contains(FLAG_VALUE)) {
+                            String val = FileUtil.extractVal(line);
+                            list.add(val);
+                        }
+                        if (line.contains("</tr>")) {
+                            finishNAPS = true;
+                        }
+                    }
                     // Finish all
-                    if (finishTime && finishIncome && finishNetProfit && finishRONA && finishROTA && finishDTAR) {
+                    if (finishTime && finishIncome && finishNetProfit && finishRONA && finishROTA && finishDTAR
+                            && finishPEPS && finishNAPS) {
                         break;
                     }
                 }
 
                 StringBuilder text = new StringBuilder();
-                FileUtil.convertListToText(list, 6, text);
+                FileUtil.convertListToText(list, 8, text);
                 String fp = AppFilePath.getOutputCwfxDir() + File.separator + stock + ".txt";
                 LOGGER.info("Save file {}", fp);
                 FileUtil.writeFile(fp, text.toString());

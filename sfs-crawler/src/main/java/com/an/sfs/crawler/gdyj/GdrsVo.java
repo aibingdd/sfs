@@ -1,4 +1,4 @@
-package com.an.sfs.crawler.gdrs;
+package com.an.sfs.crawler.gdyj;
 
 public class GdrsVo implements Comparable<GdrsVo> {
     private String code;

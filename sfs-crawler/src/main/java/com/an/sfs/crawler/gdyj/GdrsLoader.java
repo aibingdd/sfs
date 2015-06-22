@@ -1,4 +1,4 @@
-package com.an.sfs.crawler.gdrs;
+package com.an.sfs.crawler.gdyj;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -26,9 +26,8 @@ public class GdrsLoader {
     }
 
     private void init() {
-        String dir = AppFilePath.getOutputGdyjGdrsDir();
         List<File> fileList = new ArrayList<File>();
-        FileUtil.getFilesUnderDir(dir, fileList);
+        FileUtil.getFilesUnderDir(AppFilePath.getOutputGdyjDir(), fileList);
         for (File f : fileList) {
             String code = FileUtil.getFileName(f.toString());
             gdrsMap.put(code, new ArrayList<>());

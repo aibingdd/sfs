@@ -15,9 +15,16 @@ import org.slf4j.LoggerFactory;
 import com.an.sfs.crawler.AppFilePath;
 import com.an.sfs.crawler.AppUtil;
 import com.an.sfs.crawler.FileUtil;
+import com.an.sfs.crawler.gsgk.StockIndustryLoader;
+import com.an.sfs.crawler.name.IndustryLoader;
+import com.an.sfs.crawler.name.IndustryVo;
 
 public class InvalidCwfxLoader {
     private static final Logger LOGGER = LoggerFactory.getLogger(InvalidCwfxLoader.class);
+
+    private String getInvalidCwfxFile() {
+        return AppFilePath.getOutputDir() + File.separator + "Invalid_Cwfx_Rona_Rota.txt";
+    }
 
     private Set<String> stockSet = new HashSet<>();
     private List<String> stockList = new ArrayList<>();
@@ -31,28 +38,29 @@ public class InvalidCwfxLoader {
     }
 
     private void init() {
-        String fp = AppFilePath.getOutputDir() + File.separator + "Invalid_Cwfx_Rona_Rota.txt";
-        extract(fp);
+        extract();
 
-        try (BufferedReader br = new BufferedReader(new FileReader(fp))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(getInvalidCwfxFile()))) {
             String line = null;
             while ((line = br.readLine()) != null) {
                 String[] strs = line.split(",");
                 stockList.add(strs[0]);
             }
         } catch (IOException e) {
+            LOGGER.error("Error ", e);
         }
 
         stockSet.addAll(stockList);
     }
 
-    private void extract(String fp) {
+    private void extract() {
         List<File> files = new ArrayList<File>();
         FileUtil.getFilesUnderDir(AppFilePath.getOutputCwfxDir(), files);
 
         StringBuilder text = new StringBuilder();
         for (File f : files) {
-            String code = FileUtil.getFileName(f.toString());
+            String stock = FileUtil.getFileName(f.toString());
+            IndustryVo industry = StockIndustryLoader.getInst().getIndustry(stock);
             try (BufferedReader br = new BufferedReader(new FileReader(f));) {
                 String line = null;
                 int i = 0;
@@ -64,22 +72,26 @@ public class InvalidCwfxLoader {
                             if (!AppUtil.INVALID.equals(strs[3])) {
                                 float rona = Float.parseFloat(strs[3]);
                                 if (rona > 100f) {
-                                    text.append(code).append(",").append(line).append("\n");
+                                    text.append(stock).append(",").append(industry.getIndustry()).append(",")
+                                            .append(line).append("\n");
                                     break;
                                 }
                                 if (rona < -50f) {
-                                    text.append(code).append(",").append(line).append("\n");
+                                    text.append(stock).append(",").append(industry.getIndustry()).append(",")
+                                            .append(line).append("\n");
                                     break;
                                 }
                             }
                             if (!AppUtil.INVALID.equals(strs[4])) {
                                 float rota = Float.parseFloat(strs[4]);
                                 if (rota > 100f) {
-                                    text.append(code).append(",").append(line).append("\n");
+                                    text.append(stock).append(",").append(industry.getIndustry()).append(",")
+                                            .append(line).append("\n");
                                     break;
                                 }
                                 if (rota < -50f) {
-                                    text.append(code).append(",").append(line).append("\n");
+                                    text.append(stock).append(",").append(industry.getIndustry()).append(",")
+                                            .append(line).append("\n");
                                     break;
                                 }
                             }
@@ -87,12 +99,12 @@ public class InvalidCwfxLoader {
                     }
                 }
             } catch (Exception e) {
-                LOGGER.error("Error, code {}", code, e);
+                LOGGER.error("Error, code {}", stock, e);
                 break;
             }
         }
 
-        FileUtil.writeFile(fp, text.toString());
+        FileUtil.writeFile(getInvalidCwfxFile(), text.toString());
     }
 
     private InvalidCwfxLoader() {

@@ -8,10 +8,10 @@ import java.util.List;
 import java.util.Map;
 
 import com.an.sfs.crawler.fhrz.FhrzLoader;
-import com.an.sfs.crawler.gdrs.GdrsDownLoader;
-import com.an.sfs.crawler.gdrs.GdrsLoader;
-import com.an.sfs.crawler.gdrs.GdrsSortVo;
-import com.an.sfs.crawler.gdrs.GdrsVo;
+import com.an.sfs.crawler.gdyj.GdrsDownLoader;
+import com.an.sfs.crawler.gdyj.GdrsLoader;
+import com.an.sfs.crawler.gdyj.GdrsSortVo;
+import com.an.sfs.crawler.gdyj.GdrsVo;
 import com.an.sfs.crawler.tfp.TfpLoader;
 
 /**

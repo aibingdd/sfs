@@ -18,11 +18,12 @@ import org.slf4j.LoggerFactory;
 
 import com.an.sfs.crawler.ccjg.CcjgLoader;
 import com.an.sfs.crawler.cwfx.CwfxProfitUpLoader;
-import com.an.sfs.crawler.gdrs.GdrsDownLoader;
+import com.an.sfs.crawler.gdyj.GdrsDownLoader;
 import com.an.sfs.crawler.name.IgnoreStockLoader;
 import com.an.sfs.crawler.name.IndustryLoader;
 import com.an.sfs.crawler.name.StockLoader;
 import com.an.sfs.crawler.name.StockVo;
+import com.an.sfs.crawler.name.WhiteHorseStockLoader;
 
 public class FileUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(FileUtil.class);
@@ -228,6 +229,9 @@ public class FileUtil {
         text.append("<head><meta charset=\"utf-8\"></head>\n");
         text.append("<body>\n");
 
+        text.append("摊薄净资产收益率").append(" | 摊薄总资产收益率").append(" | 资产负债率").append(" | 机构持仓").append(" | 市盈率")
+                .append(" | 市净率").append("<br>\n");
+
         int i = 1;
         for (String stock : stockCodeList) {
             String url = "<a href=\"http://f10.eastmoney.com/f10_v2/ShareholderResearch.aspx?code=%s%s\">%s</a>";
@@ -239,6 +243,11 @@ public class FileUtil {
             }
 
             text.append(" ").append(String.format("%04d", i++)).append(" ");
+            if (name.length() < 4) {
+                for (int j = 0; j < 4 - name.length(); j++) {
+                    text.append("&nbsp&nbsp&nbsp&nbsp");
+                }
+            }
             text.append(name);
             if (appendInfoList != null && !appendInfoList.isEmpty()) {
                 for (Map<String, String> infoMap : appendInfoList) {
@@ -250,11 +259,14 @@ public class FileUtil {
             }
 
             long total = CcjgLoader.getInst().getTotal(stock);
-            text.append(" | " + FLOAT_FORMAT.format((float) total / 10000f));
+            text.append(" | " + FLOAT_FORMAT.format((float) total / 10000f) + "万");
 
             if (IgnoreStockLoader.getInst().isIgnore(stock)) {
                 text.append(" | IGNORE");
+            } else if (WhiteHorseStockLoader.getInst().isWhiteHorse(stock)) {
+                text.append(" | WHITEHORSE");
             }
+
             if (GdrsDownLoader.getInst().isGdrsDown(stock)) {
                 text.append(" | GDRS");
             }

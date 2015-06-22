@@ -23,10 +23,9 @@ public class AppFilePath {
         dirs.add(getInputDir());
 
         dirs.add(getInputGdyjDir());
+        dirs.add(getInputGdyjRawDir());
+        dirs.add(getInputGdyjTxtDir());
         dirs.add(getOutputGdyjDir());
-
-        dirs.add(getInputGdyjGdrsDir());
-        dirs.add(getOutputGdyjGdrsDir());
 
         dirs.add(getInputCwfxRawDir());
         dirs.add(getOutputCwfxDir());
@@ -107,16 +106,16 @@ public class AppFilePath {
         return getInputDir() + File.separator + "gdyj";
     }
 
-    private static String getOutputGdyjDir() {
+    public static String getInputGdyjRawDir() {
+        return getInputGdyjDir() + File.separator + "raw";
+    }
+
+    public static String getInputGdyjTxtDir() {
+        return getInputGdyjDir() + File.separator + "txt";
+    }
+
+    public static String getOutputGdyjDir() {
         return getOutputDir() + File.separator + "gdyj";
-    }
-
-    public static String getInputGdyjGdrsDir() {
-        return getInputGdyjDir() + File.separator + "gdrs";
-    }
-
-    public static String getOutputGdyjGdrsDir() {
-        return getOutputGdyjDir() + File.separator + "gdrs";
     }
 
     private static String getInputCwfxDir() {
@@ -289,5 +288,4 @@ public class AppFilePath {
     public static String getConfFile(String fileName) {
         return getConfDir() + File.separator + fileName;
     }
-
 }

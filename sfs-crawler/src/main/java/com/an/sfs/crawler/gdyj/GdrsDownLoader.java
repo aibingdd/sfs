@@ -1,4 +1,4 @@
-package com.an.sfs.crawler.gdrs;
+package com.an.sfs.crawler.gdyj;
 
 import java.util.ArrayList;
 import java.util.HashSet;

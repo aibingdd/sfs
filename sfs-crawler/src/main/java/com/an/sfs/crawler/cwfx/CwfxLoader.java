@@ -40,50 +40,61 @@ public class CwfxLoader {
                     if (!line.isEmpty()) {
                         line = line.replaceAll(",", "");
                         String[] strs = line.split(";");
-                        String date = "20" + strs[0];
+
+                        float peps = 0f;
+                        if (!AppUtil.INVALID.equals(strs[0])) {
+                            peps = Float.parseFloat(strs[0]);
+                        }
+                        float naps = 0f;
+                        if (!AppUtil.INVALID.equals(strs[1])) {
+                            naps = Float.parseFloat(strs[1]);
+                        }
+
+                        String date = "20" + strs[2];
 
                         long income = 0;
-                        if (!AppUtil.INVALID.equals(strs[1])) {
-                            int idxWan = strs[1].indexOf(AppUtil.UNIT_WAN);
-                            int idxYi = strs[1].indexOf(AppUtil.UNIT_YI);
+                        if (!AppUtil.INVALID.equals(strs[3])) {
+                            int idxWan = strs[3].indexOf(AppUtil.UNIT_WAN);
+                            int idxYi = strs[3].indexOf(AppUtil.UNIT_YI);
                             if (idxWan != -1) {
-                                float tmp = Float.parseFloat(strs[1].substring(0, idxWan));
+                                float tmp = Float.parseFloat(strs[3].substring(0, idxWan));
                                 income = (long) (tmp * 10000f);
                             } else if (idxYi != -1) {
-                                float tmp = Float.parseFloat(strs[1].substring(0, idxYi));
+                                float tmp = Float.parseFloat(strs[3].substring(0, idxYi));
                                 income = (long) (tmp * 100000000f);
                             } else {
-                                income = Long.parseLong(strs[1]);
+                                income = Long.parseLong(strs[3]);
                             }
                         }
 
                         long profit = 0;
-                        if (!AppUtil.INVALID.equals(strs[2])) {
-                            int idxWan = strs[2].indexOf(AppUtil.UNIT_WAN);
-                            int idxYi = strs[2].indexOf(AppUtil.UNIT_YI);
+                        if (!AppUtil.INVALID.equals(strs[4])) {
+                            int idxWan = strs[4].indexOf(AppUtil.UNIT_WAN);
+                            int idxYi = strs[4].indexOf(AppUtil.UNIT_YI);
                             if (idxWan != -1) {
-                                float tmp = Float.parseFloat(strs[2].substring(0, idxWan));
+                                float tmp = Float.parseFloat(strs[4].substring(0, idxWan));
                                 profit = (long) (tmp * 10000f);
                             } else if (idxYi != -1) {
-                                float tmp = Float.parseFloat(strs[2].substring(0, idxYi));
+                                float tmp = Float.parseFloat(strs[4].substring(0, idxYi));
                                 profit = (long) (tmp * 100000000f);
                             } else {
-                                profit = Long.parseLong(strs[2]);
+                                profit = Long.parseLong(strs[4]);
                             }
                         }
 
                         float rona = 0f;
-                        if (!AppUtil.INVALID.equals(strs[3])) {
-                            rona = Float.parseFloat(strs[3]);
+                        if (!AppUtil.INVALID.equals(strs[5])) {
+                            rona = Float.parseFloat(strs[5]);
                         }
                         float rota = 0f;
-                        if (!AppUtil.INVALID.equals(strs[4])) {
-                            rota = Float.parseFloat(strs[4]);
+                        if (!AppUtil.INVALID.equals(strs[6])) {
+                            rota = Float.parseFloat(strs[6]);
                         }
                         float dtar = 0f;
-                        if (!AppUtil.INVALID.equals(strs[5])) {
-                            dtar = Float.parseFloat(strs[5]);
+                        if (!AppUtil.INVALID.equals(strs[7])) {
+                            dtar = Float.parseFloat(strs[7]);
                         }
+
                         CwfxVo vo = new CwfxVo();
                         vo.setCode(code);
                         vo.setDate(date);
@@ -92,6 +103,8 @@ public class CwfxLoader {
                         vo.setRona(rona);
                         vo.setRota(rota);
                         vo.setDtar(dtar);
+                        vo.setPeps(peps);
+                        vo.setNaps(naps);
                         cwfxMap.get(code).add(vo);
                     }
                 }

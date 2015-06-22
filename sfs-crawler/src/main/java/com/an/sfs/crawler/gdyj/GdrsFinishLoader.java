@@ -1,4 +1,4 @@
-package com.an.sfs.crawler.gdrs;
+package com.an.sfs.crawler.gdyj;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

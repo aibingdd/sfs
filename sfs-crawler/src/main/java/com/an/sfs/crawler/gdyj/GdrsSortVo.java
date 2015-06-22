@@ -1,4 +1,4 @@
-package com.an.sfs.crawler.gdrs;
+package com.an.sfs.crawler.gdyj;
 
 import com.an.sfs.crawler.FileUtil;
 
