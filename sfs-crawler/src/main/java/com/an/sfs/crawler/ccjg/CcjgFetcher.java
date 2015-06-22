@@ -15,8 +15,7 @@ import org.slf4j.LoggerFactory;
 import com.an.sfs.crawler.AppFilePath;
 import com.an.sfs.crawler.AppUtil;
 import com.an.sfs.crawler.FileUtil;
-import com.an.sfs.crawler.name.StockLoader;
-import com.an.sfs.crawler.name.StockVo;
+import com.an.sfs.crawler.gsgk.StockCodeLoader;
 
 public class CcjgFetcher {
     private static final Logger LOGGER = LoggerFactory.getLogger(CcjgFetcher.class);
@@ -40,20 +39,19 @@ public class CcjgFetcher {
     }
 
     private void download() {
-        List<StockVo> stocks = StockLoader.getInst().getStocks();
-        for (StockVo vo : stocks) {
+        List<String> stockCodeList = StockCodeLoader.getInst().getStockCodeList();
+        for (String stock : stockCodeList) {
             boolean finished = false;
-            String code = vo.getCode();
 
             for (String season : AppUtil.seasonList) {
-                if (earliestSeasons.containsKey(code)) {
-                    if (season.compareTo(earliestSeasons.get(code)) <= 0) {
+                if (earliestSeasons.containsKey(stock)) {
+                    if (season.compareTo(earliestSeasons.get(stock)) <= 0) {
                         break;// Ignore earlier season
                     }
                 }
 
-                String url = String.format(URL, code, season);
-                String filePath = AppFilePath.getInputCcjgRawDir(season) + File.separator + code + ".txt";
+                String url = String.format(URL, stock, season);
+                String filePath = AppFilePath.getInputCcjgRawDir(season) + File.separator + stock + ".txt";
                 if (FileUtil.isFileExist(filePath)) {
                     continue;
                 }
@@ -65,8 +63,8 @@ public class CcjgFetcher {
                     while ((line = br.readLine()) != null) {
                         if (line.contains(FLAG_EMPTY_DATA)) {
                             finished = true;
-                            earliestSeasons.put(code, season);
-                            String text = code + "," + season + "\n";
+                            earliestSeasons.put(stock, season);
+                            String text = stock + "," + season + "\n";
                             FileUtil.writeFile(getEarliestSeasonFile(), text, true);
                         }
                         break;

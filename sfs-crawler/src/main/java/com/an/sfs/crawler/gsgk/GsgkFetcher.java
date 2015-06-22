@@ -5,7 +5,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,8 +15,6 @@ import org.slf4j.LoggerFactory;
 import com.an.sfs.crawler.AppFilePath;
 import com.an.sfs.crawler.AppUtil;
 import com.an.sfs.crawler.FileUtil;
-import com.an.sfs.crawler.name.StockLoader;
-import com.an.sfs.crawler.name.StockVo;
 
 public class GsgkFetcher {
     private static final Logger LOGGER = LoggerFactory.getLogger(GsgkFetcher.class);
@@ -28,6 +28,8 @@ public class GsgkFetcher {
     private static final String FLAG_PUBLIC = "上市日期";
     private static final String FLAG_INDUSTRY = "所属行业";
 
+    private Map<String, String> stockNameMap = new HashMap<>();
+
     public void run() {
         LOGGER.info("Fetch ...");
         fetch(URL, AppFilePath.getInputGsgkRawDir());
@@ -37,10 +39,10 @@ public class GsgkFetcher {
     }
 
     private void fetch(String url, String fileDir) {
-        List<StockVo> stocks = StockLoader.getInst().getStocks();
-        for (StockVo vo : stocks) {
-            String stock = vo.getCode();
-            String httpUrl = String.format(url, vo.getTypeStr(), stock);
+        List<String> stockList = StockCodeLoader.getInst().getStockCodeList();
+        for (String stock : stockList) {
+            String typeStr = StockCodeLoader.getTypeStr(stock);
+            String httpUrl = String.format(url, typeStr, stock);
             String fp = fileDir + File.separator + stock + ".html";
             if (!FileUtil.isFileExist(fp)) {
                 AppUtil.download(httpUrl, fp);
@@ -51,39 +53,57 @@ public class GsgkFetcher {
 
     private void extract(String stock, String filePath) {
         StringBuilder data = new StringBuilder();
+        boolean finishName = false;
         boolean jbzlStart = false;
         boolean jbzlFinish = false;
         boolean fxxgStart = false;
         boolean fxxgFinish = false;
+
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line = null;
             while ((line = br.readLine()) != null) {
-                if (!jbzlStart && line.contains(FLAG_JBZL)) {
-                    jbzlStart = true;
-                    continue;
-                }
-                if (!jbzlFinish && jbzlStart && line.contains("<table")) {
-                    String text = line.trim();
-                    int endIndex = text.indexOf("公司简介");
-                    if (endIndex != -1) {
-                        text.substring(0, endIndex);
+                if (!finishName) {
+                    int idx = line.indexOf("(" + stock + ")");
+                    if (idx != -1) {
+                        String name = line.substring(0, idx).trim();
+                        stockNameMap.put(stock, name);
+
+                        finishName = true;
+                        continue;
                     }
-                    text = text.replace("><", ">\n<");
-                    data.append(text).append("\n");
-                    jbzlFinish = true;
-                    continue;
                 }
 
-                if (!fxxgStart && line.contains(FLAG_FXXG)) {
-                    fxxgStart = true;
-                    continue;
+                if (!jbzlFinish) {
+                    if (!jbzlStart && line.contains(FLAG_JBZL)) {
+                        jbzlStart = true;
+                        continue;
+                    }
+                    if (jbzlStart && line.contains("<table")) {
+                        String text = line.trim();
+                        int endIndex = text.indexOf("公司简介");
+                        if (endIndex != -1) {
+                            text.substring(0, endIndex);
+                        }
+                        text = text.replace("><", ">\n<");
+                        data.append(text).append("\n");
+
+                        jbzlFinish = true;
+                        continue;
+                    }
                 }
-                if (!fxxgFinish && fxxgStart && line.contains("<table")) {
-                    String text = line.trim();
-                    text = text.replace("><", ">\n<");
-                    data.append(text);
-                    fxxgFinish = true;
-                    continue;
+
+                if (!fxxgFinish) {
+                    if (!fxxgStart && line.contains(FLAG_FXXG)) {
+                        fxxgStart = true;
+                        continue;
+                    }
+                    if (fxxgStart && line.contains("<table")) {
+                        String text = line.trim();
+                        text = text.replace("><", ">\n<");
+                        data.append(text);
+                        fxxgFinish = true;
+                        continue;
+                    }
                 }
 
                 if (fxxgFinish && jbzlFinish) {
@@ -104,7 +124,8 @@ public class GsgkFetcher {
         FileUtil.getFilesUnderDir(AppFilePath.getInputGsgkTxtDir(), files);
         for (File f : files) {
             String stock = FileUtil.getFileName(f.getPath());
-            text.append(stock).append(",");
+            String name = stockNameMap.get(stock);
+            text.append(stock).append(",").append(name).append(",");
 
             boolean startCreate = false;
             boolean finishCreate = false;
@@ -115,34 +136,40 @@ public class GsgkFetcher {
             try (BufferedReader br = new BufferedReader(new FileReader(f))) {
                 String line = null;
                 while ((line = br.readLine()) != null) {
-                    if (!startIndustry && line.contains(FLAG_INDUSTRY)) {
-                        startIndustry = true;
-                        continue;
-                    }
-                    if (!finishIndustry && startIndustry) {
-                        String date = FileUtil.extractVal(line);
-                        text.append(date).append(",");
-                        finishIndustry = true;
-                    }
-
-                    if (!startCreate && line.contains(FLAG_CREATE)) {
-                        startCreate = true;
-                        continue;
-                    }
-                    if (!finishCreate && startCreate) {
-                        String date = FileUtil.extractVal(line);
-                        text.append(date).append(",");
-                        finishCreate = true;
+                    if (!finishIndustry) {
+                        if (!startIndustry && line.contains(FLAG_INDUSTRY)) {
+                            startIndustry = true;
+                            continue;
+                        }
+                        if (startIndustry) {
+                            text.append(FileUtil.extractVal(line)).append(",");
+                            finishIndustry = true;
+                            continue;
+                        }
                     }
 
-                    if (!startPublic && line.contains(FLAG_PUBLIC)) {
-                        startPublic = true;
-                        continue;
+                    if (!finishCreate) {
+                        if (!startCreate && line.contains(FLAG_CREATE)) {
+                            startCreate = true;
+                            continue;
+                        }
+                        if (startCreate) {
+                            text.append(FileUtil.extractVal(line)).append(",");
+                            finishCreate = true;
+                            continue;
+                        }
                     }
-                    if (!finishPublic && startPublic) {
-                        String date = FileUtil.extractVal(line);
-                        text.append(date).append("\n");
-                        finishPublic = true;
+
+                    if (!finishPublic) {
+                        if (!startPublic && line.contains(FLAG_PUBLIC)) {
+                            startPublic = true;
+                            continue;
+                        }
+                        if (startPublic) {
+                            text.append(FileUtil.extractVal(line)).append("\n");
+                            finishPublic = true;
+                            continue;
+                        }
                     }
                 }
             } catch (IOException e) {

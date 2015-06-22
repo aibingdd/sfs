@@ -13,8 +13,7 @@ import org.slf4j.LoggerFactory;
 import com.an.sfs.crawler.AppFilePath;
 import com.an.sfs.crawler.AppUtil;
 import com.an.sfs.crawler.FileUtil;
-import com.an.sfs.crawler.name.StockLoader;
-import com.an.sfs.crawler.name.StockVo;
+import com.an.sfs.crawler.gsgk.StockCodeLoader;
 
 public class CwfxFetcher {
     private static final Logger LOGGER = LoggerFactory.getLogger(CwfxFetcher.class);
@@ -53,12 +52,12 @@ public class CwfxFetcher {
     }
 
     private void fetchCwfxData(String url, String fileDir) {
-        List<StockVo> stocks = StockLoader.getInst().getStocks();
-        for (StockVo vo : stocks) {
-            String code = vo.getCode();
-            String codeSuffix = vo.getCodeSuffix();
-            String httpUrl = String.format(url, code, codeSuffix, Count, vo.getTypeStr(), code, n);
-            String fp = fileDir + File.separator + code + ".txt";
+        List<String> stockCodeList = StockCodeLoader.getInst().getStockCodeList();
+        for (String stock : stockCodeList) {
+            String codeSuffix = StockCodeLoader.getCodeSuffix(stock);
+            String typeStr = StockCodeLoader.getTypeStr(stock);
+            String httpUrl = String.format(url, stock, codeSuffix, Count, typeStr, stock, n);
+            String fp = fileDir + File.separator + stock + ".txt";
             if (!FileUtil.isFileExist(fp)) {
                 AppUtil.download(httpUrl, fp);
             }

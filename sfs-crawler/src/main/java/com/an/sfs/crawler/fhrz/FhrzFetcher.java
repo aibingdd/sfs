@@ -15,8 +15,7 @@ import org.slf4j.LoggerFactory;
 import com.an.sfs.crawler.AppFilePath;
 import com.an.sfs.crawler.AppUtil;
 import com.an.sfs.crawler.FileUtil;
-import com.an.sfs.crawler.name.StockLoader;
-import com.an.sfs.crawler.name.StockVo;
+import com.an.sfs.crawler.gsgk.StockCodeLoader;
 
 public class FhrzFetcher {
     private static final Logger LOGGER = LoggerFactory.getLogger(FhrzFetcher.class);
@@ -37,12 +36,11 @@ public class FhrzFetcher {
     }
 
     private void fetchRawHtml(String url, String fileDir) {
-        List<StockVo> stocks = StockLoader.getInst().getStocks();
-        for (StockVo vo : stocks) {
-            String code = vo.getCode();
-            String typeStr = vo.getTypeStr();
-            String httpUrl = String.format(url, typeStr, code);
-            String filePath = fileDir + File.separator + code + ".html";
+        List<String> stockCodeList = StockCodeLoader.getInst().getStockCodeList();
+        for (String stock : stockCodeList) {
+            String typeStr = StockCodeLoader.getTypeStr(stock);
+            String httpUrl = String.format(url, typeStr, stock);
+            String filePath = fileDir + File.separator + stock + ".html";
             if (!FileUtil.isFileExist(filePath)) {
                 AppUtil.download(httpUrl, filePath);
             }

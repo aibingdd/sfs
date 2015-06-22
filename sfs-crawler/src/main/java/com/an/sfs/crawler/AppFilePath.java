@@ -24,7 +24,8 @@ public class AppFilePath {
 
         dirs.add(getInputGdyjDir());
         dirs.add(getInputGdyjRawDir());
-        dirs.add(getInputGdyjTxtDir());
+        dirs.add(getInputGdyjGdrsDir());
+        dirs.add(getInputGdyjSdltgdDir());
         dirs.add(getOutputGdyjDir());
 
         dirs.add(getInputCwfxRawDir());
@@ -110,8 +111,12 @@ public class AppFilePath {
         return getInputGdyjDir() + File.separator + "raw";
     }
 
-    public static String getInputGdyjTxtDir() {
-        return getInputGdyjDir() + File.separator + "txt";
+    public static String getInputGdyjGdrsDir() {
+        return getInputGdyjDir() + File.separator + "gdrs";
+    }
+
+    public static String getInputGdyjSdltgdDir() {
+        return getInputGdyjDir() + File.separator + "sdltgd";
     }
 
     public static String getOutputGdyjDir() {

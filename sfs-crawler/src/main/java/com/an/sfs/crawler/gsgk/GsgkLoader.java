@@ -8,9 +8,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class GsgkLoader {
+    private static final Logger LOGGER = LoggerFactory.getLogger(GsgkLoader.class);
     private List<GsgkVo> gsgkList = new ArrayList<>();
     private Map<String, GsgkVo> gsgkMap = new HashMap<>();
+
+    public String getName(String stockCode) {
+        return gsgkMap.get(stockCode).getName();
+    }
 
     public List<GsgkVo> getGsgkList() {
         return gsgkList;
@@ -27,14 +35,16 @@ public class GsgkLoader {
             while ((line = br.readLine()) != null) {
                 String[] strs = line.split(",");
                 String code = strs[0];
-                String industry = strs[1];
-                String createDate = strs[2];
-                String publicDate = strs[3];
-                GsgkVo vo = new GsgkVo(code, industry, createDate, publicDate);
+                String name = strs[1];
+                String industry = strs[2];
+                String createDate = strs[3];
+                String publicDate = strs[4];
+                GsgkVo vo = new GsgkVo(code, name, industry, createDate, publicDate);
                 gsgkList.add(vo);
                 gsgkMap.put(code, vo);
             }
         } catch (IOException e) {
+            LOGGER.error("Error ", e);
         }
     }
 

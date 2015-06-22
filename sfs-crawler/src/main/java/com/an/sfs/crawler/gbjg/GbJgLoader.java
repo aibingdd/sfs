@@ -15,8 +15,6 @@ import org.slf4j.LoggerFactory;
 import com.an.sfs.crawler.AppFilePath;
 import com.an.sfs.crawler.AppUtil;
 import com.an.sfs.crawler.FileUtil;
-import com.an.sfs.crawler.name.StockLoader;
-import com.an.sfs.crawler.name.StockVo;
 
 public class GbJgLoader {
     private static final Logger LOGGER = LoggerFactory.getLogger(GbJgLoader.class);
@@ -89,15 +87,5 @@ public class GbJgLoader {
             inst.init();
         }
         return inst;
-    }
-
-    public static void main(String[] args) {
-        Map<String, GbjgVo> map = GbJgLoader.getInst().getCurSeasonGbjgMap();
-        List<StockVo> stocks = StockLoader.getInst().getStocks();
-        for (StockVo vo : stocks) {
-            if (!map.containsKey(vo.getCode())) {
-                System.out.println(vo.getCode());
-            }
-        }
     }
 }

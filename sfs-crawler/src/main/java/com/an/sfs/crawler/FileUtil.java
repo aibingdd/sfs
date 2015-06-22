@@ -19,10 +19,10 @@ import org.slf4j.LoggerFactory;
 import com.an.sfs.crawler.ccjg.CcjgLoader;
 import com.an.sfs.crawler.cwfx.CwfxProfitUpLoader;
 import com.an.sfs.crawler.gdyj.GdrsDownLoader;
+import com.an.sfs.crawler.gsgk.GsgkLoader;
+import com.an.sfs.crawler.gsgk.StockCodeLoader;
 import com.an.sfs.crawler.name.IgnoreStockLoader;
 import com.an.sfs.crawler.name.IndustryLoader;
-import com.an.sfs.crawler.name.StockLoader;
-import com.an.sfs.crawler.name.StockVo;
 import com.an.sfs.crawler.name.WhiteHorseStockLoader;
 
 public class FileUtil {
@@ -235,9 +235,9 @@ public class FileUtil {
         int i = 1;
         for (String stock : stockCodeList) {
             String url = "<a href=\"http://f10.eastmoney.com/f10_v2/ShareholderResearch.aspx?code=%s%s\">%s</a>";
-            text.append(String.format(url, StockVo.getTypeStr(stock), stock, stock));
+            text.append(String.format(url, StockCodeLoader.getTypeStr(stock), stock, stock));
 
-            String name = StockLoader.getInst().getName(stock);
+            String name = GsgkLoader.getInst().getName(stock);
             if (name == null) {
                 name = IndustryLoader.getInst().getIndustryName(stock);
             }

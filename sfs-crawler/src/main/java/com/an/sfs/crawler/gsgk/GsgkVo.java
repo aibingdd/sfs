@@ -2,6 +2,7 @@ package com.an.sfs.crawler.gsgk;
 
 public class GsgkVo {
     private String code;
+    private String name;
     private String industry;
     private String createDate;
     private String publicDate;
@@ -16,12 +17,14 @@ public class GsgkVo {
 
     /**
      * @param code
+     * @param name
      * @param industry
      * @param createDate
      * @param publicDate
      */
-    public GsgkVo(String code, String industry, String createDate, String publicDate) {
+    public GsgkVo(String code, String name, String industry, String createDate, String publicDate) {
         this.code = code;
+        this.name = name;
         this.industry = industry;
         this.createDate = createDate;
         this.publicDate = publicDate;
@@ -29,8 +32,8 @@ public class GsgkVo {
 
     @Override
     public String toString() {
-        return "GsgkVo [code=" + code + ", industry=" + industry + ", createDate=" + createDate + ", publicDate="
-                + publicDate + "]";
+        return "GsgkVo [code=" + code + ", name=" + name + ", industry=" + industry + ", createDate=" + createDate
+                + ", publicDate=" + publicDate + "]";
     }
 
     public String getCode() {
@@ -39,6 +42,14 @@ public class GsgkVo {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getIndustry() {

@@ -13,8 +13,7 @@ import org.slf4j.LoggerFactory;
 import com.an.sfs.crawler.AppFilePath;
 import com.an.sfs.crawler.AppUtil;
 import com.an.sfs.crawler.FileUtil;
-import com.an.sfs.crawler.name.StockLoader;
-import com.an.sfs.crawler.name.StockVo;
+import com.an.sfs.crawler.gsgk.StockCodeLoader;
 
 public class GbJgFetcher {
     private static final Logger LOGGER = LoggerFactory.getLogger(GbJgFetcher.class);
@@ -30,13 +29,12 @@ public class GbJgFetcher {
     }
 
     private void download() {
-        List<StockVo> stocks = StockLoader.getInst().getStocks();
-        for (StockVo vo : stocks) {
-            String code = vo.getCode();
-            String typeStr = vo.getTypeStr();
+        List<String> stockCodeList = StockCodeLoader.getInst().getStockCodeList();
+        for (String stock : stockCodeList) {
+            String typeStr = StockCodeLoader.getTypeStr(stock);
 
-            String url = String.format(URL, typeStr, code);
-            String fp = AppFilePath.getInputGbjgRawDir() + File.separator + code + ".html";
+            String url = String.format(URL, typeStr, stock);
+            String fp = AppFilePath.getInputGbjgRawDir() + File.separator + stock + ".html";
             if (!FileUtil.isFileExist(fp)) {
                 AppUtil.download(url, fp);
             }

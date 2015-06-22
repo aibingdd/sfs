@@ -16,7 +16,6 @@ import com.an.sfs.crawler.AppFilePath;
 import com.an.sfs.crawler.AppUtil;
 import com.an.sfs.crawler.FileUtil;
 import com.an.sfs.crawler.gsgk.StockIndustryLoader;
-import com.an.sfs.crawler.name.IndustryLoader;
 import com.an.sfs.crawler.name.IndustryVo;
 
 public class InvalidCwfxLoader {

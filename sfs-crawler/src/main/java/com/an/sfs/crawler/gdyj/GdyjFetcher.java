@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import com.an.sfs.crawler.AppFilePath;
 import com.an.sfs.crawler.AppUtil;
 import com.an.sfs.crawler.FileUtil;
-import com.an.sfs.crawler.name.StockVo;
+import com.an.sfs.crawler.gsgk.StockCodeLoader;
 
 public class GdyjFetcher {
     private static final Logger LOGGER = LoggerFactory.getLogger(GdyjFetcher.class);
@@ -24,47 +24,36 @@ public class GdyjFetcher {
     private static final String FLAG_GDRS = "<strong>股东人数</strong>";
     private static final String FLAG_GDRS_DATA = "tips-dataL";
 
-    private List<String> stockCodeList = new ArrayList<>();
+    private static final String FLAG_SDLTGD = "<strong>十大流通股东</strong>";
 
     public void run() {
-        LOGGER.info("Load stock code ...");
-        loadStockCode();
         LOGGER.info("Fetch ...");
         fetchHtml(GDYJ_URL);
         LOGGER.info("Analyze ...");
-        analyze();
+        analyzeGdrs();
     }
 
     private void fetchHtml(String url) {
-        for (String code : stockCodeList) {
-            String typeStr = StockVo.getTypeStr(code);
-            String httpUrl = String.format(url, typeStr, code);
-            String filePath = AppFilePath.getInputGdyjRawDir() + File.separator + code + ".html";
+        List<String> stockList = StockCodeLoader.getInst().getStockCodeList();
+        for (String stock : stockList) {
+            String typeStr = StockCodeLoader.getTypeStr(stock);
+            String httpUrl = String.format(url, typeStr, stock);
+            String filePath = AppFilePath.getInputGdyjRawDir() + File.separator + stock + ".html";
             if (!FileUtil.isFileExist(filePath)) {
                 AppUtil.download(httpUrl, filePath);
             }
 
-            extract(filePath);
+            extractGdrs(filePath);
         }
     }
 
-    private void extract(String filePath) {
+    private void extractGdrs(String filePath) {
         String stock = FileUtil.getFileName(filePath);
         boolean beginGdrs = false;
         boolean finishGdrs = false;
-        boolean finishName = false;
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line = null;
             while ((line = br.readLine()) != null) {
-                if (!finishName) {
-                    int idx = line.indexOf("(" + stock + ")");
-                    if (idx != -1) {
-                        String name = line.substring(0, idx).trim();
-                        // stockNameMap.put(code, name);
-                        finishName = true;
-                    }
-                }
-
                 if (!finishGdrs && line.indexOf(FLAG_GDRS) != -1) {
                     beginGdrs = true;
                     continue;
@@ -72,7 +61,7 @@ public class GdyjFetcher {
                 if (!finishGdrs && beginGdrs && line.indexOf("<table") != -1) {
                     String text = line.trim();
                     text = text.replaceAll("><", ">\n<");
-                    String fp = AppFilePath.getInputGdyjTxtDir() + File.separator + stock + ".txt";
+                    String fp = AppFilePath.getInputGdyjGdrsDir() + File.separator + stock + ".txt";
                     FileUtil.writeFile(fp, text);
                     finishGdrs = true;
                 }
@@ -82,9 +71,9 @@ public class GdyjFetcher {
         }
     }
 
-    private void analyze() {
+    private void analyzeGdrs() {
         List<File> files = new ArrayList<>();
-        FileUtil.getFilesUnderDir(AppFilePath.getInputGdyjTxtDir(), files);
+        FileUtil.getFilesUnderDir(AppFilePath.getInputGdyjGdrsDir(), files);
         for (File f : files) {
             String stockCode = FileUtil.getFileName(f.getPath());
             List<String> list = new ArrayList<>();
@@ -104,30 +93,6 @@ public class GdyjFetcher {
             } catch (IOException e) {
                 LOGGER.error("Error ", e);
             }
-        }
-    }
-
-    private void loadStockCode() {
-        try (BufferedReader br = new BufferedReader(new FileReader(AppFilePath.getConfFile("SH.EBK")));) {
-            String line = null;
-            while ((line = br.readLine()) != null) {
-                if (!line.isEmpty()) {
-                    stockCodeList.add(line.trim().substring(1));
-                }
-            }
-        } catch (IOException e) {
-            LOGGER.error("Error while parsing SH.EBK.");
-        }
-
-        try (BufferedReader br = new BufferedReader(new FileReader(AppFilePath.getConfFile("SZ.EBK")));) {
-            String line = null;
-            while ((line = br.readLine()) != null) {
-                if (!line.isEmpty()) {
-                    stockCodeList.add(line.trim().substring(1));
-                }
-            }
-        } catch (IOException e) {
-            LOGGER.error("Error while parsing SZ.EBK.");
         }
     }
 }
