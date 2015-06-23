@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import com.an.sfs.crawler.AppFilePath;
 import com.an.sfs.crawler.AppUtil;
 import com.an.sfs.crawler.FileUtil;
-import com.an.sfs.crawler.gsgk.StockCodeLoader;
+import com.an.sfs.crawler.tdx.StockLoader;
 
 public class GgdqFetcher {
     private static final Logger LOGGER = LoggerFactory.getLogger(GgdqFetcher.class);
@@ -22,7 +22,7 @@ public class GgdqFetcher {
     }
 
     private void fetchGgdqData(String url, String fileDir) {
-        List<String> stockCodeList = StockCodeLoader.getInst().getStockCodeList();
+        List<String> stockCodeList = StockLoader.getInst().getStockCodeList();
         for (String stock : stockCodeList) {
             downloadGgdq(url, 1, fileDir, stock);
         }

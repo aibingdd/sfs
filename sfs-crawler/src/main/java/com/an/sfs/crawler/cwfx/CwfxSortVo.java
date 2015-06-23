@@ -1,6 +1,9 @@
 package com.an.sfs.crawler.cwfx;
 
 public class CwfxSortVo implements Comparable<CwfxSortVo> {
+    /**
+     * Stock Code or Industry Code
+     */
     private String code;
     private float rona;
     private float rota;
@@ -8,6 +11,7 @@ public class CwfxSortVo implements Comparable<CwfxSortVo> {
 
     /**
      * @param code
+     *            Stock Code or Industry Code
      * @param rona
      * @param rota
      * @param dtar

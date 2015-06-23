@@ -14,7 +14,7 @@ import com.an.sfs.crawler.ccjg.CcjgVo;
 import com.an.sfs.crawler.gbjg.GbJgLoader;
 import com.an.sfs.crawler.gbjg.GbjgVo;
 import com.an.sfs.crawler.gdyj.GdyjVo;
-import com.an.sfs.crawler.gsgk.StockCodeLoader;
+import com.an.sfs.crawler.tdx.StockLoader;
 
 public class StockJgMain {
     private static final Logger LOGGER = LoggerFactory.getLogger(AppFilePath.class);
@@ -46,7 +46,7 @@ public class StockJgMain {
 
         List<GdyjVo> gdyjList = new ArrayList<>();
 
-        List<String> stockCodeList = StockCodeLoader.getInst().getStockCodeList();
+        List<String> stockCodeList = StockLoader.getInst().getStockCodeList();
         for (String stock : stockCodeList) {
             long totalL = 0L;
             if (stockJgTotalMap.containsKey(stock)) {

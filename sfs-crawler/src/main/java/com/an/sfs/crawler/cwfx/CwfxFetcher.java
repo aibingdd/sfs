@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import com.an.sfs.crawler.AppFilePath;
 import com.an.sfs.crawler.AppUtil;
 import com.an.sfs.crawler.FileUtil;
-import com.an.sfs.crawler.gsgk.StockCodeLoader;
+import com.an.sfs.crawler.tdx.StockLoader;
 
 public class CwfxFetcher {
     private static final Logger LOGGER = LoggerFactory.getLogger(CwfxFetcher.class);
@@ -52,10 +52,10 @@ public class CwfxFetcher {
     }
 
     private void fetchCwfxData(String url, String fileDir) {
-        List<String> stockCodeList = StockCodeLoader.getInst().getStockCodeList();
+        List<String> stockCodeList = StockLoader.getInst().getStockCodeList();
         for (String stock : stockCodeList) {
-            String codeSuffix = StockCodeLoader.getCodeSuffix(stock);
-            String typeStr = StockCodeLoader.getTypeStr(stock);
+            String codeSuffix = StockLoader.getCodeSuffix(stock);
+            String typeStr = StockLoader.getTypeStr(stock);
             String httpUrl = String.format(url, stock, codeSuffix, Count, typeStr, stock, n);
             String fp = fileDir + File.separator + stock + ".txt";
             if (!FileUtil.isFileExist(fp)) {
@@ -219,7 +219,6 @@ public class CwfxFetcher {
                 StringBuilder text = new StringBuilder();
                 FileUtil.convertListToText(list, 8, text);
                 String fp = AppFilePath.getOutputCwfxDir() + File.separator + stock + ".txt";
-                LOGGER.info("Save file {}", fp);
                 FileUtil.writeFile(fp, text.toString());
             } catch (IOException e) {
                 LOGGER.error("Error while analyzing file {}", f.getPath());

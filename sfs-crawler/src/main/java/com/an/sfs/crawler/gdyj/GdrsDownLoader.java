@@ -36,7 +36,7 @@ public class GdrsDownLoader {
             boolean invalid = false;
             for (GdrsVo vo : list) {
                 if (vo.getDate().compareTo(GdrsMain.START_SEASON) >= 0) {
-                    if (vo.getCountChangeRate() > 1) {
+                    if (vo.getShareholderCountChangeRate() > 1) {
                         invalid = true;
                         break;
                     }

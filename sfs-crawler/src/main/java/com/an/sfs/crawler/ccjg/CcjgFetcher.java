@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 import com.an.sfs.crawler.AppFilePath;
 import com.an.sfs.crawler.AppUtil;
 import com.an.sfs.crawler.FileUtil;
-import com.an.sfs.crawler.gsgk.StockCodeLoader;
+import com.an.sfs.crawler.tdx.StockLoader;
 
 public class CcjgFetcher {
     private static final Logger LOGGER = LoggerFactory.getLogger(CcjgFetcher.class);
@@ -39,7 +39,7 @@ public class CcjgFetcher {
     }
 
     private void download() {
-        List<String> stockCodeList = StockCodeLoader.getInst().getStockCodeList();
+        List<String> stockCodeList = StockLoader.getInst().getStockCodeList();
         for (String stock : stockCodeList) {
             boolean finished = false;
 
@@ -102,8 +102,8 @@ public class CcjgFetcher {
                                 String text = line.substring(startIndex + 1, endIndex);
                                 text = text.replaceAll("\",", "\n");
                                 text = text.replaceAll("\"", "");
-                                FileUtil.writeFile(AppFilePath.getInputCcjgTxtDir(season) + File.separator + fn
-                                        + ".txt", text);
+                                String fp = AppFilePath.getInputCcjgTxtDir(season) + File.separator + fn + ".txt";
+                                FileUtil.writeFile(fp, text);
                             }
                         }
                     }

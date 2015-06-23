@@ -1,18 +1,24 @@
 package com.an.sfs.crawler.gdyj;
 
 public class GdrsVo implements Comparable<GdrsVo> {
-    private String code;
     private String date;
-    private int count;
-    private float countChangeRate;
-    private int floatStock;
-    private float floatStockChangeRate;
+    private String code;
+    private int shareholderCount;
+    private int circulationStockCountPer;
     private float stockPrice;
-    private long holdStockPrice;
-    private float top10StockRate;
-    private float top10FloatStockRate;
+    private float sdgdRate;
+    private float sdltgdRate;
 
-    public GdrsVo() {
+    private float shareholderCountChangeRate;
+    private float circulationStockCountPerChangeRate;
+
+    @Override
+    public String toString() {
+        return "GdrsVo [date=" + date + ", code=" + code + ", shareholderCount=" + shareholderCount
+                + ", circulationStockCountPer=" + circulationStockCountPer + ", stockPrice=" + stockPrice
+                + ", sdgdRate=" + sdgdRate + ", sdltgdRate=" + sdltgdRate + ", shareholderCountChangeRate="
+                + shareholderCountChangeRate + ", circulationStockCountPerChangeRate="
+                + circulationStockCountPerChangeRate + "]";
     }
 
     @Override
@@ -23,12 +29,12 @@ public class GdrsVo implements Comparable<GdrsVo> {
         return this.date.compareTo(o.date) * -1;
     }
 
-    @Override
-    public String toString() {
-        return "GdrsVo [code=" + code + ", date=" + date + ", count=" + count + ", countChangeRate=" + countChangeRate
-                + ", floatStock=" + floatStock + ", floatStockChangeRate=" + floatStockChangeRate + ", stockPrice="
-                + stockPrice + ", holdStockPrice=" + holdStockPrice + ", top10StockRate=" + top10StockRate
-                + ", top10FloatStockRate=" + top10FloatStockRate + "]";
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public String getCode() {
@@ -39,44 +45,20 @@ public class GdrsVo implements Comparable<GdrsVo> {
         this.code = code;
     }
 
-    public String getDate() {
-        return date;
+    public int getShareholderCount() {
+        return shareholderCount;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public void setShareholderCount(int shareholderCount) {
+        this.shareholderCount = shareholderCount;
     }
 
-    public int getCount() {
-        return count;
+    public int getCirculationStockCountPer() {
+        return circulationStockCountPer;
     }
 
-    public void setCount(int count) {
-        this.count = count;
-    }
-
-    public float getCountChangeRate() {
-        return countChangeRate;
-    }
-
-    public void setCountChangeRate(float countChangeRate) {
-        this.countChangeRate = countChangeRate;
-    }
-
-    public int getFloatStock() {
-        return floatStock;
-    }
-
-    public void setFloatStock(int floatStock) {
-        this.floatStock = floatStock;
-    }
-
-    public float getFloatStockChangeRate() {
-        return floatStockChangeRate;
-    }
-
-    public void setFloatStockChangeRate(float floatStockChangeRate) {
-        this.floatStockChangeRate = floatStockChangeRate;
+    public void setCirculationStockCountPer(int circulationStockCountPer) {
+        this.circulationStockCountPer = circulationStockCountPer;
     }
 
     public float getStockPrice() {
@@ -87,27 +69,35 @@ public class GdrsVo implements Comparable<GdrsVo> {
         this.stockPrice = stockPrice;
     }
 
-    public long getHoldStockPrice() {
-        return holdStockPrice;
+    public float getSdgdRate() {
+        return sdgdRate;
     }
 
-    public void setHoldStockPrice(long holdStockPrice) {
-        this.holdStockPrice = holdStockPrice;
+    public void setSdgdRate(float sdgdRate) {
+        this.sdgdRate = sdgdRate;
     }
 
-    public float getTop10StockRate() {
-        return top10StockRate;
+    public float getSdltgdRate() {
+        return sdltgdRate;
     }
 
-    public void setTop10StockRate(float top10StockRate) {
-        this.top10StockRate = top10StockRate;
+    public void setSdltgdRate(float sdltgdRate) {
+        this.sdltgdRate = sdltgdRate;
     }
 
-    public float getTop10FloatStockRate() {
-        return top10FloatStockRate;
+    public float getShareholderCountChangeRate() {
+        return shareholderCountChangeRate;
     }
 
-    public void setTop10FloatStockRate(float top10FloatStockRate) {
-        this.top10FloatStockRate = top10FloatStockRate;
+    public void setShareholderCountChangeRate(float shareholderCountChangeRate) {
+        this.shareholderCountChangeRate = shareholderCountChangeRate;
+    }
+
+    public float getCirculationStockCountPerChangeRate() {
+        return circulationStockCountPerChangeRate;
+    }
+
+    public void setCirculationStockCountPerChangeRate(float circulationStockCountPerChangeRate) {
+        this.circulationStockCountPerChangeRate = circulationStockCountPerChangeRate;
     }
 }

@@ -5,8 +5,11 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -15,8 +18,7 @@ import org.slf4j.LoggerFactory;
 import com.an.sfs.crawler.AppFilePath;
 import com.an.sfs.crawler.AppUtil;
 import com.an.sfs.crawler.FileUtil;
-import com.an.sfs.crawler.gsgk.StockIndustryLoader;
-import com.an.sfs.crawler.name.IndustryVo;
+import com.an.sfs.crawler.tdx.StockLoader;
 
 public class InvalidCwfxLoader {
     private static final Logger LOGGER = LoggerFactory.getLogger(InvalidCwfxLoader.class);
@@ -37,8 +39,14 @@ public class InvalidCwfxLoader {
     }
 
     private void init() {
-        extract();
+        if (!FileUtil.isFileExist(getInvalidCwfxFile())) {
+            extract();
+        }
 
+        load();
+    }
+
+    private void load() {
         try (BufferedReader br = new BufferedReader(new FileReader(getInvalidCwfxFile()))) {
             String line = null;
             while ((line = br.readLine()) != null) {
@@ -56,10 +64,17 @@ public class InvalidCwfxLoader {
         List<File> files = new ArrayList<File>();
         FileUtil.getFilesUnderDir(AppFilePath.getOutputCwfxDir(), files);
 
-        StringBuilder text = new StringBuilder();
+        Map<String, List<String>> industryTextMap = new HashMap<>();
+
         for (File f : files) {
             String stock = FileUtil.getFileName(f.toString());
-            IndustryVo industry = StockIndustryLoader.getInst().getIndustry(stock);
+            String industryName = StockLoader.getInst().getIndustryName(stock);
+            String stockName = StockLoader.getInst().getStockName(stock);
+
+            if (!industryTextMap.containsKey(industryName)) {
+                industryTextMap.put(industryName, new ArrayList<String>());
+            }
+
             try (BufferedReader br = new BufferedReader(new FileReader(f));) {
                 String line = null;
                 int i = 0;
@@ -68,31 +83,23 @@ public class InvalidCwfxLoader {
                         if (i++ < 3) {
                             line = line.replaceAll(",", "");
                             String[] strs = line.split(";");
-                            if (!AppUtil.INVALID.equals(strs[3])) {
-                                float rona = Float.parseFloat(strs[3]);
-                                if (rona > 100f) {
-                                    text.append(stock).append(",").append(industry.getIndustry()).append(",")
-                                            .append(line).append("\n");
-                                    break;
-                                }
-                                if (rona < -50f) {
-                                    text.append(stock).append(",").append(industry.getIndustry()).append(",")
-                                            .append(line).append("\n");
-                                    break;
+
+                            boolean invalid = false;
+                            if (!AppUtil.INVALID.equals(strs[5])) {
+                                float rona = Float.parseFloat(strs[5]);
+                                if (rona > 100f || rona < -50f) {
+                                    invalid = true;
                                 }
                             }
-                            if (!AppUtil.INVALID.equals(strs[4])) {
-                                float rota = Float.parseFloat(strs[4]);
-                                if (rota > 100f) {
-                                    text.append(stock).append(",").append(industry.getIndustry()).append(",")
-                                            .append(line).append("\n");
-                                    break;
+                            if (!AppUtil.INVALID.equals(strs[6])) {
+                                float rota = Float.parseFloat(strs[6]);
+                                if (rota > 100f || rota < -50f) {
+                                    invalid = true;
                                 }
-                                if (rota < -50f) {
-                                    text.append(stock).append(",").append(industry.getIndustry()).append(",")
-                                            .append(line).append("\n");
-                                    break;
-                                }
+                            }
+                            if (invalid) {
+                                String text = stock + "," + industryName + "," + stockName + "," + line + "\n";
+                                industryTextMap.get(industryName).add(text);
                             }
                         }
                     }
@@ -103,6 +110,17 @@ public class InvalidCwfxLoader {
             }
         }
 
+        List<String> industryList = new ArrayList<>();
+        industryList.addAll(industryTextMap.keySet());
+        Collections.sort(industryList);
+
+        StringBuilder text = new StringBuilder();
+        for (String industry : industryList) {
+            List<String> list = industryTextMap.get(industry);
+            for (String line : list) {
+                text.append(line);
+            }
+        }
         FileUtil.writeFile(getInvalidCwfxFile(), text.toString());
     }
 

@@ -2,10 +2,10 @@ package com.an.sfs.crawler;
 
 import java.util.List;
 
-import com.an.sfs.crawler.gsgk.GsgkLoader;
 import com.an.sfs.crawler.jjcc.JjccLoader;
 import com.an.sfs.crawler.name.FundLoader;
 import com.an.sfs.crawler.name.FundVo;
+import com.an.sfs.crawler.tdx.StockLoader;
 
 public class FundMain {
     private static final String STOCK = "600551";
@@ -23,8 +23,8 @@ public class FundMain {
         System.out.println("Search stock:");
         List<String> stocks = JjccLoader.getInst().getStocks(FUND);
         for (String stock : stocks) {
-            String vo = GsgkLoader.getInst().getName(stock);
-            System.out.println(vo);
+            String name = StockLoader.getInst().getStockName(stock);
+            System.out.println(name);
         }
     }
 }

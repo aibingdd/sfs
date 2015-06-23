@@ -14,10 +14,10 @@ import com.an.sfs.crawler.cwfx.CwfxSortVo;
 import com.an.sfs.crawler.cwfx.CwfxVo;
 import com.an.sfs.crawler.cwfx.InvalidCwfxLoader;
 import com.an.sfs.crawler.fhrz.FhrzLoader;
-import com.an.sfs.crawler.gsgk.GsgkLoader;
-import com.an.sfs.crawler.gsgk.GsgkVo;
-import com.an.sfs.crawler.gsgk.StockIndustryLoader;
 import com.an.sfs.crawler.name.IndustryLoader;
+import com.an.sfs.crawler.report.ReportVo;
+import com.an.sfs.crawler.report.ReportVoLoader;
+import com.an.sfs.crawler.tdx.StockLoader;
 import com.an.sfs.crawler.tfp.TfpLoader;
 
 /**
@@ -79,13 +79,13 @@ public class CwfxMain {
             if (invalidCwfxSet.contains(stock)) {
                 continue;
             }
-
-            GsgkVo gsgk = GsgkLoader.getInst().getGsgk(stock);
-            if (gsgk != null && gsgk.isPublicAfter("2012-12-31")) {
+            String publicDate = StockLoader.getInst().getPublicDate(stock);
+            if (publicDate.compareTo("2012-12-31") > 0) {
                 continue;
             }
 
-            String industryCode = StockIndustryLoader.getInst().getIndustry(stock).getCode();
+            String industryName = StockLoader.getInst().getIndustryName(stock);
+            String industryCode = IndustryLoader.getInst().getIndustryCode(industryName);
             if (!industryCwfxMap.containsKey(industryCode)) {
                 industryCwfxMap.put(industryCode, new ArrayList<>());
             }
@@ -147,11 +147,6 @@ public class CwfxMain {
                 dtarMap.put(vo.getCode(), FileUtil.PERCENT_FORMAT.format(dtar));
             }
 
-            List<Map<String, String>> appendList = new ArrayList<>();
-            appendList.add(ronaMap);
-            appendList.add(rotaMap);
-            appendList.add(dtarMap);
-
             String name = IndustryLoader.getInst().getIndustryName(industryCode);
             String txt = AppFilePath.getOutputCwfxRonaDir() + File.separator + "Stock_Cwfx_Rona_" + industryCode + name
                     + ".txt";
@@ -159,7 +154,10 @@ public class CwfxMain {
                     + name + ".html";
 
             FileUtil.exportStock(stockList, txt);
-            FileUtil.exportHtml(stockList, appendList, html);
+
+            List<ReportVo> reportVoList = new ArrayList<>();
+            ReportVoLoader.loadReportVo(stockList, ronaMap, rotaMap, dtarMap, reportVoList);
+            FileUtil.exportReport(reportVoList, html);
         }
 
         exportIndustryRona(avgIndustryVoList);
@@ -189,7 +187,10 @@ public class CwfxMain {
         String txt = AppFilePath.getOutputCwfxRonaDir() + File.separator + "Stock_Cwfx_Industry_Rona" + ".txt";
         String html = AppFilePath.getOutputCwfxRonaDir() + File.separator + "Stock_Cwfx_Industry_Rona" + ".html";
         FileUtil.exportStock(stockList, txt);
-        FileUtil.exportHtml(stockList, appendList, html);
+
+        List<ReportVo> reportVoList = new ArrayList<>();
+        ReportVoLoader.loadReportVo(stockList, ronaMap, rotaMap, dtarMap, reportVoList);
+        FileUtil.exportReport(reportVoList, html);
     }
 
     private static void searchRona() {
@@ -202,9 +203,8 @@ public class CwfxMain {
             if (invalidSet.contains(stock)) {
                 continue;
             }
-
-            GsgkVo gsgk = GsgkLoader.getInst().getGsgk(stock);
-            if (gsgk != null && gsgk.isPublicAfter("2012-12-31")) {
+            String publicDate = StockLoader.getInst().getPublicDate(stock);
+            if (publicDate.compareTo("2012-12-31") > 0) {
                 continue;
             }
 
@@ -243,15 +243,13 @@ public class CwfxMain {
             dtarMap.put(vo.getCode(), FileUtil.PERCENT_FORMAT.format(dtar));
         }
 
-        List<Map<String, String>> appendList = new ArrayList<>();
-        appendList.add(ronaMap);
-        appendList.add(rotaMap);
-        appendList.add(dtarMap);
-
         String txt = AppFilePath.getOutputCwfxRonaDir() + File.separator + "Stock_Cwfx_Rona.txt";
         String html = AppFilePath.getOutputCwfxRonaDir() + File.separator + "Stock_Cwfx_Rona.html";
 
         FileUtil.exportStock(stockList, txt);
-        FileUtil.exportHtml(stockList, appendList, html);
+
+        List<ReportVo> reportVoList = new ArrayList<>();
+        ReportVoLoader.loadReportVo(stockList, ronaMap, rotaMap, dtarMap, reportVoList);
+        FileUtil.exportReport(reportVoList, html);
     }
 }

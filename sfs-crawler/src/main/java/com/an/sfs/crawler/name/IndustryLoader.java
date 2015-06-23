@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -17,98 +16,78 @@ import org.slf4j.LoggerFactory;
 
 import com.an.sfs.crawler.AppFilePath;
 import com.an.sfs.crawler.FileUtil;
-import com.an.sfs.crawler.gsgk.StockIndustryLoader;
+import com.an.sfs.crawler.tdx.StockLoader;
+import com.an.sfs.crawler.tdx.StockVo;
 
 public class IndustryLoader {
     private static final Logger LOGGER = LoggerFactory.getLogger(IndustryLoader.class);
     private List<IndustryVo> industryList = new ArrayList<>();
-    // Industry Code -> Industry Name
-    private Map<String, String> industryCodeNameMap = new HashMap<String, String>();
-    // Industry Name -> Industry Code
-    private Map<String, String> industryNameCodeMap = new HashMap<String, String>();
-
-    private static String getIndustryFile() {
-        return AppFilePath.getOutputDir() + File.separator + "Industry.txt";
-    }
+    private Map<String, String> codeNameMap = new HashMap<>();
+    private Map<String, String> nameCodeMap = new HashMap<>();
 
     public List<IndustryVo> getIndustryList() {
         return industryList;
     }
 
-    public String getIndustryCode(String industryName) {
-        return industryNameCodeMap.get(industryName);
+    public String getIndustryName(String industryCode) {
+        return codeNameMap.get(industryCode);
     }
 
-    public String getIndustryName(String industryCode) {
-        return industryCodeNameMap.get(industryCode);
+    public String getIndustryCode(String industryName) {
+        return nameCodeMap.get(industryName);
+    }
+
+    private String getIndustryFile() {
+        return AppFilePath.getOutputDir() + File.separator + "Industry_Tdx.txt";
     }
 
     private void init() {
-        StockIndustryLoader.exportStockIndustryFile();
+        if (!FileUtil.isFileExist(getIndustryFile())) {
+            exportFile();
+        }
 
-        exportIndustryFile();
-
-        loadFromFile();
+        load();
     }
 
-    private void loadFromFile() {
-        String industryFile = getIndustryFile();
-        try (BufferedReader br = new BufferedReader(new FileReader(industryFile))) {
+    private void load() {
+        try (BufferedReader br = new BufferedReader(new FileReader(getIndustryFile()))) {
             String line = null;
             while ((line = br.readLine()) != null) {
                 if (!line.isEmpty()) {
                     String[] strs = line.split(",");
                     String code = strs[0];
-                    String industry = strs[1];
+                    String name = strs[1];
+                    IndustryVo vo = new IndustryVo(code, name);
 
-                    IndustryVo vo = new IndustryVo(code, industry);
                     industryList.add(vo);
-                    industryCodeNameMap.put(code, industry);
-                    industryNameCodeMap.put(industry, code);
+                    codeNameMap.put(code, name);
+                    nameCodeMap.put(name, code);
                 }
             }
         } catch (IOException e) {
+            LOGGER.error("Error ", e);
         }
     }
 
-    private static void exportIndustryFile() {
-        String industryFile = getIndustryFile();
-        if (!FileUtil.isFileExist(industryFile)) {
-            Set<String> industryNameSet = new HashSet<>();
-            String stockIndustryFile = StockIndustryLoader.getStockIndustryFile();
-            try (BufferedReader br = new BufferedReader(new FileReader(stockIndustryFile))) {
-                String line = null;
-                while ((line = br.readLine()) != null) {
-                    if (!line.isEmpty()) {
-                        String[] strs = line.split(",");
-                        String industry = strs[1];
-                        if (!industryNameSet.contains(industry)) {
-                            industryNameSet.add(industry);
-                        }
-                    }
-                }
-            } catch (IOException e) {
-            }
-            List<String> industryNameList = new ArrayList<>();
-            industryNameList.addAll(industryNameSet);
-            Collections.sort(industryNameList);
+    private void exportFile() {
+        Map<String, StockVo> map = StockLoader.getInst().getTstockMap();
 
-            StringBuilder text = new StringBuilder();
-            int i = 0;
-            for (String industry : industryNameList) {
-                String code = "9" + String.format("%05d", i++);
-                text.append(code).append(",").append(industry).append("\n");
-            }
-
-            LOGGER.info("Save file {}", industryFile);
-            FileUtil.writeFile(industryFile, text.toString());
+        Set<String> industrySet = new HashSet<>();
+        for (StockVo vo : map.values()) {
+            industrySet.add(vo.getIndustry());
         }
-    }
+        List<String> industryNameList = new ArrayList<>();
+        industryNameList.addAll(industrySet);
+        StringBuilder text = new StringBuilder();
 
-    private IndustryLoader() {
-    }
+        int i = 0;
+        for (String industry : industryNameList) {
+            String code = "9" + String.format("%05d", i++);
+            text.append(code).append(",").append(industry).append("\n");
+        }
 
-    private static IndustryLoader inst;
+        FileUtil.writeFile(getIndustryFile(), text.toString());
+    }
 
     public static IndustryLoader getInst() {
         if (inst == null) {
@@ -116,6 +95,11 @@ public class IndustryLoader {
             inst.init();
         }
         return inst;
+    }
+
+    private static IndustryLoader inst = null;
+
+    private IndustryLoader() {
     }
 
     public static void main(String[] args) {

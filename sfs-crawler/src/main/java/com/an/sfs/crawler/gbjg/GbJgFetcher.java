@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import com.an.sfs.crawler.AppFilePath;
 import com.an.sfs.crawler.AppUtil;
 import com.an.sfs.crawler.FileUtil;
-import com.an.sfs.crawler.gsgk.StockCodeLoader;
+import com.an.sfs.crawler.tdx.StockLoader;
 
 public class GbJgFetcher {
     private static final Logger LOGGER = LoggerFactory.getLogger(GbJgFetcher.class);
@@ -29,9 +29,9 @@ public class GbJgFetcher {
     }
 
     private void download() {
-        List<String> stockCodeList = StockCodeLoader.getInst().getStockCodeList();
+        List<String> stockCodeList = StockLoader.getInst().getStockCodeList();
         for (String stock : stockCodeList) {
-            String typeStr = StockCodeLoader.getTypeStr(stock);
+            String typeStr = StockLoader.getTypeStr(stock);
 
             String url = String.format(URL, typeStr, stock);
             String fp = AppFilePath.getInputGbjgRawDir() + File.separator + stock + ".html";
@@ -63,7 +63,6 @@ public class GbJgFetcher {
             String fp = AppFilePath.getOutputGbjgDir() + File.separator + stock + ".txt";
             StringBuilder text = new StringBuilder();
             FileUtil.convertListToText(valList, 4, text);
-            LOGGER.info("Save file {}", fp);
             FileUtil.writeFile(fp, text.toString());
         }
     }
@@ -84,7 +83,8 @@ public class GbJgFetcher {
                     if (start && line.contains("<table>")) {
                         String text = line.trim();
                         text = text.replaceAll("><", ">\n<");
-                        FileUtil.writeFile(AppFilePath.getInputGbjgTxtDir() + File.separator + fn + ".txt", text);
+                        String fp = AppFilePath.getInputGbjgTxtDir() + File.separator + fn + ".txt";
+                        FileUtil.writeFile(fp, text);
                         break;
                     }
                 }

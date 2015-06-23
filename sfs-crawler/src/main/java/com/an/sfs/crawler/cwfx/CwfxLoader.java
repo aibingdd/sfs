@@ -25,6 +25,18 @@ public class CwfxLoader {
         return cwfxMap;
     }
 
+    /**
+     * @param stockCode
+     * @return
+     */
+    public CwfxVo getCwfxVo(String stockCode) {
+        List<CwfxVo> list = cwfxMap.get(stockCode);
+        if (list != null && !list.isEmpty()) {
+            return list.get(0);
+        }
+        return null;
+    }
+
     private void init() {
         String dir = AppFilePath.getOutputCwfxDir();
         List<File> files = new ArrayList<File>();

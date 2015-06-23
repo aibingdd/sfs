@@ -21,17 +21,23 @@ public class JjmcFetcher {
     // type= 0-全部, 1-股票型, 2-混合型, 3-债券型 4-LOF, 5-ETF,6-QDII
     private final String URL = "http://hq2data.eastmoney.com/fund/fundlist.aspx?jsName=fundListObj&fund=0&type=%s&page=%s";
     private static final String FLAG = "<a href=\"http://fund.eastmoney.com/";
-    private static final String FILE_NAME = "jjmc.txt";
+
+    public static String getJjmcFile() {
+        return AppFilePath.getOutputJjmcDir() + File.separator + "jjmc.txt";
+    }
 
     public void run() {
+        LOGGER.info("Download ...");
         download();
+        LOGGER.info("Convert ...");
         convert();
+        LOGGER.info("Export ...");
         export();
     }
 
     private void download() {
-        List<JjType> jjTypes = JjTypeLoader.getJjTypes();
-        for (JjType jj : jjTypes) {
+        List<JgType> jjTypes = JgTypeLoader.getJjTypes();
+        for (JgType jj : jjTypes) {
             int pageCount = jj.getPageCount();
             for (int i = 0; i < pageCount; i++) {
                 int typeVal = jj.getValue();
@@ -88,9 +94,5 @@ public class JjmcFetcher {
             text.append(vo.getStr()).append("\n");
         }
         FileUtil.writeFile(getJjmcFile(), text.toString());
-    }
-
-    public static String getJjmcFile() {
-        return AppFilePath.getOutputJjmcDir() + File.separator + FILE_NAME;
     }
 }

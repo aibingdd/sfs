@@ -62,8 +62,8 @@ public class JjccFetcher {
                                 String text = line.substring(startIndex + 1, endIndex);
                                 text = text.replaceAll("\",", "\n");
                                 text = text.replaceAll("\"", "");
-                                FileUtil.writeFile(AppFilePath.getInputJjccTxtDir(season) + File.separator + fileName
-                                        + ".txt", text);
+                                String fp = AppFilePath.getInputJjccTxtDir(season) + File.separator + fileName + ".txt";
+                                FileUtil.writeFile(fp, text);
                             }
                         }
                     }

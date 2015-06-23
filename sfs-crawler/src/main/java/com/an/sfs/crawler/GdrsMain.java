@@ -88,10 +88,10 @@ public class GdrsMain {
             int currentCount = 0;
             for (GdrsVo vo : list) {
                 if (vo.getDate().equals(START_SEASON)) {
-                    startCount = vo.getCount();
+                    startCount = vo.getShareholderCount();
                 }
                 if (vo.getDate().equals(AppUtil.CUR_SEASON)) {
-                    currentCount = vo.getCount();
+                    currentCount = vo.getShareholderCount();
                 }
             }
             if (startCount != 0 && currentCount != 0) {

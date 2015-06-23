@@ -1,14 +1,14 @@
 package com.an.sfs.crawler.jjmc;
 
-public class JjType {
+public class JgType {
     private int value;
     private String name;
     private int pageCount;
 
-    public JjType() {
+    public JgType() {
     }
 
-    public JjType(int value, String name, int pageCount) {
+    public JgType(int value, String name, int pageCount) {
         this.value = value;
         this.name = name;
         this.pageCount = pageCount;

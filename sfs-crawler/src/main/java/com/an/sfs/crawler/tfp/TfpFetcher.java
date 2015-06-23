@@ -152,7 +152,8 @@ public class TfpFetcher {
                 }
             }
 
-            FileUtil.writeFile(AppFilePath.getOutputTfpggDir() + File.separator + fileName + ".txt", tfpText.toString());
+            String fp = AppFilePath.getOutputTfpggDir() + File.separator + fileName + ".txt";
+            FileUtil.writeFile(fp, tfpText.toString());
             // Save to one file
             allText.append(fileName).append("\n");
             allText.append(tfpText.toString());

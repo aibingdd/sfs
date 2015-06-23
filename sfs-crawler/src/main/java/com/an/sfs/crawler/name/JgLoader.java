@@ -73,7 +73,6 @@ public class JgLoader {
                 LOGGER.error("Error ", e);
             }
         }
-        LOGGER.info("Save file {}", JG_FILE);
         FileUtil.writeFile(JG_FILE, text.toString());
     }
 

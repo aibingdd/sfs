@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 import com.an.sfs.crawler.AppFilePath;
 import com.an.sfs.crawler.AppUtil;
 import com.an.sfs.crawler.FileUtil;
-import com.an.sfs.crawler.gsgk.StockCodeLoader;
+import com.an.sfs.crawler.tdx.StockLoader;
 
 public class FhrzFetcher {
     private static final Logger LOGGER = LoggerFactory.getLogger(FhrzFetcher.class);
@@ -36,9 +36,9 @@ public class FhrzFetcher {
     }
 
     private void fetchRawHtml(String url, String fileDir) {
-        List<String> stockCodeList = StockCodeLoader.getInst().getStockCodeList();
+        List<String> stockCodeList = StockLoader.getInst().getStockCodeList();
         for (String stock : stockCodeList) {
-            String typeStr = StockCodeLoader.getTypeStr(stock);
+            String typeStr = StockLoader.getTypeStr(stock);
             String httpUrl = String.format(url, typeStr, stock);
             String filePath = fileDir + File.separator + stock + ".html";
             if (!FileUtil.isFileExist(filePath)) {
@@ -58,7 +58,8 @@ public class FhrzFetcher {
                 while ((line = br.readLine()) != null) {
                     if (line.contains("BonusDetailsTable")) {
                         String text = line.trim().replaceAll("><", ">\n<");
-                        FileUtil.writeFile(AppFilePath.getInputFhrzFhyxDir() + File.separator + fileName + ".txt", text);
+                        String fp = AppFilePath.getInputFhrzFhyxDir() + File.separator + fileName + ".txt";
+                        FileUtil.writeFile(fp, text);
                     }
                 }
             } catch (IOException e) {
@@ -91,7 +92,8 @@ public class FhrzFetcher {
                     }
                 }
                 if (text != null) {
-                    FileUtil.writeFile(AppFilePath.getInputFhrzZfmxDir() + File.separator + fileName + ".txt", text);
+                    String fp = AppFilePath.getInputFhrzZfmxDir() + File.separator + fileName + ".txt";
+                    FileUtil.writeFile(fp, text);
                 }
             } catch (IOException e) {
                 LOGGER.error("Error ", e);

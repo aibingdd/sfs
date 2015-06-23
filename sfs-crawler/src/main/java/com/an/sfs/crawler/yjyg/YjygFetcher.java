@@ -52,7 +52,6 @@ public class YjygFetcher {
                         text = text.replaceAll("\"", "");
                         text = text.replaceAll("&sbquo", "");
                         text = text.replaceAll("～", ":");
-                        LOGGER.info("Save file: {}", txtFilePath);
                         FileUtil.writeFile(txtFilePath, text);
                     }
                 }

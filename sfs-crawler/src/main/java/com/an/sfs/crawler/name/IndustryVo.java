@@ -2,20 +2,20 @@ package com.an.sfs.crawler.name;
 
 public class IndustryVo {
     private String code;
-    private String industry;
+    private String name;
 
     /**
      * @param code
-     * @param industry
+     * @param name
      */
-    public IndustryVo(String code, String industry) {
+    public IndustryVo(String code, String name) {
         this.code = code;
-        this.industry = industry;
+        this.name = name;
     }
 
     @Override
     public String toString() {
-        return "IndustryVo [code=" + code + ", industry=" + industry + "]";
+        return "TIndustryVo [code=" + code + ", name=" + name + "]";
     }
 
     public String getCode() {
@@ -26,12 +26,11 @@ public class IndustryVo {
         this.code = code;
     }
 
-    public String getIndustry() {
-        return industry;
+    public String getName() {
+        return name;
     }
 
-    public void setIndustry(String industry) {
-        this.industry = industry;
+    public void setName(String name) {
+        this.name = name;
     }
-
 }

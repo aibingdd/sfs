@@ -16,14 +16,9 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.an.sfs.crawler.ccjg.CcjgLoader;
-import com.an.sfs.crawler.cwfx.CwfxProfitUpLoader;
-import com.an.sfs.crawler.gdyj.GdrsDownLoader;
-import com.an.sfs.crawler.gsgk.GsgkLoader;
-import com.an.sfs.crawler.gsgk.StockCodeLoader;
-import com.an.sfs.crawler.name.IgnoreStockLoader;
 import com.an.sfs.crawler.name.IndustryLoader;
-import com.an.sfs.crawler.name.WhiteHorseStockLoader;
+import com.an.sfs.crawler.report.ReportVo;
+import com.an.sfs.crawler.tdx.StockLoader;
 
 public class FileUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(FileUtil.class);
@@ -50,6 +45,7 @@ public class FileUtil {
      */
     public static void writeFile(String filePath, String text) {
         try (BufferedWriter out = new BufferedWriter(new FileWriter(filePath))) {
+            LOGGER.info("Save file {}", filePath);
             out.write(text);
         } catch (IOException e) {
             LOGGER.error("Error, filePath {}", filePath, e);
@@ -223,23 +219,61 @@ public class FileUtil {
      *            [ {code -> info}, {code -> info}]
      * @param fileName
      */
-    public static void exportHtml(List<String> stockCodeList, List<Map<String, String>> appendInfoList, String filePath) {
+    public static void exportReport(List<ReportVo> reportVoList, String filePath) {
         StringBuilder text = new StringBuilder();
         text.append("<html>\n");
         text.append("<head><meta charset=\"utf-8\"></head>\n");
         text.append("<body>\n");
 
-        text.append("摊薄净资产收益率").append(" | 摊薄总资产收益率").append(" | 资产负债率").append(" | 机构持仓").append(" | 市盈率")
-                .append(" | 市净率").append("<br>\n");
+        text.append("净资产收益率").append(" | 总资产收益率").append(" | 资产负债率").append(" | 市盈率").append(" | 市净率")
+                .append(" | 机构持仓").append("<br>\n");
+
+        String url = "<a href=\"http://f10.eastmoney.com/f10_v2/ShareholderResearch.aspx?code=%s%s\">%s</a>";
+        for (ReportVo vo : reportVoList) {
+            String stock = vo.getCode();
+
+            text.append(vo.getIndex()).append("&nbsp");
+            text.append(String.format(url, StockLoader.getTypeStr(stock), stock, stock)).append("&nbsp");
+            text.append(vo.getName());
+            text.append(" | ").append(vo.getRona());
+            text.append(" | ").append(vo.getRota());
+            text.append(" | ").append(vo.getDtar());
+            text.append(" | ").append(vo.getPe());
+            text.append(" | ").append(vo.getPb());
+            text.append(" | ").append(vo.getJgcc());
+            text.append(vo.getNote());
+
+            text.append("<br>\n");
+        }
+        text.append("</body>\n");
+        text.append("</html>");
+
+        FileUtil.writeFile(filePath, text.toString());
+    }
+
+    /**
+     * @param codeList
+     *            Stock Code or Industry Code
+     * @param appendInfoList
+     * @param filePath
+     */
+    public static void exportHtml(List<String> codeList, List<Map<String, String>> appendInfoList, String filePath) {
+        StringBuilder text = new StringBuilder();
+        text.append("<html>\n");
+        text.append("<head><meta charset=\"utf-8\"></head>\n");
+        text.append("<body>\n");
+
+        text.append("净资产收益率").append(" | 总资产收益率").append(" | 资产负债率").append(" | 市盈率").append(" | 市净率")
+                .append(" | 机构持仓").append("<br>\n");
 
         int i = 1;
-        for (String stock : stockCodeList) {
+        for (String code : codeList) {
             String url = "<a href=\"http://f10.eastmoney.com/f10_v2/ShareholderResearch.aspx?code=%s%s\">%s</a>";
-            text.append(String.format(url, StockCodeLoader.getTypeStr(stock), stock, stock));
+            text.append(String.format(url, StockLoader.getTypeStr(code), code, code));
 
-            String name = GsgkLoader.getInst().getName(stock);
+            String name = StockLoader.getInst().getStockName(code);
             if (name == null) {
-                name = IndustryLoader.getInst().getIndustryName(stock);
+                name = IndustryLoader.getInst().getIndustryName(code);
             }
 
             text.append(" ").append(String.format("%04d", i++)).append(" ");
@@ -251,27 +285,11 @@ public class FileUtil {
             text.append(name);
             if (appendInfoList != null && !appendInfoList.isEmpty()) {
                 for (Map<String, String> infoMap : appendInfoList) {
-                    if (infoMap.containsKey(stock)) {
-                        String info = infoMap.get(stock);
+                    if (infoMap.containsKey(code)) {
+                        String info = infoMap.get(code);
                         text.append(" | ").append(info);
                     }
                 }
-            }
-
-            long total = CcjgLoader.getInst().getTotal(stock);
-            text.append(" | " + FLOAT_FORMAT.format((float) total / 10000f) + "万");
-
-            if (IgnoreStockLoader.getInst().isIgnore(stock)) {
-                text.append(" | IGNORE");
-            } else if (WhiteHorseStockLoader.getInst().isWhiteHorse(stock)) {
-                text.append(" | WHITEHORSE");
-            }
-
-            if (GdrsDownLoader.getInst().isGdrsDown(stock)) {
-                text.append(" | GDRS");
-            }
-            if (CwfxProfitUpLoader.getInst().isProfitUp(stock)) {
-                text.append(" | PROFIT");
             }
 
             text.append("<br>\n");
@@ -293,7 +311,6 @@ public class FileUtil {
             text.append(code + "\n");
         }
 
-        LOGGER.info("Write file {}", filePath);
         FileUtil.writeFile(filePath, text.toString());
     }
 
@@ -314,6 +331,16 @@ public class FileUtil {
                     text.append(list.get(rowIdx * columnCnt + colIdx)).append(";");
                 }
             }
+        }
+    }
+
+    public static long parseFloat(String str) {
+        if (str.equals("0.00")) {
+            return 0;
+        } else if (str.endsWith("0")) {
+            return (long) (((int) (Float.parseFloat(str) * 10)) * 1000L);
+        } else {
+            return (long) (((int) (Float.parseFloat(str) * 100)) * 100L);
         }
     }
 }
