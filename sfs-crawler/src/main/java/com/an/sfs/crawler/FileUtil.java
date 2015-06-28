@@ -16,8 +16,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.an.sfs.crawler.cwfx.ReportVo;
 import com.an.sfs.crawler.name.IndustryLoader;
-import com.an.sfs.crawler.report.ReportVo;
 import com.an.sfs.crawler.tdx.StockLoader;
 
 public class FileUtil {
@@ -225,21 +225,29 @@ public class FileUtil {
         text.append("<head><meta charset=\"utf-8\"></head>\n");
         text.append("<body>\n");
 
-        text.append("净资产收益率").append(" | 总资产收益率").append(" | 资产负债率").append(" | 市盈率").append(" | 市净率")
+        text.append("净资产收益率").append(" | 总资产收益率").append(" | 资产负债率").append(" | 地区").append(" | 市盈率").append(" | 市净率")
                 .append(" | 机构持仓").append("<br>\n");
 
-        String url = "<a href=\"http://f10.eastmoney.com/f10_v2/ShareholderResearch.aspx?code=%s%s\">%s</a>";
-        for (ReportVo vo : reportVoList) {
-            String stock = vo.getCode();
+        String industryUrl = "<a href=\"D:\\sfs_home\\output\\cwfx_rona\\Stock_Cwfx_Rona_%s%s.html\">%s</a>";
+        String stockUrl = "<a href=\"http://f10.eastmoney.com/f10_v2/ShareholderResearch.aspx?code=%s%s\">%s</a>";
 
+        for (ReportVo vo : reportVoList) {
+            String code = vo.getCode();
             text.append(vo.getIndex()).append("&nbsp");
-            text.append(String.format(url, StockLoader.getTypeStr(stock), stock, stock)).append("&nbsp");
-            text.append(vo.getName());
-            text.append(" | ").append(vo.getRona());
-            text.append(" | ").append(vo.getRota());
-            text.append(" | ").append(vo.getDtar());
-            text.append(" | ").append(vo.getPe());
-            text.append(" | ").append(vo.getPb());
+            String url = null;
+            if (vo.isIndustry()) {
+                url = String.format(industryUrl, code, vo.getName().trim(), code);
+            } else {
+                url = String.format(stockUrl, StockLoader.getTypeStr(code), code, code);
+            }
+            text.append(url).append("&nbsp");
+            text.append(vo.getNameDisplayStr());
+            text.append(" | ").append(vo.getRonaStr());
+            text.append(" | ").append(vo.getRotaStr());
+            text.append(" | ").append(vo.getDtarStr());
+            text.append(" | ").append(vo.getRegion());
+            text.append(" | ").append(vo.getPeStr());
+            text.append(" | ").append(vo.getPbStr());
             text.append(" | ").append(vo.getJgcc());
             text.append(vo.getNote());
 

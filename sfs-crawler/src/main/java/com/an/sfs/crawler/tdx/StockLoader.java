@@ -26,12 +26,28 @@ public class StockLoader {
         return stockCodeList;
     }
 
+    public String getRegion(String stockCode) {
+        StockVo tStockVo = tstockMap.get(stockCode);
+        if (tStockVo != null) {
+            return tStockVo.getRegion();
+        }
+        return null;
+    }
+
     public String getStockName(String stockCode) {
         StockVo tStockVo = tstockMap.get(stockCode);
         if (tStockVo != null) {
             return tStockVo.getName();
         }
         return null;
+    }
+
+    public float getPrice(String stockCode) {
+        StockVo tStockVo = tstockMap.get(stockCode);
+        if (tStockVo != null) {
+            return tStockVo.getPrice();
+        }
+        return 0f;
     }
 
     public String getIndustryName(String stockCode) {
@@ -89,21 +105,21 @@ public class StockLoader {
             while ((line = br.readLine()) != null) {
                 if (line.startsWith("0") || line.startsWith("3") || line.startsWith("6")) {
                     String[] strs = line.split("\t");
-                    String code = strs[0];
-                    String name = strs[1];
-                    float price = Float.parseFloat(strs[2]);
-                    String industry = strs[3];
+                    String code = strs[0];// code
+                    String name = strs[1];// name
+                    float price = Float.parseFloat(strs[2]);// price
+                    String industry = strs[3];// industry
                     if (industry.isEmpty()) {
                         continue;
                     }
-                    String region = strs[4];
-                    long floatShare = FileUtil.parseFloat(strs[5]);
-                    String publicDate = strs[6];
+                    String region = strs[4];// region
+                    long floatShare = FileUtil.parseFloat(strs[5]);// FloatShare
+                    String publicDate = strs[6];// Public date
                     String newPublicDate = publicDate.substring(0, 4) + "-" + publicDate.substring(4, 6) + "-"
                             + publicDate.substring(6);
-                    long outstandingShare = FileUtil.parseFloat(strs[7]);
-                    long bShare = FileUtil.parseFloat(strs[8]);
-                    long hShare = FileUtil.parseFloat(strs[9]);
+                    long outstandingShare = FileUtil.parseFloat(strs[7]);// OutstandingShare
+                    long bShare = FileUtil.parseFloat(strs[8]);// B
+                    long hShare = FileUtil.parseFloat(strs[9]);// H
 
                     StockVo vo = new StockVo();
                     vo.setCode(code);
