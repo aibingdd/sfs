@@ -39,10 +39,7 @@ public class InvalidCwfxLoader {
     }
 
     private void init() {
-        if (!FileUtil.isFileExist(getInvalidCwfxFile())) {
-            extract();
-        }
-
+        extract();
         load();
     }
 
@@ -87,15 +84,19 @@ public class InvalidCwfxLoader {
                             boolean invalid = false;
                             if (!AppUtil.INVALID.equals(strs[5])) {
                                 float rona = Float.parseFloat(strs[5]);
-                                if (rona > 100f || rona < -50f) {
+                                if (rona > 100f || rona < -20f) {
                                     invalid = true;
                                 }
+                            } else {
+                                invalid = true;
                             }
                             if (!AppUtil.INVALID.equals(strs[6])) {
                                 float rota = Float.parseFloat(strs[6]);
-                                if (rota > 100f || rota < -50f) {
+                                if (rota > 100f || rota < -20f) {
                                     invalid = true;
                                 }
+                            } else {
+                                invalid = true;
                             }
                             if (invalid) {
                                 String text = stock + "," + industryName + "," + stockName + "," + line + "\n";

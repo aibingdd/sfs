@@ -26,12 +26,9 @@ public class StockLoader {
         return stockCodeList;
     }
 
-    public String getRegion(String stockCode) {
+    public StockVo getStockVo(String stockCode) {
         StockVo tStockVo = tstockMap.get(stockCode);
-        if (tStockVo != null) {
-            return tStockVo.getRegion();
-        }
-        return null;
+        return tStockVo;
     }
 
     public String getStockName(String stockCode) {
@@ -108,23 +105,25 @@ public class StockLoader {
                     String code = strs[0];// code
                     String name = strs[1];// name
                     float price = Float.parseFloat(strs[2]);// price
-                    String industry = strs[3];// industry
+                    long totalVolume = Long.parseLong(strs[3]);
+                    String industry = strs[4];// industry
                     if (industry.isEmpty()) {
                         continue;
                     }
-                    String region = strs[4];// region
-                    long floatShare = FileUtil.parseFloat(strs[5]);// FloatShare
-                    String publicDate = strs[6];// Public date
+                    String region = strs[5];// region
+                    long floatShare = FileUtil.parseFloat(strs[6]);// FloatShare
+                    String publicDate = strs[7];// Public date
                     String newPublicDate = publicDate.substring(0, 4) + "-" + publicDate.substring(4, 6) + "-"
                             + publicDate.substring(6);
-                    long outstandingShare = FileUtil.parseFloat(strs[7]);// OutstandingShare
-                    long bShare = FileUtil.parseFloat(strs[8]);// B
-                    long hShare = FileUtil.parseFloat(strs[9]);// H
+                    long outstandingShare = FileUtil.parseFloat(strs[8]);// OutstandingShare
+                    long bShare = FileUtil.parseFloat(strs[9]);// B
+                    long hShare = FileUtil.parseFloat(strs[10]);// H
 
                     StockVo vo = new StockVo();
                     vo.setCode(code);
                     vo.setName(name);
                     vo.setPrice(price);
+                    vo.setTotalVolume(totalVolume);
                     vo.setIndustry(industry);
                     vo.setRegion(region);
                     vo.setFloatShare(floatShare);

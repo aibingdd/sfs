@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import com.an.sfs.crawler.cwfx.ReportVo;
 import com.an.sfs.crawler.name.IndustryLoader;
 import com.an.sfs.crawler.tdx.StockLoader;
+import com.an.sfs.crawler.tdx.StockVo;
 
 public class FileUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(FileUtil.class);
@@ -219,14 +220,17 @@ public class FileUtil {
      *            [ {code -> info}, {code -> info}]
      * @param fileName
      */
-    public static void exportReport(List<ReportVo> reportVoList, String filePath) {
+    public static void exportReport(List<ReportVo> reportVoList, String filePath, boolean displayIndustry) {
         StringBuilder text = new StringBuilder();
         text.append("<html>\n");
         text.append("<head><meta charset=\"utf-8\"></head>\n");
         text.append("<body>\n");
 
-        text.append("净资产收益率").append(" | 总资产收益率").append(" | 资产负债率").append(" | 地区").append(" | 市盈率").append(" | 市净率")
-                .append(" | 机构持仓").append("<br>\n");
+        for (int i = 0; i < 30; i++) {
+            text.append("&nbsp");
+        }
+        text.append("净资产收益率").append(" | 总资产收益率ROTA(14-13-12)").append(" | 扣非净利润增长").append(" | 资产负债率").append(" | 地区")
+                .append(" | 市盈率").append(" | 市净率").append(" | 机构持仓").append("<br>\n");
 
         String industryUrl = "<a href=\"D:\\sfs_home\\output\\cwfx_rona\\Stock_Cwfx_Rona_%s%s.html\">%s</a>";
         String stockUrl = "<a href=\"http://f10.eastmoney.com/f10_v2/ShareholderResearch.aspx?code=%s%s\">%s</a>";
@@ -242,13 +246,20 @@ public class FileUtil {
             }
             text.append(url).append("&nbsp");
             text.append(vo.getNameDisplayStr());
-            text.append(" | ").append(vo.getRonaStr());
-            text.append(" | ").append(vo.getRotaStr());
-            text.append(" | ").append(vo.getDtarStr());
-            text.append(" | ").append(vo.getRegion());
-            text.append(" | ").append(vo.getPeStr());
-            text.append(" | ").append(vo.getPbStr());
-            text.append(" | ").append(vo.getJgcc());
+            if (displayIndustry) {
+                StockVo stockVo = StockLoader.getInst().getStockVo(code);
+                text.append("\t|").append(stockVo.getIndustryDisplay());
+            }
+            text.append("\t|").append(vo.getRonaDisplayStr());
+            text.append("\t|").append(vo.getRotaDisplayStr());
+            text.append("\t|").append(vo.getRotaStr());
+            text.append("\t|").append(vo.getProfitChangeDisplayStr());
+            text.append("\t|").append(vo.getProfitChangeStr());
+            text.append("\t|").append(vo.getDtarDisplayStr());
+            text.append("\t|").append(vo.getRegion());
+            text.append("\t|").append(vo.getPeDisplayStr());
+            text.append("\t|").append(vo.getPbDisplayStr());
+            text.append("\t|").append(vo.getJgcc());
             text.append(vo.getNote());
 
             text.append("<br>\n");

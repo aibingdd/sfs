@@ -137,8 +137,15 @@ public class CwfxLoader {
                     CwfxVo last = list.get(i + 1);
                     float incomeRate = ((float) cur.getIncome()) / ((float) last.getIncome());
                     float profitRate = ((float) cur.getProfit()) / ((float) last.getProfit());
+                    float ronaRate = ((float) cur.getRona()) / ((float) last.getRona());
+                    float rotaRate = ((float) cur.getRota()) / ((float) last.getRota());
+                    float dtarRate = ((float) cur.getDtar()) / ((float) last.getDtar());
+
                     cur.setIncomeChangeRate(incomeRate);
                     cur.setProfitChangeRate(profitRate);
+                    cur.setRonaChangeRate(ronaRate);
+                    cur.setRotaChangeRate(rotaRate);
+                    cur.setDtarChangeRate(dtarRate);
                 }
             }
 

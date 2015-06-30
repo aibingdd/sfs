@@ -10,7 +10,7 @@ import java.util.Set;
 
 import com.an.sfs.crawler.ccjg.CcjgLoader;
 import com.an.sfs.crawler.cwfx.CwfxLoader;
-import com.an.sfs.crawler.cwfx.CwfxProfitUpLoader;
+import com.an.sfs.crawler.cwfx.CwfxUpLoader;
 import com.an.sfs.crawler.cwfx.CwfxVo;
 import com.an.sfs.crawler.cwfx.InvalidCwfxLoader;
 import com.an.sfs.crawler.cwfx.ReportVo;
@@ -20,6 +20,7 @@ import com.an.sfs.crawler.name.IgnoreStockLoader;
 import com.an.sfs.crawler.name.IndustryLoader;
 import com.an.sfs.crawler.name.WhiteHorseStockLoader;
 import com.an.sfs.crawler.tdx.StockLoader;
+import com.an.sfs.crawler.tdx.StockVo;
 import com.an.sfs.crawler.tfp.TfpLoader;
 
 /**
@@ -38,12 +39,20 @@ public class CwfxMain {
     public static void main(String[] args) {
         AppFilePath.initDirs();
         exportProfitUp();
-        exportAllRona();
+
+        String txt = AppFilePath.getOutputCwfxRonaDir() + File.separator + "Stock_Cwfx.txt";
+        String html = AppFilePath.getOutputCwfxRonaDir() + File.separator + "Stock_Cwfx.html";
+        exportCwfx(txt, html, 0);
+
+        txt = AppFilePath.getOutputCwfxRonaDir() + File.separator + "Stock_Cwfx__Rona_Rota.txt";
+        html = AppFilePath.getOutputCwfxRonaDir() + File.separator + "Stock_Cwfx__Rona_Rota.html";
+        exportCwfx(txt, html, 1);
+
         exportRonaByIndustry();
     }
 
     private static void exportProfitUp() {
-        List<String> stockList = CwfxProfitUpLoader.getInst().getStockList();
+        List<String> stockList = CwfxUpLoader.getInst().getProfitUpStockList();
 
         Collections.sort(stockList);
 
@@ -103,18 +112,21 @@ public class CwfxMain {
                 float totalRona = 0f;
                 float totalRota = 0f;
                 float totalDtar = 0f;
+                float totalProfit = 0f;
                 for (int i = 0; i < 3; i++) {
                     CwfxVo cwfxVo = list.get(i);
                     totalRona += cwfxVo.getRona();
                     totalRota += cwfxVo.getRota();
                     totalDtar += cwfxVo.getDtar();
+                    totalProfit += cwfxVo.getProfit();
                 }
                 float avgRona = totalRona / 3f;
                 float avgRota = totalRota / 3f;
                 float avgDtar = totalDtar / 3f;
+                float avgProfit = totalProfit / 3f;
 
                 CwfxVo latestCwfxVo = list.get(0);
-                ReportVo avgReportVo = new ReportVo(stock, avgRona, avgRota, avgDtar, latestCwfxVo.getPe(),
+                ReportVo avgReportVo = new ReportVo(stock, avgRona, avgRota, avgDtar, avgProfit, latestCwfxVo.getPe(),
                         latestCwfxVo.getPb());
                 industryReportMap.get(industryCode).add(avgReportVo);
             }
@@ -128,12 +140,14 @@ public class CwfxMain {
             float totalRona = 0f;
             float totalRota = 0f;
             float totalDtar = 0f;
+            float totalProfitChange = 0f;
             float totalPe = 0f;
             float totalPb = 0f;
             for (ReportVo vo : reportVoList) {
                 totalRona += vo.getRona();
                 totalRota += vo.getRota();
                 totalDtar += vo.getDtar();
+                totalProfitChange += vo.getProfitChange();
                 totalPe += vo.getPe();
                 totalPb += vo.getPb();
             }
@@ -141,17 +155,19 @@ public class CwfxMain {
             float avgRona = totalRona / (float) count;
             float avgRota = totalRota / (float) count;
             float avgDtar = totalDtar / (float) count;
+            float avgProfitChange = totalProfitChange / (float) count;
             float avgPe = totalPe / (float) count;
             float avgPb = totalPb / (float) count;
 
             // Add average values this industry
-            ReportVo avgIndustryVo = new ReportVo(industryCode, avgRona, avgRota, avgDtar, avgPe, avgPb);
+            ReportVo avgIndustryVo = new ReportVo(industryCode, avgRona, avgRota, avgDtar, avgProfitChange, avgPe,
+                    avgPb);
             avgIndustryVoList.add(avgIndustryVo);
             reportVoList.add(avgIndustryVo);
 
             initReportVo(reportVoList);
-
             Collections.sort(reportVoList);
+            initReportIndex(reportVoList);
 
             List<String> stockCodeList = new ArrayList<>();
             for (ReportVo vo : reportVoList) {
@@ -165,7 +181,7 @@ public class CwfxMain {
 
             String html = AppFilePath.getOutputCwfxRonaDir() + File.separator + "Stock_Cwfx_Rona_" + industryCode
                     + industryName + ".html";
-            FileUtil.exportReport(reportVoList, html);
+            FileUtil.exportReport(reportVoList, html, false);
         }
 
         exportIndustryRona(avgIndustryVoList);
@@ -174,11 +190,19 @@ public class CwfxMain {
     private static void exportIndustryRona(List<ReportVo> avgIndustryVoList) {
         initReportVo(avgIndustryVoList);
         Collections.sort(avgIndustryVoList);
+        initReportIndex(avgIndustryVoList);
         String html = AppFilePath.getOutputCwfxRonaDir() + File.separator + "Stock_Cwfx_Industry" + ".html";
-        FileUtil.exportReport(avgIndustryVoList, html);
+        FileUtil.exportReport(avgIndustryVoList, html, false);
     }
 
-    private static void exportAllRona() {
+    /**
+     * @param txtFile
+     * @param htmlFile
+     * @param exportType
+     *            0: all <br>
+     *            1: rona_rota
+     */
+    private static void exportCwfx(String txtFile, String htmlFile, int exportType) {
         Map<String, List<CwfxVo>> cwfxMap = CwfxLoader.getInst().getCwfxMap();
 
         Set<String> invalidSet = InvalidCwfxLoader.getInst().getStockSet();
@@ -188,8 +212,17 @@ public class CwfxMain {
             if (invalidSet.contains(code)) {
                 continue;
             }
+
+            if (StockLoader.getInst().getStockVo(code).isSuspend()) {
+                continue;
+            }
+
             String publicDate = StockLoader.getInst().getPublicDate(code);
             if (publicDate.compareTo("2012-12-31") > 0) {
+                continue;
+            }
+
+            if (exportType == 1 && !(CwfxUpLoader.getInst().isRonaUp(code) && CwfxUpLoader.getInst().isRotaUp(code))) {
                 continue;
             }
 
@@ -198,67 +231,105 @@ public class CwfxMain {
                 float totalRona = 0f;
                 float totalRota = 0f;
                 float totalDtar = 0f;
+                float totalProfitChange = 0f;
+                String ronaStr = "";
+                String rotaStr = "";
+                String dtarStr = "";
+                String profitChangeStr = "";
                 for (int i = 0; i < 3; i++) {
                     CwfxVo cwfxVo = list.get(i);
                     totalRona += cwfxVo.getRona();
                     totalRota += cwfxVo.getRota();
                     totalDtar += cwfxVo.getDtar();
+                    totalProfitChange += cwfxVo.getProfitChangeRate() - 1;
+                    ronaStr += cwfxVo.getRona() + "% ";
+                    rotaStr += cwfxVo.getRota() + "% ";
+                    dtarStr += cwfxVo.getDtar() + "% ";
+                    profitChangeStr += FileUtil.PERCENT_FORMAT.format((cwfxVo.getProfitChangeRate() - 1)) + " ";
                 }
                 float avgRona = totalRona / 3f;
                 float avgRota = totalRota / 3f;
                 float avgDtar = totalDtar / 3f;
+                float avgProfitChange = totalProfitChange / 3f;
+
+                if (avgProfitChange < 0f) {
+                    continue;
+                }
 
                 CwfxVo latestCwfxVo = list.get(0);
-                ReportVo vo = new ReportVo(code, avgRona, avgRota, avgDtar, latestCwfxVo.getPe(), latestCwfxVo.getPb());
+                ReportVo vo = new ReportVo(code, avgRona, avgRota, avgDtar, avgProfitChange, latestCwfxVo.getPe(),
+                        latestCwfxVo.getPb());
+                vo.setRonaStr(ronaStr);
+                vo.setRotaStr(rotaStr);
+                vo.setDtarStr(dtarStr);
+                vo.setProfitChangeStr(profitChangeStr);
                 reportVoList.add(vo);
             }
         }
 
         initReportVo(reportVoList);
-
         Collections.sort(reportVoList);
+        initReportIndex(reportVoList);
 
         List<String> stockCodeList = new ArrayList<>();
         for (ReportVo vo : reportVoList) {
             stockCodeList.add(vo.getCode());
         }
-        String txt = AppFilePath.getOutputCwfxRonaDir() + File.separator + "Stock_Cwfx_Rona.txt";
-        FileUtil.exportStock(stockCodeList, txt);
-        String html = AppFilePath.getOutputCwfxRonaDir() + File.separator + "Stock_Cwfx_Rona.html";
-        FileUtil.exportReport(reportVoList, html);
+
+        FileUtil.exportStock(stockCodeList, txtFile);
+        FileUtil.exportReport(reportVoList, htmlFile, true);
     }
 
     public static void initReportVo(List<ReportVo> reportVoList) {
-        int i = 1;
         for (ReportVo vo : reportVoList) {
-            vo.setIndex(String.format("%04d", i++));
-
             String code = vo.getCode();
-            String name = StockLoader.getInst().getStockName(code);
-            if (name == null) {
+            StockVo stockVo = StockLoader.getInst().getStockVo(code);
+
+            String name = null;
+            if (stockVo != null) {
+                name = stockVo.getName();
+            } else {
                 name = IndustryLoader.getInst().getIndustryName(code);
             }
             vo.setName(name);
 
-            vo.setRegion(StockLoader.getInst().getRegion(code));
+            if (stockVo != null) {
+                vo.setRegion(stockVo.getRegion());
+            }
 
             long jgcc = CcjgLoader.getInst().getTotal(code);
             vo.setJgcc(FileUtil.FLOAT_FORMAT.format((float) jgcc / 10000f) + "万");
 
             String note = "";
+            if (GdrsDownLoader.getInst().isGdrsDown(code)) {
+                note = note + " | GDRS";
+            }
+            if (CwfxUpLoader.getInst().isRonaUp(code)) {
+                note = note + " | RONA_UP";
+            }
+            if (CwfxUpLoader.getInst().isRotaUp(code)) {
+                note = note + " | ROTA_UP";
+            }
+            if (CwfxUpLoader.getInst().isProfitUp(code)) {
+                note = note + " | PROFIT_UP";
+            }
             if (IgnoreStockLoader.getInst().isIgnore(code)) {
-                note += " | IGNORE";
+                note = note + " | IGNORE";
             } else if (WhiteHorseStockLoader.getInst().isWhiteHorse(code)) {
-                note += " | WHITEHORSE";
+                note = note + " | WHITEHORSE";
             }
 
-            if (GdrsDownLoader.getInst().isGdrsDown(code)) {
-                note += " | GDRS";
-            }
-            if (CwfxProfitUpLoader.getInst().isProfitUp(code)) {
-                note += " | PROFIT";
+            if (stockVo != null && stockVo.isSuspend()) {
+                note = note + " | 停盘";
             }
             vo.setNote(note);
+        }
+    }
+
+    public static void initReportIndex(List<ReportVo> reportVoList) {
+        int i = 1;
+        for (ReportVo vo : reportVoList) {
+            vo.setIndex(String.format("%04d", i++));
         }
     }
 }

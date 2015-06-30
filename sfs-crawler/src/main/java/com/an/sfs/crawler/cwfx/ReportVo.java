@@ -7,13 +7,19 @@ public class ReportVo implements Comparable<ReportVo> {
     private String index;
     private String code;// Stock Code or Industry Code
     private String name;// Stock Name or Industry Name
-
     // Return on Net Assets
     private float rona;
+    private String ronaStr;
     // Return on Total Assets
     private float rota;
+    private String rotaStr;
     // debt to assets ratio
     private float dtar;
+    private String dtarStr;
+
+    // Net profit
+    private float profitChange;
+    private String profitChangeStr;
 
     // Price / Earning Per Share
     private float pe;
@@ -44,34 +50,40 @@ public class ReportVo implements Comparable<ReportVo> {
         return displayName;
     }
 
-    public String getRonaStr() {
+    public String getRonaDisplayStr() {
         float val = this.rona / 100f;
         return FileUtil.PERCENT_FORMAT.format(val);
     }
 
-    public String getRotaStr() {
+    public String getRotaDisplayStr() {
         float val = this.rota / 100f;
         return FileUtil.PERCENT_FORMAT.format(val);
     }
 
-    public String getDtarStr() {
+    public String getDtarDisplayStr() {
         float val = this.dtar / 100f;
         return FileUtil.PERCENT_FORMAT.format(val);
     }
 
-    public String getPeStr() {
+    public String getProfitChangeDisplayStr() {
+        float val = this.profitChange;
+        return FileUtil.PERCENT_FORMAT.format(val);
+    }
+
+    public String getPeDisplayStr() {
         return FileUtil.FLOAT_FORMAT.format(this.pe);
     }
 
-    public String getPbStr() {
+    public String getPbDisplayStr() {
         return FileUtil.FLOAT_FORMAT.format(this.pb);
     }
 
-    public ReportVo(String code, float rona, float rota, float dtar, float pe, float pb) {
+    public ReportVo(String code, float rona, float rota, float dtar, float profitChange, float pe, float pb) {
         this.code = code;
         this.rona = rona;
         this.rota = rota;
         this.dtar = dtar;
+        this.profitChange = profitChange;
         this.pe = pe;
         this.pb = pb;
     }
@@ -124,9 +136,50 @@ public class ReportVo implements Comparable<ReportVo> {
 
     @Override
     public String toString() {
-        return "ReportVo [index=" + index + ", code=" + code + ", name=" + name + ", rona=" + rona + ", rota=" + rota
-                + ", dtar=" + dtar + ", pe=" + pe + ", pb=" + pb + ", region=" + region + ", jgcc=" + jgcc + ", note="
-                + note + "]";
+        return "ReportVo [index=" + index + ", code=" + code + ", name=" + name + ", rona=" + rona + ", ronaStr="
+                + ronaStr + ", rota=" + rota + ", rotaStr=" + rotaStr + ", dtar=" + dtar + ", dtarStr=" + dtarStr
+                + ", profitChange=" + profitChange + ", profitChangeStr=" + profitChangeStr + ", pe=" + pe + ", pb="
+                + pb + ", region=" + region + ", jgcc=" + jgcc + ", note=" + note + "]";
+    }
+
+    public float getProfitChange() {
+        return profitChange;
+    }
+
+    public void setProfitChange(float profitChange) {
+        this.profitChange = profitChange;
+    }
+
+    public String getProfitChangeStr() {
+        return profitChangeStr;
+    }
+
+    public void setProfitChangeStr(String profitChangeStr) {
+        this.profitChangeStr = profitChangeStr;
+    }
+
+    public String getRonaStr() {
+        return ronaStr;
+    }
+
+    public void setRonaStr(String ronaStr) {
+        this.ronaStr = ronaStr;
+    }
+
+    public String getRotaStr() {
+        return rotaStr;
+    }
+
+    public void setRotaStr(String rotaStr) {
+        this.rotaStr = rotaStr;
+    }
+
+    public String getDtarStr() {
+        return dtarStr;
+    }
+
+    public void setDtarStr(String dtarStr) {
+        this.dtarStr = dtarStr;
     }
 
     public String getRegion() {

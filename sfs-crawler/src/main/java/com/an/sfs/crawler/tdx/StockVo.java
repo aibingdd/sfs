@@ -3,6 +3,7 @@ package com.an.sfs.crawler.tdx;
 public class StockVo {
     private String code;
     private float price;
+    private long totalVolume;
     private String name;
     // XiFenHangYe
     private String industry;
@@ -13,14 +14,31 @@ public class StockVo {
     private long bShare;
     private long hShare;
 
+    public String getIndustryDisplay() {
+        String displayName = industry;
+        if (displayName.length() < 4) {
+            String prefix = "";
+            for (int j = 0; j < 4 - displayName.length(); j++) {
+                prefix += "&nbsp&nbsp&nbsp&nbsp";
+            }
+            displayName = prefix + displayName;
+        }
+        return displayName;
+    }
+
+    public boolean isSuspend() {
+        return totalVolume == 0;
+    }
+
     public StockVo() {
     }
 
     @Override
     public String toString() {
-        return "TStockVo [code=" + code + ", price=" + price + ", name=" + name + ", industry=" + industry
-                + ", region=" + region + ", publicDate=" + publicDate + ", outstandingShare=" + outstandingShare
-                + ", floatShare=" + floatShare + ", bShare=" + bShare + ", hShare=" + hShare + "]";
+        return "StockVo [code=" + code + ", price=" + price + ", totalVolume=" + totalVolume + ", name=" + name
+                + ", industry=" + industry + ", region=" + region + ", publicDate=" + publicDate
+                + ", outstandingShare=" + outstandingShare + ", floatShare=" + floatShare + ", bShare=" + bShare
+                + ", hShare=" + hShare + "]";
     }
 
     public String getCode() {
@@ -29,6 +47,14 @@ public class StockVo {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public long getTotalVolume() {
+        return totalVolume;
+    }
+
+    public void setTotalVolume(long totalVolume) {
+        this.totalVolume = totalVolume;
     }
 
     public float getPrice() {

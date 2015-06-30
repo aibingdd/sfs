@@ -21,6 +21,9 @@ public class CwfxVo implements Comparable<CwfxVo> {
     //
     private float incomeChangeRate;
     private float profitChangeRate;
+    private float ronaChangeRate;
+    private float rotaChangeRate;
+    private float dtarChangeRate;
 
     public float getPe() {
         float val = StockLoader.getInst().getPrice(code) / this.peps;
@@ -44,7 +47,33 @@ public class CwfxVo implements Comparable<CwfxVo> {
     public String toString() {
         return "CwfxVo [code=" + code + ", date=" + date + ", income=" + income + ", profit=" + profit + ", rona="
                 + rona + ", rota=" + rota + ", dtar=" + dtar + ", peps=" + peps + ", naps=" + naps
-                + ", incomeChangeRate=" + incomeChangeRate + ", profitChangeRate=" + profitChangeRate + "]";
+                + ", incomeChangeRate=" + incomeChangeRate + ", profitChangeRate=" + profitChangeRate
+                + ", ronaChangeRate=" + ronaChangeRate + ", rotaChangeRate=" + rotaChangeRate + ", dtarChangeRate="
+                + dtarChangeRate + "]";
+    }
+
+    public float getRonaChangeRate() {
+        return ronaChangeRate;
+    }
+
+    public void setRonaChangeRate(float ronaChangeRate) {
+        this.ronaChangeRate = ronaChangeRate;
+    }
+
+    public float getRotaChangeRate() {
+        return rotaChangeRate;
+    }
+
+    public void setRotaChangeRate(float rotaChangeRate) {
+        this.rotaChangeRate = rotaChangeRate;
+    }
+
+    public float getDtarChangeRate() {
+        return dtarChangeRate;
+    }
+
+    public void setDtarChangeRate(float dtarChangeRate) {
+        this.dtarChangeRate = dtarChangeRate;
     }
 
     public float getPeps() {
