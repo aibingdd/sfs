@@ -18,7 +18,7 @@ public class ReportVo implements Comparable<ReportVo> {
     private String dtarStr;
 
     // Net profit
-    private float profitChange;
+    private float profitChangeRate;
     private String profitChangeStr;
 
     // Price / Earning Per Share
@@ -40,11 +40,15 @@ public class ReportVo implements Comparable<ReportVo> {
 
     public String getNameDisplayStr() {
         String displayName = name;
+        String prefix = "";
         if (displayName.length() < 4) {
-            String prefix = "";
             for (int j = 0; j < 4 - displayName.length(); j++) {
                 prefix += "&nbsp&nbsp&nbsp&nbsp";
             }
+        } else if (displayName.length() == 5) {
+            prefix = "&nbsp&nbsp";
+        }
+        if (!prefix.isEmpty()) {
             displayName = prefix + displayName;
         }
         return displayName;
@@ -65,8 +69,8 @@ public class ReportVo implements Comparable<ReportVo> {
         return FileUtil.PERCENT_FORMAT.format(val);
     }
 
-    public String getProfitChangeDisplayStr() {
-        float val = this.profitChange;
+    public String getProfitChangeRateDisplayStr() {
+        float val = this.profitChangeRate;
         return FileUtil.PERCENT_FORMAT.format(val);
     }
 
@@ -78,32 +82,41 @@ public class ReportVo implements Comparable<ReportVo> {
         return FileUtil.FLOAT_FORMAT.format(this.pb);
     }
 
-    public ReportVo(String code, float rona, float rota, float dtar, float profitChange, float pe, float pb) {
+    /**
+     * @param code
+     * @param rona
+     * @param rota
+     * @param dtar
+     * @param profitChangeRate
+     * @param pe
+     * @param pb
+     */
+    public ReportVo(String code, float rona, float rota, float dtar, float profitChangeRate, float pe, float pb) {
         this.code = code;
         this.rona = rona;
         this.rota = rota;
         this.dtar = dtar;
-        this.profitChange = profitChange;
+        this.profitChangeRate = profitChangeRate;
         this.pe = pe;
         this.pb = pb;
     }
 
     @Override
     public int compareTo(ReportVo o) {
-        if (CwfxMain.SORT_BY_RONA) {
-            if (Math.abs(this.rona - o.rona) < 0.001f) {
-                return 0;
-            } else if (this.rona > o.rona) {
-                return -1;
-            } else if (this.rona < o.rona) {
-                return 1;
-            }
-        } else if (CwfxMain.SORT_BY_ROTA) {
+        if (CwfxMain.SORT_BY_ROTA) {
             if (Math.abs(this.rota - o.rota) < 0.001f) {
                 return 0;
             } else if (this.rota > o.rota) {
                 return -1;
             } else if (this.rota < o.rota) {
+                return 1;
+            }
+        } else if (CwfxMain.SORT_BY_RONA) {
+            if (Math.abs(this.rona - o.rona) < 0.001f) {
+                return 0;
+            } else if (this.rona > o.rona) {
+                return -1;
+            } else if (this.rona < o.rona) {
                 return 1;
             }
         } else if (CwfxMain.SORT_BY_DTAR) {
@@ -138,16 +151,16 @@ public class ReportVo implements Comparable<ReportVo> {
     public String toString() {
         return "ReportVo [index=" + index + ", code=" + code + ", name=" + name + ", rona=" + rona + ", ronaStr="
                 + ronaStr + ", rota=" + rota + ", rotaStr=" + rotaStr + ", dtar=" + dtar + ", dtarStr=" + dtarStr
-                + ", profitChange=" + profitChange + ", profitChangeStr=" + profitChangeStr + ", pe=" + pe + ", pb="
-                + pb + ", region=" + region + ", jgcc=" + jgcc + ", note=" + note + "]";
+                + ", profitChange=" + profitChangeRate + ", profitChangeStr=" + profitChangeStr + ", pe=" + pe
+                + ", pb=" + pb + ", region=" + region + ", jgcc=" + jgcc + ", note=" + note + "]";
     }
 
-    public float getProfitChange() {
-        return profitChange;
+    public float getProfitChangeRate() {
+        return profitChangeRate;
     }
 
-    public void setProfitChange(float profitChange) {
-        this.profitChange = profitChange;
+    public void setProfitChangeRate(float profitChangeRate) {
+        this.profitChangeRate = profitChangeRate;
     }
 
     public String getProfitChangeStr() {

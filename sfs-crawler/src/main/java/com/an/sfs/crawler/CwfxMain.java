@@ -30,8 +30,8 @@ import com.an.sfs.crawler.tfp.TfpLoader;
  *
  */
 public class CwfxMain {
-    public static final boolean SORT_BY_RONA = true;
-    public static final boolean SORT_BY_ROTA = false;
+    public static final boolean SORT_BY_ROTA = true;
+    public static final boolean SORT_BY_RONA = false;
     public static final boolean SORT_BY_DTAR = false;
     public static final boolean SORT_BY_PE = false;
     public static final boolean SORT_BY_PB = false;
@@ -40,15 +40,16 @@ public class CwfxMain {
         AppFilePath.initDirs();
         exportProfitUp();
 
+        Map<String, List<ReportVo>> industryCodeReportMap = new HashMap<>();
         String txt = AppFilePath.getOutputCwfxRonaDir() + File.separator + "Stock_Cwfx.txt";
         String html = AppFilePath.getOutputCwfxRonaDir() + File.separator + "Stock_Cwfx.html";
-        exportCwfx(txt, html, 0);
+        exportCwfx(txt, html, 0, industryCodeReportMap);
 
-        txt = AppFilePath.getOutputCwfxRonaDir() + File.separator + "Stock_Cwfx__Rona_Rota.txt";
-        html = AppFilePath.getOutputCwfxRonaDir() + File.separator + "Stock_Cwfx__Rona_Rota.html";
-        exportCwfx(txt, html, 1);
+        txt = AppFilePath.getOutputCwfxRonaDir() + File.separator + "Stock_Cwfx__Rona_Rota_Profit.txt";
+        html = AppFilePath.getOutputCwfxRonaDir() + File.separator + "Stock_Cwfx__Rona_Rota_Profit.html";
+        exportCwfx(txt, html, 1, null);
 
-        exportRonaByIndustry();
+        exportRonaByIndustry(industryCodeReportMap);
     }
 
     private static void exportProfitUp() {
@@ -85,57 +86,11 @@ public class CwfxMain {
         FileUtil.exportHtml(tfpStockList, tfpAppendInfoList, htmlTfp);
     }
 
-    private static void exportRonaByIndustry() {
-        Map<String, List<CwfxVo>> cwfxMap = CwfxLoader.getInst().getCwfxMap();
-
-        Set<String> invalidCwfxSet = InvalidCwfxLoader.getInst().getStockSet();
-
-        // Industry Code -> [ReportVo]
-        Map<String, List<ReportVo>> industryReportMap = new HashMap<>();
-        for (String stock : cwfxMap.keySet()) {
-            if (invalidCwfxSet.contains(stock)) {
-                continue;
-            }
-            String publicDate = StockLoader.getInst().getPublicDate(stock);
-            if (publicDate.compareTo("2012-12-31") > 0) {
-                continue;
-            }
-
-            String industryName = StockLoader.getInst().getIndustryName(stock);
-            String industryCode = IndustryLoader.getInst().getIndustryCode(industryName);
-            if (!industryReportMap.containsKey(industryCode)) {
-                industryReportMap.put(industryCode, new ArrayList<>());
-            }
-
-            List<CwfxVo> list = cwfxMap.get(stock);
-            if (list.size() > 2) {// At least have 3 year's data
-                float totalRona = 0f;
-                float totalRota = 0f;
-                float totalDtar = 0f;
-                float totalProfit = 0f;
-                for (int i = 0; i < 3; i++) {
-                    CwfxVo cwfxVo = list.get(i);
-                    totalRona += cwfxVo.getRona();
-                    totalRota += cwfxVo.getRota();
-                    totalDtar += cwfxVo.getDtar();
-                    totalProfit += cwfxVo.getProfit();
-                }
-                float avgRona = totalRona / 3f;
-                float avgRota = totalRota / 3f;
-                float avgDtar = totalDtar / 3f;
-                float avgProfit = totalProfit / 3f;
-
-                CwfxVo latestCwfxVo = list.get(0);
-                ReportVo avgReportVo = new ReportVo(stock, avgRona, avgRota, avgDtar, avgProfit, latestCwfxVo.getPe(),
-                        latestCwfxVo.getPb());
-                industryReportMap.get(industryCode).add(avgReportVo);
-            }
-        }
-
+    private static void exportRonaByIndustry(Map<String, List<ReportVo>> industryCodeReportMap) {
         List<ReportVo> avgIndustryVoList = new ArrayList<>();
 
-        for (String industryCode : industryReportMap.keySet()) {
-            List<ReportVo> reportVoList = industryReportMap.get(industryCode);
+        for (String industryCode : industryCodeReportMap.keySet()) {
+            List<ReportVo> reportVoList = industryCodeReportMap.get(industryCode);
 
             float totalRona = 0f;
             float totalRota = 0f;
@@ -147,7 +102,7 @@ public class CwfxMain {
                 totalRona += vo.getRona();
                 totalRota += vo.getRota();
                 totalDtar += vo.getDtar();
-                totalProfitChange += vo.getProfitChange();
+                totalProfitChange += vo.getProfitChangeRate();
                 totalPe += vo.getPe();
                 totalPb += vo.getPb();
             }
@@ -201,8 +156,10 @@ public class CwfxMain {
      * @param exportType
      *            0: all <br>
      *            1: rona_rota
+     * @param outIndustryCodeReportMap
      */
-    private static void exportCwfx(String txtFile, String htmlFile, int exportType) {
+    private static void exportCwfx(String txtFile, String htmlFile, int exportType,
+            Map<String, List<ReportVo>> outIndustryCodeReportMap) {
         Map<String, List<CwfxVo>> cwfxMap = CwfxLoader.getInst().getCwfxMap();
 
         Set<String> invalidSet = InvalidCwfxLoader.getInst().getStockSet();
@@ -213,7 +170,8 @@ public class CwfxMain {
                 continue;
             }
 
-            if (StockLoader.getInst().getStockVo(code).isSuspend()) {
+            StockVo stockVo = StockLoader.getInst().getStockVo(code);
+            if (stockVo.isSuspend()) {
                 continue;
             }
 
@@ -222,8 +180,11 @@ public class CwfxMain {
                 continue;
             }
 
-            if (exportType == 1 && !(CwfxUpLoader.getInst().isRonaUp(code) && CwfxUpLoader.getInst().isRotaUp(code))) {
-                continue;
+            if (exportType == 1) {
+                if (!CwfxUpLoader.getInst().isRonaUp(code) || !CwfxUpLoader.getInst().isRotaUp(code)
+                        || !CwfxUpLoader.getInst().isProfitUp(code)) {
+                    continue;
+                }
             }
 
             List<CwfxVo> list = cwfxMap.get(code);
@@ -235,17 +196,17 @@ public class CwfxMain {
                 String ronaStr = "";
                 String rotaStr = "";
                 String dtarStr = "";
-                String profitChangeStr = "";
+                String profitChangeRateStr = "";
                 for (int i = 0; i < 3; i++) {
                     CwfxVo cwfxVo = list.get(i);
                     totalRona += cwfxVo.getRona();
                     totalRota += cwfxVo.getRota();
                     totalDtar += cwfxVo.getDtar();
-                    totalProfitChange += cwfxVo.getProfitChangeRate() - 1;
-                    ronaStr += cwfxVo.getRona() + "% ";
-                    rotaStr += cwfxVo.getRota() + "% ";
-                    dtarStr += cwfxVo.getDtar() + "% ";
-                    profitChangeStr += FileUtil.PERCENT_FORMAT.format((cwfxVo.getProfitChangeRate() - 1)) + " ";
+                    totalProfitChange += cwfxVo.getProfitChangeRate();
+                    ronaStr += cwfxVo.getRona() + " ";
+                    rotaStr += cwfxVo.getRota() + " ";
+                    dtarStr += cwfxVo.getDtar() + " ";
+                    profitChangeRateStr += FileUtil.FLOAT_FORMAT.format(cwfxVo.getProfitChangeRate() * 100) + " ";
                 }
                 float avgRona = totalRona / 3f;
                 float avgRota = totalRota / 3f;
@@ -262,7 +223,17 @@ public class CwfxMain {
                 vo.setRonaStr(ronaStr);
                 vo.setRotaStr(rotaStr);
                 vo.setDtarStr(dtarStr);
-                vo.setProfitChangeStr(profitChangeStr);
+                vo.setProfitChangeStr(profitChangeRateStr);
+
+                if (outIndustryCodeReportMap != null) {
+                    String industryName = stockVo.getIndustry();
+                    String industryCode = IndustryLoader.getInst().getIndustryCode(industryName);
+                    if (!outIndustryCodeReportMap.containsKey(industryCode)) {
+                        outIndustryCodeReportMap.put(industryCode, new ArrayList<ReportVo>());
+                    }
+                    outIndustryCodeReportMap.get(industryCode).add(vo);
+                }
+
                 reportVoList.add(vo);
             }
         }
@@ -283,46 +254,41 @@ public class CwfxMain {
     public static void initReportVo(List<ReportVo> reportVoList) {
         for (ReportVo vo : reportVoList) {
             String code = vo.getCode();
-            StockVo stockVo = StockLoader.getInst().getStockVo(code);
 
-            String name = null;
-            if (stockVo != null) {
-                name = stockVo.getName();
+            if (vo.isIndustry()) {
+                vo.setName(IndustryLoader.getInst().getIndustryName(code));
             } else {
-                name = IndustryLoader.getInst().getIndustryName(code);
-            }
-            vo.setName(name);
-
-            if (stockVo != null) {
+                StockVo stockVo = StockLoader.getInst().getStockVo(code);
+                vo.setName(stockVo.getName());
                 vo.setRegion(stockVo.getRegion());
-            }
 
-            long jgcc = CcjgLoader.getInst().getTotal(code);
-            vo.setJgcc(FileUtil.FLOAT_FORMAT.format((float) jgcc / 10000f) + "万");
+                long jgcc = CcjgLoader.getInst().getTotal(code);
+                vo.setJgcc(FileUtil.FLOAT_FORMAT.format((float) jgcc / 10000f) + "万");
 
-            String note = "";
-            if (GdrsDownLoader.getInst().isGdrsDown(code)) {
-                note = note + " | GDRS";
-            }
-            if (CwfxUpLoader.getInst().isRonaUp(code)) {
-                note = note + " | RONA_UP";
-            }
-            if (CwfxUpLoader.getInst().isRotaUp(code)) {
-                note = note + " | ROTA_UP";
-            }
-            if (CwfxUpLoader.getInst().isProfitUp(code)) {
-                note = note + " | PROFIT_UP";
-            }
-            if (IgnoreStockLoader.getInst().isIgnore(code)) {
-                note = note + " | IGNORE";
-            } else if (WhiteHorseStockLoader.getInst().isWhiteHorse(code)) {
-                note = note + " | WHITEHORSE";
-            }
+                String note = "";
+                if (CwfxUpLoader.getInst().isRotaUp(code)) {
+                    note = note + " | ROTA_UP";
+                }
+                if (CwfxUpLoader.getInst().isRonaUp(code)) {
+                    note = note + " | RONA_UP";
+                }
+                if (CwfxUpLoader.getInst().isProfitUp(code)) {
+                    note = note + " | PROFIT_UP";
+                }
+                if (GdrsDownLoader.getInst().isGdrsDown(code)) {
+                    note = note + " | GDRS";
+                }
+                if (IgnoreStockLoader.getInst().isIgnore(code)) {
+                    note = note + " | IGNORE";
+                } else if (WhiteHorseStockLoader.getInst().isWhiteHorse(code)) {
+                    note = note + " | WHITEHORSE";
+                }
 
-            if (stockVo != null && stockVo.isSuspend()) {
-                note = note + " | 停盘";
+                if (stockVo != null && stockVo.isSuspend()) {
+                    note = note + " | 停盘";
+                }
+                vo.setNote(note);
             }
-            vo.setNote(note);
         }
     }
 

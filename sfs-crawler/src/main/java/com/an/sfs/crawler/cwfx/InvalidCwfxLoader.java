@@ -24,7 +24,7 @@ public class InvalidCwfxLoader {
     private static final Logger LOGGER = LoggerFactory.getLogger(InvalidCwfxLoader.class);
 
     private String getInvalidCwfxFile() {
-        return AppFilePath.getOutputDir() + File.separator + "Invalid_Cwfx_Rona_Rota.txt";
+        return AppFilePath.getOutputDir() + File.separator + "Invalid_Cwfx_Rona_Rota_Profit.txt";
     }
 
     private Set<String> stockSet = new HashSet<>();
@@ -82,6 +82,14 @@ public class InvalidCwfxLoader {
                             String[] strs = line.split(";");
 
                             boolean invalid = false;
+                            if (!AppUtil.INVALID.equals(strs[4])) {
+                                if (strs[4].startsWith("-")) {
+                                    invalid = true;
+                                }
+                            } else {
+                                invalid = true;
+                            }
+
                             if (!AppUtil.INVALID.equals(strs[5])) {
                                 float rona = Float.parseFloat(strs[5]);
                                 if (rona > 100f || rona < -20f) {
@@ -90,6 +98,7 @@ public class InvalidCwfxLoader {
                             } else {
                                 invalid = true;
                             }
+
                             if (!AppUtil.INVALID.equals(strs[6])) {
                                 float rota = Float.parseFloat(strs[6]);
                                 if (rota > 100f || rota < -20f) {
@@ -98,6 +107,7 @@ public class InvalidCwfxLoader {
                             } else {
                                 invalid = true;
                             }
+
                             if (invalid) {
                                 String text = stock + "," + industryName + "," + stockName + "," + line + "\n";
                                 industryTextMap.get(industryName).add(text);

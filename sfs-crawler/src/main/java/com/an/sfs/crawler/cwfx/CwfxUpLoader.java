@@ -55,19 +55,19 @@ public class CwfxUpLoader {
             boolean invalidRonaUp = false;
             boolean invalidRotaUp = false;
             for (CwfxVo vo : voList) {
-                if (vo.getProfit() < 0 || vo.getProfitChangeRate() < 1f) {
+                if (vo.getProfit() < 0 || vo.getProfitChangeRate() < 0f) {
                     invalidProfitUp = true;
                     break;
                 }
             }
             for (CwfxVo vo : voList) {
-                if (vo.getRona() < 0 || vo.getRonaChangeRate() < 1f) {
+                if (vo.getRona() < 0 || vo.getRonaChangeRate() < 0f) {
                     invalidRonaUp = true;
                     break;
                 }
             }
             for (CwfxVo vo : voList) {
-                if (vo.getRota() < 0 || vo.getRotaChangeRate() < 1f) {
+                if (vo.getRota() < 0 || vo.getRotaChangeRate() < 0f) {
                     invalidRotaUp = true;
                     break;
                 }

@@ -11,8 +11,6 @@ public class StockVo {
     private String publicDate;
     private long outstandingShare;
     private long floatShare;
-    private long bShare;
-    private long hShare;
 
     public String getIndustryDisplay() {
         String displayName = industry;
@@ -30,15 +28,11 @@ public class StockVo {
         return totalVolume == 0;
     }
 
-    public StockVo() {
-    }
-
     @Override
     public String toString() {
         return "StockVo [code=" + code + ", price=" + price + ", totalVolume=" + totalVolume + ", name=" + name
                 + ", industry=" + industry + ", region=" + region + ", publicDate=" + publicDate
-                + ", outstandingShare=" + outstandingShare + ", floatShare=" + floatShare + ", bShare=" + bShare
-                + ", hShare=" + hShare + "]";
+                + ", outstandingShare=" + outstandingShare + ", floatShare=" + floatShare + "]";
     }
 
     public String getCode() {
@@ -111,21 +105,5 @@ public class StockVo {
 
     public void setFloatShare(long floatShare) {
         this.floatShare = floatShare;
-    }
-
-    public long getbShare() {
-        return bShare;
-    }
-
-    public void setbShare(long bShare) {
-        this.bShare = bShare;
-    }
-
-    public long gethShare() {
-        return hShare;
-    }
-
-    public void sethShare(long hShare) {
-        this.hShare = hShare;
     }
 }

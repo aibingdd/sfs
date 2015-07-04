@@ -100,6 +100,15 @@ public class StockLoader {
             FileInputStream fis = new FileInputStream(latestFile);
             br = new BufferedReader(new InputStreamReader(fis, "GB2312"));
             while ((line = br.readLine()) != null) {
+                if (line.startsWith("代码")) {
+                    String[] strs = line.split("\t");
+                    if (!"代码".equals(strs[0]) || !"名称".equals(strs[1]) || !"现价".equals(strs[2])
+                            || !"总量".equals(strs[3]) || !"细分行业".equals(strs[4]) || !"地区".equals(strs[5])
+                            || !"流通股本(万)".equals(strs[6]) || !"上市日期".equals(strs[7]) || !"总股本(万)".equals(strs[8])) {
+                        LOGGER.error("Error exported headers of file {}", latestFile);
+                        System.exit(1);
+                    }
+                }
                 if (line.startsWith("0") || line.startsWith("3") || line.startsWith("6")) {
                     String[] strs = line.split("\t");
                     String code = strs[0];// code
@@ -116,8 +125,6 @@ public class StockLoader {
                     String newPublicDate = publicDate.substring(0, 4) + "-" + publicDate.substring(4, 6) + "-"
                             + publicDate.substring(6);
                     long outstandingShare = FileUtil.parseFloat(strs[8]);// OutstandingShare
-                    long bShare = FileUtil.parseFloat(strs[9]);// B
-                    long hShare = FileUtil.parseFloat(strs[10]);// H
 
                     StockVo vo = new StockVo();
                     vo.setCode(code);
@@ -129,8 +136,6 @@ public class StockLoader {
                     vo.setFloatShare(floatShare);
                     vo.setPublicDate(newPublicDate);
                     vo.setOutstandingShare(outstandingShare);
-                    vo.setbShare(bShare);
-                    vo.sethShare(hShare);
 
                     stockCodeList.add(code);
                     tstockMap.put(code, vo);

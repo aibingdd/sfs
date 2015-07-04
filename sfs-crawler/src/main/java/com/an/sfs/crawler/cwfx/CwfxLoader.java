@@ -127,7 +127,9 @@ public class CwfxLoader {
         }
     }
 
-    private void initRate() {
+    public static final int INVALID_CHANGE_RATE = -999;
+
+    private void initChangeRate() {
         for (String code : cwfxMap.keySet()) {
             List<CwfxVo> list = cwfxMap.get(code);
             Collections.sort(list);
@@ -135,17 +137,49 @@ public class CwfxLoader {
                 for (int i = 0; i < list.size() - 1; i++) {
                     CwfxVo cur = list.get(i);
                     CwfxVo last = list.get(i + 1);
-                    float incomeRate = ((float) cur.getIncome()) / ((float) last.getIncome());
-                    float profitRate = ((float) cur.getProfit()) / ((float) last.getProfit());
-                    float ronaRate = ((float) cur.getRona()) / ((float) last.getRona());
-                    float rotaRate = ((float) cur.getRota()) / ((float) last.getRota());
-                    float dtarRate = ((float) cur.getDtar()) / ((float) last.getDtar());
+
+                    float incomeRate = 0f;
+                    if (cur.getIncome() < 0 || last.getIncome() < 0) {
+                        incomeRate = INVALID_CHANGE_RATE;
+                    } else {
+                        incomeRate = Math.abs((float) cur.getIncome()) / Math.abs((float) last.getIncome());
+                        incomeRate = incomeRate - 1;
+                    }
+                    float profitChangeRate = 0f;
+                    profitChangeRate = profitChangeRate - 1;
+                    if (cur.getProfit() < 0 || last.getProfit() < 0) {
+                        profitChangeRate = INVALID_CHANGE_RATE;
+                    } else {
+                        profitChangeRate = Math.abs((float) cur.getProfit()) / Math.abs((float) last.getProfit());
+                        profitChangeRate = profitChangeRate - 1;
+                    }
+                    float ronaChangeRate = 0f;
+                    if (cur.getRona() < 0 || last.getRona() < 0) {
+                        ronaChangeRate = INVALID_CHANGE_RATE;
+                    } else {
+                        ronaChangeRate = Math.abs((float) cur.getRona()) / Math.abs((float) last.getRona());
+                        ronaChangeRate = ronaChangeRate - 1;
+                    }
+                    float rotaChangeRate = 0f;
+                    if (cur.getRota() < 0 || last.getRota() < 0) {
+                        rotaChangeRate = INVALID_CHANGE_RATE;
+                    } else {
+                        rotaChangeRate = Math.abs((float) cur.getRota()) / Math.abs((float) last.getRota());
+                        rotaChangeRate = rotaChangeRate - 1;
+                    }
+                    float dtarChangeRate = 0f;
+                    if (cur.getDtar() < 0 || last.getDtar() < 0) {
+                        dtarChangeRate = INVALID_CHANGE_RATE;
+                    } else {
+                        dtarChangeRate = Math.abs((float) cur.getDtar()) / Math.abs((float) last.getDtar());
+                        dtarChangeRate = dtarChangeRate - 1;
+                    }
 
                     cur.setIncomeChangeRate(incomeRate);
-                    cur.setProfitChangeRate(profitRate);
-                    cur.setRonaChangeRate(ronaRate);
-                    cur.setRotaChangeRate(rotaRate);
-                    cur.setDtarChangeRate(dtarRate);
+                    cur.setProfitChangeRate(profitChangeRate);
+                    cur.setRonaChangeRate(ronaChangeRate);
+                    cur.setRotaChangeRate(rotaChangeRate);
+                    cur.setDtarChangeRate(dtarChangeRate);
                 }
             }
 
@@ -162,7 +196,7 @@ public class CwfxLoader {
         if (inst == null) {
             inst = new CwfxLoader();
             inst.init();
-            inst.initRate();
+            inst.initChangeRate();
         }
         return inst;
     }
