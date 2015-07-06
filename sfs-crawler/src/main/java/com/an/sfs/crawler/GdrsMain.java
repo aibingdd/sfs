@@ -90,7 +90,7 @@ public class GdrsMain {
                 if (vo.getDate().equals(START_SEASON)) {
                     startCount = vo.getShareholderCount();
                 }
-                if (vo.getDate().equals(AppUtil.CUR_SEASON)) {
+                if (vo.getDate().equals(AppUtil.CURRENT_SEASON)) {
                     currentCount = vo.getShareholderCount();
                 }
             }

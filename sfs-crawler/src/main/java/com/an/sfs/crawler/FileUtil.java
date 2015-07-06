@@ -24,6 +24,7 @@ import com.an.sfs.crawler.tdx.StockVo;
 public class FileUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(FileUtil.class);
     public static final DecimalFormat PERCENT_FORMAT = new DecimalFormat("00.00%");
+    public static final DecimalFormat PERCENT_3_FORMAT = new DecimalFormat("000.00%");
     public static final DecimalFormat FLOAT_FORMAT = new DecimalFormat("00.00");
     /**
      * 123 -> 000123
@@ -80,10 +81,10 @@ public class FileUtil {
 
     /**
      * @param dirPath
-     * @param outFileList
+     * @param files
      */
-    public static void getFilesUnderDir(String dirPath, List<File> outFileList) {
-        getFilesUnderDir(dirPath, null, null, outFileList);
+    public static void getFilesUnderDir(String dirPath, List<File> files) {
+        getFilesUnderDir(dirPath, null, null, files);
     }
 
     /**
@@ -223,10 +224,10 @@ public class FileUtil {
         for (int i = 0; i < 58; i++) {
             text.append("&nbsp");
         }
-        text.append("ROTA&nbsp").append(" |&nbspRONA").append(" |&nbspN P&nbsp&nbsp&nbsp&nbsp&nbsp")
-                .append(" | DTAR&nbsp").append(" | P E&nbsp&nbsp").append(" | P B&nbsp&nbsp").append(" |地区")
-                .append(" | ROTA(14-13-12)").append(" | RONA(14-13-12)").append(" | N P(14-13-12) ").append(" | 机构持仓")
-                .append("<br>\n");
+        text.append("ROTA&nbsp").append(" |&nbspRONA").append(" |&nbspN P&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp")
+                .append(" | DTAR&nbsp").append(" | P E&nbsp&nbsp").append(" | PED").append(" | P B&nbsp&nbsp")
+                .append(" | JGCC&nbsp&nbsp").append(" |地区").append(" | ROTA(14-13-12)").append(" | RONA(14-13-12)")
+                .append(" | N P(14-13-12) ").append(" | 机构持仓").append("<br>\n");
 
         String industryUrl = "<a href=\"D:\\sfs_home\\output\\cwfx_rona\\Stock_Cwfx_Rona_%s%s.html\">%s</a>";
         String stockUrl = "<a href=\"http://f10.eastmoney.com/f10_v2/ShareholderResearch.aspx?code=%s%s\">%s</a>";
@@ -242,22 +243,29 @@ public class FileUtil {
             }
             text.append(url).append("&nbsp");
             text.append(vo.getNameDisplayStr());
+            StockVo stockVo = StockLoader.getInst().getStockVo(code);
             if (displayIndustry) {
-                StockVo stockVo = StockLoader.getInst().getStockVo(code);
                 text.append("\t|").append(stockVo.getIndustryDisplay());
+            }
+            String peDynamic = "";
+            if (stockVo != null) {
+                peDynamic = stockVo.getPeDisplayStr();
             }
             text.append("\t|").append(vo.getRotaDisplayStr());
             text.append("\t|").append(vo.getRonaDisplayStr());
-            text.append("\t|").append(vo.getProfitChangeRateDisplayStr());
+            text.append("\t|").append(vo.getNetProfitChangeRateDisplayStr());
             text.append("\t|").append(vo.getDtarDisplayStr());
             text.append("\t|").append(vo.getPeDisplayStr());
+            text.append("\t|").append(peDynamic);
             text.append("\t|").append(vo.getPbDisplayStr());
+            text.append("\t|").append(vo.getJgccRatioDisplayStr());
             text.append("\t|").append(vo.getRegion());
             text.append("\t|").append(vo.getRotaStr());
             text.append("\t|").append(vo.getRonaStr());
-            text.append("\t|").append(vo.getProfitChangeStr());
+            text.append("\t|").append(vo.getNetProfitChangeStr());
             text.append("\t|").append(vo.getJgcc());
             text.append(vo.getNote());
+            text.append("\t|").append(vo.getFhfa());
 
             text.append("<br>\n");
         }

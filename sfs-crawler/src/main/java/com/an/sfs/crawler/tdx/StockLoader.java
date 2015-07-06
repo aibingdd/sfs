@@ -103,8 +103,9 @@ public class StockLoader {
                 if (line.startsWith("代码")) {
                     String[] strs = line.split("\t");
                     if (!"代码".equals(strs[0]) || !"名称".equals(strs[1]) || !"现价".equals(strs[2])
-                            || !"总量".equals(strs[3]) || !"细分行业".equals(strs[4]) || !"地区".equals(strs[5])
-                            || !"流通股本(万)".equals(strs[6]) || !"上市日期".equals(strs[7]) || !"总股本(万)".equals(strs[8])) {
+                            || !"总量".equals(strs[3]) || !"市盈(动)".equals(strs[4]) || !"细分行业".equals(strs[5])
+                            || !"地区".equals(strs[6]) || !"流通股本(万)".equals(strs[7]) || !"上市日期".equals(strs[8])
+                            || !"总股本(万)".equals(strs[9])) {
                         LOGGER.error("Error exported headers of file {}", latestFile);
                         System.exit(1);
                     }
@@ -115,22 +116,27 @@ public class StockLoader {
                     String name = strs[1];// name
                     float price = Float.parseFloat(strs[2]);// price
                     long totalVolume = Long.parseLong(strs[3]);
-                    String industry = strs[4];// industry
+                    float pe = 0f;
+                    if (!"--".equals(strs[4].trim())) {
+                        pe = Float.parseFloat(strs[4].trim());
+                    }
+                    String industry = strs[5];// industry
                     if (industry.isEmpty()) {
                         continue;
                     }
-                    String region = strs[5];// region
-                    long floatShare = FileUtil.parseFloat(strs[6]);// FloatShare
-                    String publicDate = strs[7];// Public date
+                    String region = strs[6];// region
+                    long floatShare = FileUtil.parseFloat(strs[7]);// FloatShare
+                    String publicDate = strs[8];// Public date
                     String newPublicDate = publicDate.substring(0, 4) + "-" + publicDate.substring(4, 6) + "-"
                             + publicDate.substring(6);
-                    long outstandingShare = FileUtil.parseFloat(strs[8]);// OutstandingShare
+                    long outstandingShare = FileUtil.parseFloat(strs[9]);// OutstandingShare
 
                     StockVo vo = new StockVo();
                     vo.setCode(code);
                     vo.setName(name);
                     vo.setPrice(price);
                     vo.setTotalVolume(totalVolume);
+                    vo.setPe(pe);
                     vo.setIndustry(industry);
                     vo.setRegion(region);
                     vo.setFloatShare(floatShare);

@@ -64,7 +64,7 @@ public class GbJgLoader {
                         stockGbjgList.add(vo);
                         gbjgList.add(vo);
 
-                        if (AppUtil.CUR_SEASON.equals(vo.getDate())) {
+                        if (AppUtil.CURRENT_SEASON.equals(vo.getDate())) {
                             curSeasonGbjgMap.put(stock, vo);
                         }
                     }

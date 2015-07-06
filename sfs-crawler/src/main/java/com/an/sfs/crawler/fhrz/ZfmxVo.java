@@ -16,9 +16,6 @@ public class ZfmxVo implements Comparable<ZfmxVo> {
         return increaseTime + " " + type + " ￥" + price + " " + (amount / 10000) + "万";
     }
 
-    public ZfmxVo() {
-    }
-
     @Override
     public int compareTo(ZfmxVo o) {
         if (this.increaseTime.equals(o.increaseTime)) {

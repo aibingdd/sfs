@@ -14,6 +14,7 @@ import com.an.sfs.crawler.cwfx.CwfxUpLoader;
 import com.an.sfs.crawler.cwfx.CwfxVo;
 import com.an.sfs.crawler.cwfx.InvalidCwfxLoader;
 import com.an.sfs.crawler.cwfx.ReportVo;
+import com.an.sfs.crawler.fhrz.FhfaLoader;
 import com.an.sfs.crawler.fhrz.FhrzLoader;
 import com.an.sfs.crawler.gdyj.GdrsDownLoader;
 import com.an.sfs.crawler.name.IgnoreStockLoader;
@@ -102,7 +103,7 @@ public class CwfxMain {
                 totalRona += vo.getRona();
                 totalRota += vo.getRota();
                 totalDtar += vo.getDtar();
-                totalProfitChange += vo.getProfitChangeRate();
+                totalProfitChange += vo.getNetProfitChangeRate();
                 totalPe += vo.getPe();
                 totalPb += vo.getPb();
             }
@@ -217,13 +218,20 @@ public class CwfxMain {
                     continue;
                 }
 
+                if (code.equals("002294")) {
+                    System.out.println(code);
+                }
                 CwfxVo latestCwfxVo = list.get(0);
-                ReportVo vo = new ReportVo(code, avgRona, avgRota, avgDtar, avgProfitChange, latestCwfxVo.getPe(),
-                        latestCwfxVo.getPb());
+                float factor = FhfaLoader.getInst().getYearFactor(code);
+                float price = StockLoader.getInst().getPrice(code);
+                float pe = price / (latestCwfxVo.getPeps() * factor);
+                float pb = price / (latestCwfxVo.getNaps() * factor);
+                ReportVo vo = new ReportVo(code, avgRona, avgRota, avgDtar, avgProfitChange, pe, pb);
+
                 vo.setRonaStr(ronaStr);
                 vo.setRotaStr(rotaStr);
                 vo.setDtarStr(dtarStr);
-                vo.setProfitChangeStr(profitChangeRateStr);
+                vo.setNetProfitChangeStr(profitChangeRateStr);
 
                 if (outIndustryCodeReportMap != null) {
                     String industryName = stockVo.getIndustry();
@@ -265,15 +273,27 @@ public class CwfxMain {
                 long jgcc = CcjgLoader.getInst().getTotal(code);
                 vo.setJgcc(FileUtil.FLOAT_FORMAT.format((float) jgcc / 10000f) + "万");
 
+                String fhfa = FhfaLoader.getInst().getYearFhfa(code);
+                vo.setFhfa(fhfa);
+
+                float seasonFactor = FhfaLoader.getInst().getSeasonFactor(code);
+                float jgccRatio = 0f;
+                if (seasonFactor != 1f) {
+                    jgccRatio = jgcc / (stockVo.getFloatShare() * seasonFactor);
+                } else {
+                    jgccRatio = (float) jgcc / (float) (stockVo.getFloatShare());
+                }
+                vo.setJgccRatio(jgccRatio);
+
                 String note = "";
                 if (CwfxUpLoader.getInst().isRotaUp(code)) {
-                    note = note + " | ROTA_UP";
+                    note = note + " | ROTA";
                 }
                 if (CwfxUpLoader.getInst().isRonaUp(code)) {
-                    note = note + " | RONA_UP";
+                    note = note + " | RONA";
                 }
                 if (CwfxUpLoader.getInst().isProfitUp(code)) {
-                    note = note + " | PROFIT_UP";
+                    note = note + " | PROFIT";
                 }
                 if (GdrsDownLoader.getInst().isGdrsDown(code)) {
                     note = note + " | GDRS";

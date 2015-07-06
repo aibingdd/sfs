@@ -18,8 +18,8 @@ public class ReportVo implements Comparable<ReportVo> {
     private String dtarStr;
 
     // Net profit
-    private float profitChangeRate;
-    private String profitChangeStr;
+    private float netProfitChangeRate;
+    private String netProfitChangeStr;
 
     // Price / Earning Per Share
     private float pe;
@@ -31,6 +31,11 @@ public class ReportVo implements Comparable<ReportVo> {
 
     // JiGouChiCang
     private String jgcc;
+    // JiGouChiCang Ratio
+    private float jgccRatio;
+
+    // Fhfa
+    private String fhfa;
 
     private String note;
 
@@ -69,9 +74,9 @@ public class ReportVo implements Comparable<ReportVo> {
         return FileUtil.PERCENT_FORMAT.format(val);
     }
 
-    public String getProfitChangeRateDisplayStr() {
-        float val = this.profitChangeRate;
-        return FileUtil.PERCENT_FORMAT.format(val);
+    public String getNetProfitChangeRateDisplayStr() {
+        float val = this.netProfitChangeRate;
+        return FileUtil.PERCENT_3_FORMAT.format(val);
     }
 
     public String getPeDisplayStr() {
@@ -82,21 +87,26 @@ public class ReportVo implements Comparable<ReportVo> {
         return FileUtil.FLOAT_FORMAT.format(this.pb);
     }
 
+    public String getJgccRatioDisplayStr() {
+        float val = this.jgccRatio;
+        return FileUtil.PERCENT_FORMAT.format(val);
+    }
+
     /**
      * @param code
      * @param rona
      * @param rota
      * @param dtar
-     * @param profitChangeRate
+     * @param netProfitChangeRate
      * @param pe
      * @param pb
      */
-    public ReportVo(String code, float rona, float rota, float dtar, float profitChangeRate, float pe, float pb) {
+    public ReportVo(String code, float rona, float rota, float dtar, float netProfitChangeRate, float pe, float pb) {
         this.code = code;
         this.rona = rona;
         this.rota = rota;
         this.dtar = dtar;
-        this.profitChangeRate = profitChangeRate;
+        this.netProfitChangeRate = netProfitChangeRate;
         this.pe = pe;
         this.pb = pb;
     }
@@ -151,24 +161,41 @@ public class ReportVo implements Comparable<ReportVo> {
     public String toString() {
         return "ReportVo [index=" + index + ", code=" + code + ", name=" + name + ", rona=" + rona + ", ronaStr="
                 + ronaStr + ", rota=" + rota + ", rotaStr=" + rotaStr + ", dtar=" + dtar + ", dtarStr=" + dtarStr
-                + ", profitChange=" + profitChangeRate + ", profitChangeStr=" + profitChangeStr + ", pe=" + pe
-                + ", pb=" + pb + ", region=" + region + ", jgcc=" + jgcc + ", note=" + note + "]";
+                + ", netProfitChangeRate=" + netProfitChangeRate + ", netProfitChangeStr=" + netProfitChangeStr
+                + ", pe=" + pe + ", pb=" + pb + ", region=" + region + ", jgcc=" + jgcc + ", jgccRatio=" + jgccRatio
+                + ", fhfa=" + fhfa + ", note=" + note + "]";
     }
 
-    public float getProfitChangeRate() {
-        return profitChangeRate;
+    public float getJgccRatio() {
+        return jgccRatio;
     }
 
-    public void setProfitChangeRate(float profitChangeRate) {
-        this.profitChangeRate = profitChangeRate;
+    public void setJgccRatio(float jgccRatio) {
+        this.jgccRatio = jgccRatio;
     }
 
-    public String getProfitChangeStr() {
-        return profitChangeStr;
+    public String getFhfa() {
+        return fhfa;
     }
 
-    public void setProfitChangeStr(String profitChangeStr) {
-        this.profitChangeStr = profitChangeStr;
+    public void setFhfa(String fhfa) {
+        this.fhfa = fhfa;
+    }
+
+    public float getNetProfitChangeRate() {
+        return netProfitChangeRate;
+    }
+
+    public void setNetProfitChangeRate(float netProfitChangeRate) {
+        this.netProfitChangeRate = netProfitChangeRate;
+    }
+
+    public String getNetProfitChangeStr() {
+        return netProfitChangeStr;
+    }
+
+    public void setNetProfitChangeStr(String netProfitChangeStr) {
+        this.netProfitChangeStr = netProfitChangeStr;
     }
 
     public String getRonaStr() {

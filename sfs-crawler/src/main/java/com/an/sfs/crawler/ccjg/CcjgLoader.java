@@ -63,7 +63,7 @@ public class CcjgLoader {
 
     private void init() {
         List<File> files = new ArrayList<>();
-        FileUtil.getFilesUnderDir(AppFilePath.getInputCcjgTxtDir(AppUtil.CUR_SEASON), files);
+        FileUtil.getFilesUnderDir(AppFilePath.getInputCcjgTxtDir(AppUtil.CURRENT_SEASON), files);
         for (File f : files) {
             String stock = FileUtil.getFileName(f.getPath());
             List<CcjgVo> jgList = new ArrayList<>();

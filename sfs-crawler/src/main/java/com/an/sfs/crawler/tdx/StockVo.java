@@ -1,16 +1,23 @@
 package com.an.sfs.crawler.tdx;
 
+import com.an.sfs.crawler.FileUtil;
+
 public class StockVo {
     private String code;
     private float price;
     private long totalVolume;
     private String name;
+    private float pe;
     // XiFenHangYe
     private String industry;
     private String region;
     private String publicDate;
     private long outstandingShare;
     private long floatShare;
+
+    public String getPeDisplayStr() {
+        return FileUtil.FLOAT_FORMAT.format(pe);
+    }
 
     public String getIndustryDisplay() {
         String displayName = industry;
@@ -31,8 +38,16 @@ public class StockVo {
     @Override
     public String toString() {
         return "StockVo [code=" + code + ", price=" + price + ", totalVolume=" + totalVolume + ", name=" + name
-                + ", industry=" + industry + ", region=" + region + ", publicDate=" + publicDate
+                + ", pe=" + pe + ", industry=" + industry + ", region=" + region + ", publicDate=" + publicDate
                 + ", outstandingShare=" + outstandingShare + ", floatShare=" + floatShare + "]";
+    }
+
+    public float getPe() {
+        return pe;
+    }
+
+    public void setPe(float pe) {
+        this.pe = pe;
     }
 
     public String getCode() {

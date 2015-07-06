@@ -22,10 +22,12 @@ public class AppUtil {
     public static final String INVALID = "--";
     public static final String UNIT_WAN = "万";
     public static final String UNIT_YI = "亿";
+    // Last year
+    public static final String LAST_YEAR = "2014-12-31";
     // Last Season
     public static final String LAST_SEASON = "2014-12-31";
     // Current Season
-    public static final String CUR_SEASON = "2015-03-31";
+    public static final String CURRENT_SEASON = "2015-03-31";
     // Current YJYG season
     public static final String SEASON_YJYG = "2015-06-30";
 

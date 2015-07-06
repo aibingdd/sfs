@@ -1,7 +1,5 @@
 package com.an.sfs.crawler.cwfx;
 
-import com.an.sfs.crawler.tdx.StockLoader;
-
 public class CwfxVo implements Comparable<CwfxVo> {
     private String code;
     private String date;
@@ -24,16 +22,6 @@ public class CwfxVo implements Comparable<CwfxVo> {
     private float ronaChangeRate;
     private float rotaChangeRate;
     private float dtarChangeRate;
-
-    public float getPe() {
-        float val = StockLoader.getInst().getPrice(code) / this.peps;
-        return val;
-    }
-
-    public float getPb() {
-        float val = StockLoader.getInst().getPrice(code) / this.naps;
-        return val;
-    }
 
     @Override
     public int compareTo(CwfxVo o) {

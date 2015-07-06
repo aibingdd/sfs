@@ -48,7 +48,7 @@ public class JgLoader {
 
     private void analyze() {
         List<File> files = new ArrayList<>();
-        FileUtil.getFilesUnderDir(AppFilePath.getInputCcjgTxtDir(AppUtil.CUR_SEASON), files);
+        FileUtil.getFilesUnderDir(AppFilePath.getInputCcjgTxtDir(AppUtil.CURRENT_SEASON), files);
 
         StringBuilder text = new StringBuilder();
         for (File f : files) {

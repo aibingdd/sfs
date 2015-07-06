@@ -93,11 +93,11 @@ public class TfpFetcher {
         List<String> tfpUrlList = new ArrayList<>();
         tfpUrlList.addAll(tfpUrls);
         Collections.sort(tfpUrlList);
-        StringBuilder tfpUrlText = new StringBuilder();
+        StringBuilder txt = new StringBuilder();
         for (String httpUrl : tfpUrlList) {
-            tfpUrlText.append(httpUrl).append("\n");
+            txt.append(httpUrl).append("\n");
         }
-        FileUtil.writeFile(tfpUrlFile, tfpUrlText.toString());
+        FileUtil.writeFile(tfpUrlFile, txt.toString());
 
         // Download TFPGG web page
         for (String httpUrl : tfpUrlList) {

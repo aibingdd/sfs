@@ -40,9 +40,9 @@ public class AppFilePath {
         dirs.add(getOutputTfpggDir());
 
         dirs.add(getInputFhrzRawDir());
-        dirs.add(getInputFhrzFhyxDir());
+        dirs.add(getInputFhrzFhfaDir());
         dirs.add(getInputFhrzZfmxDir());
-        dirs.add(getOutputFhrzDir());
+        dirs.add(getOutputFhfaDir());
 
         dirs.add(getInputJjmcRawDir());
         dirs.add(getInputJjmcTxtDir());
@@ -168,16 +168,16 @@ public class AppFilePath {
         return getInputFhrzDir() + File.separator + "raw";
     }
 
-    public static String getInputFhrzFhyxDir() {
-        return getInputFhrzDir() + File.separator + "fhyx";
+    public static String getInputFhrzFhfaDir() {
+        return getInputFhrzDir() + File.separator + "fhfa";
     }
 
     public static String getInputFhrzZfmxDir() {
         return getInputFhrzDir() + File.separator + "zfmx";
     }
 
-    public static String getOutputFhrzDir() {
-        return getOutputDir() + File.separator + "fhrz";
+    public static String getOutputFhfaDir() {
+        return getOutputDir() + File.separator + "fhfa";
     }
 
     // Ji jin ming cheng
