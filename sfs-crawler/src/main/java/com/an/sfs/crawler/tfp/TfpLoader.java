@@ -58,19 +58,20 @@ public class TfpLoader {
     }
 
     /**
-     * @param outTfpMap
+     * @return {stock code -> display string}
      */
-    public void getTfpMap(Map<String, String> outTfpMap) {
+    public Map<String, String> getTfpMap() {
+        Map<String, String> result = new HashMap<>();
         for (String code : tfpMap.keySet()) {
             List<TfpVo> voList = tfpMap.get(code);
             Collections.sort(voList);
-
             String val = "";
             for (TfpVo vo : voList) {
                 val += (vo.getDisplayStr() + "; ");
             }
-            outTfpMap.put(code, val);
+            result.put(code, val);
         }
+        return result;
     }
 
     private void init() {

@@ -12,6 +12,7 @@ import com.an.sfs.crawler.gdyj.GdrsDownLoader;
 import com.an.sfs.crawler.gdyj.GdrsLoader;
 import com.an.sfs.crawler.gdyj.GdrsSortVo;
 import com.an.sfs.crawler.gdyj.GdrsVo;
+import com.an.sfs.crawler.tdx.StockLoader;
 import com.an.sfs.crawler.tfp.TfpLoader;
 
 /**
@@ -43,16 +44,19 @@ public class GdrsMain {
         List<Map<String, String>> zfList = new ArrayList<Map<String, String>>();
         zfList.add(zfMap);
 
-        Map<String, String> tfpMap = new HashMap<>();
-        TfpLoader.getInst().getTfpMap(tfpMap);
+        Map<String, String> tfpMap = TfpLoader.getInst().getTfpMap();
         List<Map<String, String>> tfpList = new ArrayList<Map<String, String>>();
         tfpList.add(tfpMap);
 
         List<String> list = new ArrayList<>();
         for (String stock : stockList) {
-            if (!stock.startsWith("3")) { // Filter ChuangYeBan
-                list.add(stock);
+            if (stock.startsWith("3")) { // Filter ChuangYeBan
+                continue;
             }
+            if (StockLoader.getInst().getStockVo(stock).isSuspend()) {
+                continue;
+            }
+            list.add(stock);
         }
 
         String txt = AppFilePath.getOutputDir() + File.separator + "Stock_Gdrs_Down.txt";

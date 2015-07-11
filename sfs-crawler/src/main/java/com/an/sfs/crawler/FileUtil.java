@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -29,7 +31,7 @@ public class FileUtil {
     /**
      * 123 -> 000123
      */
-    public static final String INT_FORMAT = String.format("%06d", 123);
+    public static final String INT_6_FORMAT = String.format("%06d", 123);
 
     /**
      * Save content to file.
@@ -109,6 +111,40 @@ public class FileUtil {
                     outFileList.add(f);
                 }
             }
+        }
+    }
+
+    /**
+     * @param dirPath
+     * @param files
+     */
+    public static void getSortedFilesUnderDir(String dirPath, List<File> files) {
+        getSortedFilesUnderDir(dirPath, null, null, files);
+    }
+
+    public static void getSortedFilesUnderDir(String dirPath, String start, String end, List<File> outFiles) {
+        List<SfsFile> sfsFileList = new ArrayList<>();
+        File dir = new File(dirPath);
+        if (dir.exists()) {
+            File[] files = dir.listFiles();
+            for (File f : files) {
+                if (f.isFile()) {
+                    String filePath = f.getPath();
+                    String fileNameName = FileUtil.getFileNameFull(filePath);
+                    if (start != null && !fileNameName.startsWith(start)) {
+                        continue;
+                    }
+                    if (end != null && !fileNameName.endsWith(end)) {
+                        continue;
+                    }
+                    sfsFileList.add(new SfsFile(f));
+                }
+            }
+        }
+
+        Collections.sort(sfsFileList);
+        for (SfsFile f : sfsFileList) {
+            outFiles.add(f.getFile());
         }
     }
 

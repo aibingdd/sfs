@@ -76,11 +76,25 @@ public class AppFilePath {
         dirs.add(getInputGsgkTxtDir());
         dirs.add(getOutputGsgkDir());
 
+        dirs.add(getInputCninfoRawDir());
+        dirs.add(getInputCninfoTxtDir());
+        dirs.add(getOutputCninfoGdrsDir());
+
         for (String dirName : dirs) {
             File dir = new File(dirName);
             if (!dir.exists()) {
                 dir.mkdirs();
             }
+        }
+    }
+
+    /**
+     * @param dirName
+     */
+    public static void mkdirs(String dirName) {
+        File dir = new File(dirName);
+        if (!dir.exists()) {
+            dir.mkdirs();
         }
     }
 
@@ -301,6 +315,35 @@ public class AppFilePath {
     // TDX
     public static String getInputTdxDir() {
         return getInputDir() + File.separator + "tdx";
+    }
+
+    // Cninfo
+    private static String getInputCninfoDir() {
+        return getInputDir() + File.separator + "cninfo";
+    }
+
+    public static String getInputCninfoRawDir() {
+        return getInputCninfoDir() + File.separator + "raw";
+    }
+
+    private static String getInputCninfoDetailDir() {
+        return getInputCninfoDir() + File.separator + "detail";
+    }
+
+    public static String getInputCninfoDetailDir(String code) {
+        return getInputCninfoDetailDir() + File.separator + code;
+    }
+
+    public static String getInputCninfoTxtDir() {
+        return getInputCninfoDir() + File.separator + "txt";
+    }
+
+    public static String getOutputCninfoDir() {
+        return getOutputDir() + File.separator + "cninfo";
+    }
+
+    public static String getOutputCninfoGdrsDir() {
+        return getOutputCninfoDir() + File.separator + "gdrs";
     }
 
     //

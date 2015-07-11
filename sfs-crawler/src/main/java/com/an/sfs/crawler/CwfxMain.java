@@ -69,8 +69,7 @@ public class CwfxMain {
         List<Map<String, String>> zfmxAppendInfoList = new ArrayList<Map<String, String>>();
         zfmxAppendInfoList.add(zfMap);
 
-        Map<String, String> tfpMap = new HashMap<>();
-        TfpLoader.getInst().getTfpMap(tfpMap);
+        Map<String, String> tfpMap = TfpLoader.getInst().getTfpMap();
         List<Map<String, String>> tfpAppendInfoList = new ArrayList<Map<String, String>>();
         tfpAppendInfoList.add(tfpMap);
 
@@ -218,9 +217,6 @@ public class CwfxMain {
                     continue;
                 }
 
-                if (code.equals("002294")) {
-                    System.out.println(code);
-                }
                 CwfxVo latestCwfxVo = list.get(0);
                 float factor = FhfaLoader.getInst().getYearFactor(code);
                 float price = StockLoader.getInst().getPrice(code);
