@@ -12,8 +12,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.an.sfs.crawler.AppFilePath;
-import com.an.sfs.crawler.FileUtil;
+import com.an.sfs.crawler.util.AppFile;
+import com.an.sfs.crawler.util.FileUtil;
 
 public class FhrzLoader {
     private static final Logger LOGGER = LoggerFactory.getLogger(FhrzLoader.class);
@@ -63,7 +63,7 @@ public class FhrzLoader {
 
     private void init() {
         List<File> files = new ArrayList<>();
-        FileUtil.getFilesUnderDir(AppFilePath.getInputFhrzZfmxDir(), files);
+        FileUtil.getFilesUnderDir(AppFile.getInputFhrzZfmxDir(), files);
         for (File f : files) {
             String stockCode = FileUtil.getFileName(f.getPath());
             List<ZfmxVo> voList = new ArrayList<>();

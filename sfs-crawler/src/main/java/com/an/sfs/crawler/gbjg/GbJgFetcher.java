@@ -10,10 +10,10 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.an.sfs.crawler.AppFilePath;
-import com.an.sfs.crawler.AppUtil;
-import com.an.sfs.crawler.FileUtil;
 import com.an.sfs.crawler.tdx.StockLoader;
+import com.an.sfs.crawler.util.AppFile;
+import com.an.sfs.crawler.util.AppUtil;
+import com.an.sfs.crawler.util.FileUtil;
 
 public class GbJgFetcher {
     private static final Logger LOGGER = LoggerFactory.getLogger(GbJgFetcher.class);
@@ -34,7 +34,7 @@ public class GbJgFetcher {
             String typeStr = StockLoader.getTypeStr(stock);
 
             String url = String.format(URL, typeStr, stock);
-            String fp = AppFilePath.getInputGbjgRawDir() + File.separator + stock + ".html";
+            String fp = AppFile.getInputGbjgRawDir() + File.separator + stock + ".html";
             if (!FileUtil.isFileExist(fp)) {
                 AppUtil.download(url, fp);
             }
@@ -44,7 +44,7 @@ public class GbJgFetcher {
 
     private void analyze() {
         List<File> files = new ArrayList<>();
-        FileUtil.getFilesUnderDir(AppFilePath.getInputGbjgTxtDir(), files);
+        FileUtil.getFilesUnderDir(AppFile.getInputGbjgTxtDir(), files);
         for (File f : files) {
             String stock = FileUtil.getFileName(f.getPath());
             List<String> valList = new ArrayList<String>();
@@ -60,7 +60,7 @@ public class GbJgFetcher {
                 LOGGER.error("Error ", e);
             }
 
-            String fp = AppFilePath.getOutputGbjgDir() + File.separator + stock + ".txt";
+            String fp = AppFile.getOutputGbjgDir() + File.separator + stock + ".txt";
             StringBuilder text = new StringBuilder();
             FileUtil.convertListToText(valList, 4, text);
             FileUtil.writeFile(fp, text.toString());
@@ -83,7 +83,7 @@ public class GbJgFetcher {
                     if (start && line.contains("<table>")) {
                         String text = line.trim();
                         text = text.replaceAll("><", ">\n<");
-                        String fp = AppFilePath.getInputGbjgTxtDir() + File.separator + fn + ".txt";
+                        String fp = AppFile.getInputGbjgTxtDir() + File.separator + fn + ".txt";
                         FileUtil.writeFile(fp, text);
                         break;
                     }

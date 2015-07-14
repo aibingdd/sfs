@@ -11,9 +11,9 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.an.sfs.crawler.AppFilePath;
-import com.an.sfs.crawler.FileUtil;
 import com.an.sfs.crawler.name.FundVo;
+import com.an.sfs.crawler.util.AppFile;
+import com.an.sfs.crawler.util.FileUtil;
 
 public class JjmcFetcher {
     private static final Logger LOGGER = LoggerFactory.getLogger(JjmcFetcher.class);
@@ -23,7 +23,7 @@ public class JjmcFetcher {
     private static final String FLAG = "<a href=\"http://fund.eastmoney.com/";
 
     public static String getJjmcFile() {
-        return AppFilePath.getOutputJjmcDir() + File.separator + "jjmc.txt";
+        return AppFile.getOutputJjmcDir() + File.separator + "jjmc.txt";
     }
 
     public void run() {
@@ -42,7 +42,7 @@ public class JjmcFetcher {
             for (int i = 0; i < pageCount; i++) {
                 int typeVal = jj.getValue();
                 String url = String.format(URL, typeVal, i + 1);
-                String filePath = AppFilePath.getInputJjmcDir() + File.separator + typeVal + "_" + i + ".txt";
+                String filePath = AppFile.getInputJjmcDir() + File.separator + typeVal + "_" + i + ".txt";
                 if (!FileUtil.isFileExist(filePath)) {
                     // AppUtil.download_rest(url, filePath);
                     // AppUtil.download(url, filePath);
@@ -53,15 +53,15 @@ public class JjmcFetcher {
 
     private void convert() {
         List<File> fileList = new ArrayList<>();
-        FileUtil.getFilesUnderDir(AppFilePath.getInputJjmcRawDir(), fileList);
+        FileUtil.getFilesUnderDir(AppFile.getInputJjmcRawDir(), fileList);
         for (File f : fileList) {
-            FileUtil.formatHtmlFile(AppFilePath.getInputJjmcTxtDir(), ".txt", f.getPath(), "gb2312");
+            FileUtil.formatHtmlFile(AppFile.getInputJjmcTxtDir(), ".txt", f.getPath(), "gb2312");
         }
     }
 
     private void export() {
         List<File> fileList = new ArrayList<>();
-        FileUtil.getFilesUnderDir(AppFilePath.getInputJjmcTxtDir(), fileList);
+        FileUtil.getFilesUnderDir(AppFile.getInputJjmcTxtDir(), fileList);
 
         List<FundVo> funds = new ArrayList<>();
         for (File f : fileList) {

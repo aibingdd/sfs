@@ -11,7 +11,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.an.sfs.crawler.AppUtil;
+import com.an.sfs.crawler.SfsConf;
 
 // 000963,华东医药,预计2015年1-6月归属于上市公司股东的净利润盈利:60335万元-66174万元,55%～70%,预增,389259850.75,预增,2015-03-14,2015-06-30
 public class YjygLoader {
@@ -63,7 +63,7 @@ public class YjygLoader {
     }
 
     private void init() {
-        String yjygTxtFile = YjygFetcher.getYjygTxtFile(AppUtil.SEASON_YJYG);
+        String yjygTxtFile = YjygFetcher.getYjygTxtFile(SfsConf.YJYG_SEASON);
         try (BufferedReader br = new BufferedReader(new FileReader(yjygTxtFile))) {
             String line = null;
             while ((line = br.readLine()) != null) {

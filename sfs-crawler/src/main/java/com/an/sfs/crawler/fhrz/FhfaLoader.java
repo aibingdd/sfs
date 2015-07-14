@@ -12,9 +12,9 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.an.sfs.crawler.AppFilePath;
-import com.an.sfs.crawler.AppUtil;
-import com.an.sfs.crawler.FileUtil;
+import com.an.sfs.crawler.SfsConf;
+import com.an.sfs.crawler.util.AppFile;
+import com.an.sfs.crawler.util.FileUtil;
 
 public class FhfaLoader {
     private static final Logger LOGGER = LoggerFactory.getLogger(FhfaLoader.class);
@@ -29,7 +29,7 @@ public class FhfaLoader {
         if (!list.isEmpty()) {
             FhfaVo vo = list.get(0);
             String date = vo.getDate();
-            if (date.compareTo(AppUtil.LAST_YEAR) > 0) {
+            if (date.compareTo(SfsConf.LAST_YEAR) > 0) {
                 if (vo.getIncrease() > 0) {
                     return "送转" + vo.getIncrease();
                 }
@@ -50,7 +50,7 @@ public class FhfaLoader {
         if (!list.isEmpty()) {
             FhfaVo vo = list.get(0);
             String date = vo.getDate();
-            if (date.compareTo(AppUtil.LAST_YEAR) > 0) {
+            if (date.compareTo(SfsConf.LAST_YEAR) > 0) {
                 if (vo.getIncrease() > 0) {
                     factor = 10 / (vo.getIncrease() + 10);
                 }
@@ -71,7 +71,7 @@ public class FhfaLoader {
         if (!list.isEmpty()) {
             FhfaVo vo = list.get(0);
             String date = vo.getDate();
-            if (date.compareTo(AppUtil.CURRENT_SEASON) > 0) {
+            if (date.compareTo(SfsConf.CURRENT_SEASON) > 0) {
                 if (vo.getIncrease() > 0) {
                     factor = 10 / (vo.getIncrease() + 10);
                 }
@@ -86,7 +86,7 @@ public class FhfaLoader {
 
     private void init() {
         List<File> files = new ArrayList<>();
-        FileUtil.getFilesUnderDir(AppFilePath.getOutputFhfaDir(), files);
+        FileUtil.getFilesUnderDir(AppFile.getOutputFhfaDir(), files);
         for (File f : files) {
             String code = FileUtil.getFileName(f.getPath());
             if (code.equals("300017")) {

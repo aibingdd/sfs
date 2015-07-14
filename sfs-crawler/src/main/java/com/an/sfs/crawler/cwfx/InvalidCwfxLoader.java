@@ -15,16 +15,16 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.an.sfs.crawler.AppFilePath;
-import com.an.sfs.crawler.AppUtil;
-import com.an.sfs.crawler.FileUtil;
 import com.an.sfs.crawler.tdx.StockLoader;
+import com.an.sfs.crawler.util.AppFile;
+import com.an.sfs.crawler.util.AppUtil;
+import com.an.sfs.crawler.util.FileUtil;
 
 public class InvalidCwfxLoader {
     private static final Logger LOGGER = LoggerFactory.getLogger(InvalidCwfxLoader.class);
 
     private String getInvalidCwfxFile() {
-        return AppFilePath.getOutputDir() + File.separator + "Invalid_Cwfx_Rona_Rota_Profit.txt";
+        return AppFile.getOutputDir() + File.separator + "Invalid_Cwfx_Rona_Rota_Profit.txt";
     }
 
     private Set<String> stockSet = new HashSet<>();
@@ -59,7 +59,7 @@ public class InvalidCwfxLoader {
 
     private void extract() {
         List<File> files = new ArrayList<File>();
-        FileUtil.getFilesUnderDir(AppFilePath.getOutputCwfxDir(), files);
+        FileUtil.getFilesUnderDir(AppFile.getOutputCwfxDir(), files);
 
         Map<String, List<String>> industryTextMap = new HashMap<>();
 

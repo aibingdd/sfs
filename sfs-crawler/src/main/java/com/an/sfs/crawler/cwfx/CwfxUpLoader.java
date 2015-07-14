@@ -9,9 +9,10 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.an.sfs.crawler.SfsConf;
+
 public class CwfxUpLoader {
     private static final Logger LOGGER = LoggerFactory.getLogger(CwfxUpLoader.class);
-    private static final String START_DATE = "2012-01-01";
 
     public List<String> profitUpStockList = new ArrayList<>();
     private Set<String> profitUpStockSet = new HashSet<>();
@@ -39,6 +40,7 @@ public class CwfxUpLoader {
     }
 
     private void init() {
+        LOGGER.info("init.");
         Map<String, List<CwfxVo>> cwfxMap = CwfxLoader.getInst().getCwfxMap();
 
         for (String stock : cwfxMap.keySet()) {
@@ -46,7 +48,7 @@ public class CwfxUpLoader {
             List<CwfxVo> voList = new ArrayList<>();
             for (int i = 0; i < rawVoList.size() - 1; i++) {
                 CwfxVo vo = rawVoList.get(i);
-                if (rawVoList.get(i).getDate().compareTo(START_DATE) > 0) {
+                if (rawVoList.get(i).getDate().compareTo(SfsConf.CWFX_UP_START_DATE) > 0) {
                     voList.add(vo);
                 }
             }

@@ -13,7 +13,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.an.sfs.crawler.AppFilePath;
+import com.an.sfs.crawler.util.AppFile;
 
 public class TfpLoader {
     private static final Logger LOGGER = LoggerFactory.getLogger(TfpLoader.class);
@@ -75,7 +75,7 @@ public class TfpLoader {
     }
 
     private void init() {
-        try (BufferedReader br = new BufferedReader(new FileReader(AppFilePath.getOutputDir() + File.separator
+        try (BufferedReader br = new BufferedReader(new FileReader(AppFile.getOutputDir() + File.separator
                 + TfpFetcher.TFP_FILE))) {
             // 600054;黄山旅游;2015-06-05 09:30;2015-06-05 09:30;今起复牌;重大事项
             String line = null;

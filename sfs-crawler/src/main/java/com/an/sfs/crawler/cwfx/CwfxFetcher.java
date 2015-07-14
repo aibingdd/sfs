@@ -10,10 +10,10 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.an.sfs.crawler.AppFilePath;
-import com.an.sfs.crawler.AppUtil;
-import com.an.sfs.crawler.FileUtil;
 import com.an.sfs.crawler.tdx.StockLoader;
+import com.an.sfs.crawler.util.AppFile;
+import com.an.sfs.crawler.util.AppUtil;
+import com.an.sfs.crawler.util.FileUtil;
 
 public class CwfxFetcher {
     private static final Logger LOGGER = LoggerFactory.getLogger(CwfxFetcher.class);
@@ -45,7 +45,7 @@ public class CwfxFetcher {
 
     public void run() {
         LOGGER.info("Fetch CWFX.");
-        fetchCwfxData(URL, AppFilePath.getInputCwfxRawDir());
+        fetchCwfxData(URL, AppFile.getInputCwfxRawDir());
 
         LOGGER.info("Analyze CWFX...");
         analyzeCwfx();
@@ -67,7 +67,7 @@ public class CwfxFetcher {
 
     private void analyzeCwfx() {
         List<File> fileList = new ArrayList<>();
-        String dirPath = AppFilePath.getInputCwfxRawDir();
+        String dirPath = AppFile.getInputCwfxRawDir();
         FileUtil.getFilesUnderDir(dirPath, fileList);
         for (File f : fileList) {
             String stock = FileUtil.getFileName(f.getPath());
@@ -218,7 +218,7 @@ public class CwfxFetcher {
 
                 StringBuilder text = new StringBuilder();
                 FileUtil.convertListToText(list, 8, text);
-                String fp = AppFilePath.getOutputCwfxDir() + File.separator + stock + ".txt";
+                String fp = AppFile.getOutputCwfxDir() + File.separator + stock + ".txt";
                 FileUtil.writeFile(fp, text.toString());
             } catch (IOException e) {
                 LOGGER.error("Error while analyzing file {}", f.getPath());

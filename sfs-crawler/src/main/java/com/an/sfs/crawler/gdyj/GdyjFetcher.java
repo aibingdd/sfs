@@ -10,10 +10,10 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.an.sfs.crawler.AppFilePath;
-import com.an.sfs.crawler.AppUtil;
-import com.an.sfs.crawler.FileUtil;
 import com.an.sfs.crawler.tdx.StockLoader;
+import com.an.sfs.crawler.util.AppFile;
+import com.an.sfs.crawler.util.AppUtil;
+import com.an.sfs.crawler.util.FileUtil;
 
 public class GdyjFetcher {
     private static final Logger LOGGER = LoggerFactory.getLogger(GdyjFetcher.class);
@@ -39,7 +39,7 @@ public class GdyjFetcher {
         for (String stock : stockList) {
             String typeStr = StockLoader.getTypeStr(stock);
             String httpUrl = String.format(url, typeStr, stock);
-            String filePath = AppFilePath.getInputGdyjRawDir() + File.separator + stock + ".html";
+            String filePath = AppFile.getInputGdyjRawDir() + File.separator + stock + ".html";
             if (!FileUtil.isFileExist(filePath)) {
                 AppUtil.download(httpUrl, filePath);
             }
@@ -65,7 +65,7 @@ public class GdyjFetcher {
                     if (beginGdrs && line.contains(FLAG_DATA)) {
                         String text = line.trim();
                         text = text.replaceAll("><", ">\n<");
-                        String fp = AppFilePath.getInputGdyjGdrsDir() + File.separator + stock + ".txt";
+                        String fp = AppFile.getInputGdyjGdrsDir() + File.separator + stock + ".txt";
                         FileUtil.writeFile(fp, text);
                         finishGdrs = true;
                         continue;
@@ -80,7 +80,7 @@ public class GdyjFetcher {
                     if (beginSdltgd && line.contains(FLAG_DATA)) {
                         String text = line.trim();
                         text = text.replaceAll("><", ">\n<");
-                        String fp = AppFilePath.getInputGdyjSdltgdDir() + File.separator + stock + ".txt";
+                        String fp = AppFile.getInputGdyjSdltgdDir() + File.separator + stock + ".txt";
                         FileUtil.writeFile(fp, text);
                         finishSdltgd = true;
                         continue;
@@ -94,7 +94,7 @@ public class GdyjFetcher {
 
     private void analyzeGdrs() {
         List<File> files = new ArrayList<>();
-        FileUtil.getFilesUnderDir(AppFilePath.getInputGdyjGdrsDir(), files);
+        FileUtil.getFilesUnderDir(AppFile.getInputGdyjGdrsDir(), files);
         for (File f : files) {
             String stock = FileUtil.getFileName(f.getPath());
             List<String> list = new ArrayList<>();
@@ -108,7 +108,7 @@ public class GdyjFetcher {
 
                 StringBuilder text = new StringBuilder();
                 FileUtil.convertListToText(list, 10, text);
-                String fp = AppFilePath.getOutputGdyjGdrsDir() + File.separator + stock + ".txt";
+                String fp = AppFile.getOutputGdyjGdrsDir() + File.separator + stock + ".txt";
                 FileUtil.writeFile(fp, text.toString());
             } catch (IOException e) {
                 LOGGER.error("Error ", e);
@@ -118,7 +118,7 @@ public class GdyjFetcher {
 
     private void analyzeSdltgd() {
         List<File> files = new ArrayList<>();
-        FileUtil.getFilesUnderDir(AppFilePath.getInputGdyjSdltgdDir(), files);
+        FileUtil.getFilesUnderDir(AppFile.getInputGdyjSdltgdDir(), files);
         for (File f : files) {
             String stock = FileUtil.getFileName(f.getPath());
             StringBuilder text = new StringBuilder();
@@ -142,7 +142,7 @@ public class GdyjFetcher {
                         }
                     }
                 }
-                String fp = AppFilePath.getOutputGdyjSdltgdDir() + File.separator + stock + ".txt";
+                String fp = AppFile.getOutputGdyjSdltgdDir() + File.separator + stock + ".txt";
                 FileUtil.writeFile(fp, text.toString());
             } catch (IOException e) {
                 LOGGER.error("Error ", e);

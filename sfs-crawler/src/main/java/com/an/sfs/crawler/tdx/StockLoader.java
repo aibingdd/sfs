@@ -14,8 +14,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.an.sfs.crawler.AppFilePath;
-import com.an.sfs.crawler.FileUtil;
+import com.an.sfs.crawler.util.AppFile;
+import com.an.sfs.crawler.util.FileUtil;
 
 public class StockLoader {
     private static final Logger LOGGER = LoggerFactory.getLogger(StockLoader.class);
@@ -89,7 +89,7 @@ public class StockLoader {
 
     private void init() {
         List<File> files = new ArrayList<>();
-        FileUtil.getFilesUnderDir(AppFilePath.getInputTdxDir(), files);
+        FileUtil.getFilesUnderDir(AppFile.getInputTdxDir(), files);
         Collections.sort(files);
 
         File latestFile = files.get(files.size() - 1);

@@ -1,4 +1,4 @@
-package com.an.sfs.crawler;
+package com.an.sfs.crawler.util;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -7,8 +7,10 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AppFilePath {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AppFilePath.class);
+import com.an.sfs.crawler.SfsConf;
+
+public class AppFile {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AppFile.class);
 
     public static void initDirs() {
         String baseDir = getBaseDir();
@@ -51,7 +53,7 @@ public class AppFilePath {
         dirs.add(getInputJjccRawDir());
         dirs.add(getInputJjccTxtDir());
         dirs.add(getOutputJjccDir());
-        for (String season : AppUtil.seasonList) {
+        for (String season : SfsConf.getSeasonList()) {
             dirs.add(getInputJjccRawDir(season));
             dirs.add(getInputJjccTxtDir(season));
         }
@@ -59,7 +61,7 @@ public class AppFilePath {
         dirs.add(getInputCcjgRawDir());
         dirs.add(getInputCcjgTxtDir());
         dirs.add(getOutputCcjgDir());
-        for (String season : AppUtil.seasonList) {
+        for (String season : SfsConf.getSeasonList()) {
             dirs.add(getInputCcjgRawDir(season));
             dirs.add(getInputCcjgTxtDir(season));
         }
@@ -347,7 +349,11 @@ public class AppFilePath {
     }
 
     //
-    public static String getConfFile(String fileName) {
+    public static String getConfFp(String fileName) {
         return getConfDir() + File.separator + fileName;
+    }
+
+    public static String getOutputFp(String fileName) {
+        return getOutputDir() + File.separator + fileName;
     }
 }

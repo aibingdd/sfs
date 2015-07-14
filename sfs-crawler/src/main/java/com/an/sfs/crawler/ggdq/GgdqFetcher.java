@@ -6,10 +6,10 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.an.sfs.crawler.AppFilePath;
-import com.an.sfs.crawler.AppUtil;
-import com.an.sfs.crawler.FileUtil;
 import com.an.sfs.crawler.tdx.StockLoader;
+import com.an.sfs.crawler.util.AppFile;
+import com.an.sfs.crawler.util.AppUtil;
+import com.an.sfs.crawler.util.FileUtil;
 
 public class GgdqFetcher {
     private static final Logger LOGGER = LoggerFactory.getLogger(GgdqFetcher.class);
@@ -18,7 +18,7 @@ public class GgdqFetcher {
 
     public void run() {
         LOGGER.info("Fetch GGDQ.");
-        fetchGgdqData(XWGG_QBGG_PAGE, AppFilePath.getInputGgdqDir());
+        fetchGgdqData(XWGG_QBGG_PAGE, AppFile.getInputGgdqDir());
     }
 
     private void fetchGgdqData(String url, String fileDir) {

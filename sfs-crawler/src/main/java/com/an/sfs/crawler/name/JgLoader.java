@@ -12,16 +12,16 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.an.sfs.crawler.AppFilePath;
-import com.an.sfs.crawler.AppUtil;
-import com.an.sfs.crawler.FileUtil;
+import com.an.sfs.crawler.SfsConf;
+import com.an.sfs.crawler.util.AppFile;
+import com.an.sfs.crawler.util.FileUtil;
 
 public class JgLoader {
     private static final Logger LOGGER = LoggerFactory.getLogger(JgLoader.class);
     private List<JgVo> jgList = new ArrayList<>();
     private Map<String, JgVo> jgMap = new HashMap<>();
 
-    private static final String JG_FILE = AppFilePath.getOutputDir() + File.separator + "JG.txt";
+    private static final String JG_FILE = AppFile.getOutputDir() + File.separator + "JG.txt";
 
     public List<JgVo> getJgList() {
         return jgList;
@@ -48,7 +48,7 @@ public class JgLoader {
 
     private void analyze() {
         List<File> files = new ArrayList<>();
-        FileUtil.getFilesUnderDir(AppFilePath.getInputCcjgTxtDir(AppUtil.CURRENT_SEASON), files);
+        FileUtil.getFilesUnderDir(AppFile.getInputCcjgTxtDir(SfsConf.CURRENT_SEASON), files);
 
         StringBuilder text = new StringBuilder();
         for (File f : files) {

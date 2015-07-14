@@ -23,6 +23,8 @@ import com.an.sfs.crawler.name.WhiteHorseStockLoader;
 import com.an.sfs.crawler.tdx.StockLoader;
 import com.an.sfs.crawler.tdx.StockVo;
 import com.an.sfs.crawler.tfp.TfpLoader;
+import com.an.sfs.crawler.util.AppFile;
+import com.an.sfs.crawler.util.FileUtil;
 
 /**
  * Search all stocks which net profit is increasing for last three years.
@@ -38,16 +40,16 @@ public class CwfxMain {
     public static final boolean SORT_BY_PB = false;
 
     public static void main(String[] args) {
-        AppFilePath.initDirs();
+        AppFile.initDirs();
         exportProfitUp();
 
         Map<String, List<ReportVo>> industryCodeReportMap = new HashMap<>();
-        String txt = AppFilePath.getOutputCwfxRonaDir() + File.separator + "Stock_Cwfx.txt";
-        String html = AppFilePath.getOutputCwfxRonaDir() + File.separator + "Stock_Cwfx.html";
+        String txt = AppFile.getOutputCwfxRonaDir() + File.separator + "Stock_Cwfx.txt";
+        String html = AppFile.getOutputCwfxRonaDir() + File.separator + "Stock_Cwfx.html";
         exportCwfx(txt, html, 0, industryCodeReportMap);
 
-        txt = AppFilePath.getOutputCwfxRonaDir() + File.separator + "Stock_Cwfx__Rona_Rota_Profit.txt";
-        html = AppFilePath.getOutputCwfxRonaDir() + File.separator + "Stock_Cwfx__Rona_Rota_Profit.html";
+        txt = AppFile.getOutputCwfxRonaDir() + File.separator + "Stock_Cwfx__Rona_Rota_Profit.txt";
+        html = AppFile.getOutputCwfxRonaDir() + File.separator + "Stock_Cwfx__Rona_Rota_Profit.html";
         exportCwfx(txt, html, 1, null);
 
         exportRonaByIndustry(industryCodeReportMap);
@@ -73,17 +75,8 @@ public class CwfxMain {
         List<Map<String, String>> tfpAppendInfoList = new ArrayList<Map<String, String>>();
         tfpAppendInfoList.add(tfpMap);
 
-        String txt = AppFilePath.getOutputDir() + File.separator + "Stock_Cwfx_Profit.txt";
-        String txtZf = AppFilePath.getOutputDir() + File.separator + "Stock_Cwfx_Profit_Zf.txt";
-        String txtTfp = AppFilePath.getOutputDir() + File.separator + "Stock_Cwfx_Profit_Tfp.txt";
-        String html = AppFilePath.getOutputDir() + File.separator + "Stock_Cwfx_Profit_Zf.html";
-        String htmlTfp = AppFilePath.getOutputDir() + File.separator + "Stock_Cwfx_Profit_Tfp.html";
-
+        String txt = AppFile.getOutputDir() + File.separator + "Stock_Cwfx_Profit.txt";
         FileUtil.exportStock(stockList, txt);
-        FileUtil.exportStock(zfmxStockList, txtZf);
-        FileUtil.exportStock(tfpStockList, txtTfp);
-        FileUtil.exportHtml(zfmxStockList, zfmxAppendInfoList, html);
-        FileUtil.exportHtml(tfpStockList, tfpAppendInfoList, htmlTfp);
     }
 
     private static void exportRonaByIndustry(Map<String, List<ReportVo>> industryCodeReportMap) {
@@ -130,11 +123,11 @@ public class CwfxMain {
             }
 
             String industryName = IndustryLoader.getInst().getIndustryName(industryCode);
-            String txt = AppFilePath.getOutputCwfxRonaDir() + File.separator + "Stock_Cwfx_Rona_" + industryCode
+            String txt = AppFile.getOutputCwfxRonaDir() + File.separator + "Stock_Cwfx_Rona_" + industryCode
                     + industryName + ".txt";
             FileUtil.exportStock(stockCodeList, txt);
 
-            String html = AppFilePath.getOutputCwfxRonaDir() + File.separator + "Stock_Cwfx_Rona_" + industryCode
+            String html = AppFile.getOutputCwfxRonaDir() + File.separator + "Stock_Cwfx_Rona_" + industryCode
                     + industryName + ".html";
             FileUtil.exportReport(reportVoList, html, false);
         }
@@ -146,7 +139,7 @@ public class CwfxMain {
         initReportVo(avgIndustryVoList);
         Collections.sort(avgIndustryVoList);
         initReportIndex(avgIndustryVoList);
-        String html = AppFilePath.getOutputCwfxRonaDir() + File.separator + "Stock_Cwfx_Industry" + ".html";
+        String html = AppFile.getOutputCwfxRonaDir() + File.separator + "Stock_Cwfx_Industry" + ".html";
         FileUtil.exportReport(avgIndustryVoList, html, false);
     }
 

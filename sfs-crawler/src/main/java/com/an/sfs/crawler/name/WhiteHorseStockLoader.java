@@ -12,7 +12,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.an.sfs.crawler.AppFilePath;
+import com.an.sfs.crawler.util.AppFile;
 
 public class WhiteHorseStockLoader {
     private static final Logger LOGGER = LoggerFactory.getLogger(WhiteHorseStockLoader.class);
@@ -28,7 +28,7 @@ public class WhiteHorseStockLoader {
     }
 
     private void init() {
-        String fp = AppFilePath.getConfDir() + File.separator + "WhiteHorse.txt";
+        String fp = AppFile.getConfDir() + File.separator + "WhiteHorse.txt";
         try (BufferedReader br = new BufferedReader(new FileReader(fp))) {
             String line = null;
             while ((line = br.readLine()) != null) {

@@ -12,8 +12,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.an.sfs.crawler.AppFilePath;
-import com.an.sfs.crawler.FileUtil;
+import com.an.sfs.crawler.util.AppFile;
+import com.an.sfs.crawler.util.FileUtil;
 
 public class JjccLoader {
     private static final Logger LOGGER = LoggerFactory.getLogger(JjccLoader.class);
@@ -46,7 +46,7 @@ public class JjccLoader {
 
     private void init() {
         List<File> files = new ArrayList<>();
-        FileUtil.getFilesUnderDir(AppFilePath.getInputJjccTxtDir(CUR_SEASON), files);
+        FileUtil.getFilesUnderDir(AppFile.getInputJjccTxtDir(CUR_SEASON), files);
         for (File f : files) {
             String fund = FileUtil.getFileName(f.getPath());
             List<String> stockList = new ArrayList<>();

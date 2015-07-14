@@ -1,7 +1,7 @@
 package com.an.sfs.crawler.cwfx;
 
 import com.an.sfs.crawler.CwfxMain;
-import com.an.sfs.crawler.FileUtil;
+import com.an.sfs.crawler.util.FileUtil;
 
 public class ReportVo implements Comparable<ReportVo> {
     private String index;

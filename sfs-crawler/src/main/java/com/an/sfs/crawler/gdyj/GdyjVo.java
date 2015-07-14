@@ -1,6 +1,6 @@
 package com.an.sfs.crawler.gdyj;
 
-import com.an.sfs.crawler.FileUtil;
+import com.an.sfs.crawler.util.FileUtil;
 
 public class GdyjVo implements Comparable<GdyjVo> {
     private String code;

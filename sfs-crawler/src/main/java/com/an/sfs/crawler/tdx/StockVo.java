@@ -1,6 +1,6 @@
 package com.an.sfs.crawler.tdx;
 
-import com.an.sfs.crawler.FileUtil;
+import com.an.sfs.crawler.util.FileUtil;
 
 public class StockVo {
     private String code;

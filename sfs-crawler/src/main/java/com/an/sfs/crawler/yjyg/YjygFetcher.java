@@ -8,9 +8,10 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.an.sfs.crawler.AppFilePath;
-import com.an.sfs.crawler.AppUtil;
-import com.an.sfs.crawler.FileUtil;
+import com.an.sfs.crawler.SfsConf;
+import com.an.sfs.crawler.util.AppFile;
+import com.an.sfs.crawler.util.AppUtil;
+import com.an.sfs.crawler.util.FileUtil;
 
 public class YjygFetcher {
     private static final Logger LOGGER = LoggerFactory.getLogger(YjygFetcher.class);
@@ -23,14 +24,14 @@ public class YjygFetcher {
     }
 
     public static String getYjygTxtFile(String season) {
-        String txtFilePath = AppFilePath.getInputYjygTxtDir() + File.separator + season + ".txt";
+        String txtFilePath = AppFile.getInputYjygTxtDir() + File.separator + season + ".txt";
         return txtFilePath;
     }
 
     private void download() {
-        String season = AppUtil.SEASON_YJYG;
+        String season = SfsConf.YJYG_SEASON;
         String url = String.format(URL, season);
-        String rawFilePath = AppFilePath.getInputYjygRawDir() + File.separator + season + ".txt";
+        String rawFilePath = AppFile.getInputYjygRawDir() + File.separator + season + ".txt";
         if (!FileUtil.isFileExist(rawFilePath)) {
             AppUtil.download(url, rawFilePath);
         }
@@ -38,7 +39,7 @@ public class YjygFetcher {
     }
 
     private void analyze(String rawFilePath) {
-        String season = AppUtil.SEASON_YJYG;
+        String season = SfsConf.YJYG_SEASON;
         String txtFilePath = getYjygTxtFile(season);
         try (BufferedReader br = new BufferedReader(new FileReader(rawFilePath))) {
             String line = null;

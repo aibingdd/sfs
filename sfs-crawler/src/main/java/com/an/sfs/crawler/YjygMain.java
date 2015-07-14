@@ -4,17 +4,17 @@ import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
+import com.an.sfs.crawler.util.AppFile;
+import com.an.sfs.crawler.util.FileUtil;
 import com.an.sfs.crawler.yjyg.YjygLoader;
 import com.an.sfs.crawler.yjyg.YjygVo;
 
 public class YjygMain {
     public static void main(String[] args) {
         System.out.println("Ye ji yu gao search.");
-        AppFilePath.initDirs();
+        AppFile.initDirs();
         run();
     }
-
-    public static final boolean COMPARE_BY_DATE = true;
 
     private static void run() {
         List<YjygVo> yjygList = YjygLoader.getInst().getYjygList();
@@ -98,6 +98,6 @@ public class YjygMain {
     }
 
     private static String getOutputDir(String fileName) {
-        return AppFilePath.getOutputYjygDir() + File.separator + fileName;
+        return AppFile.getOutputYjygDir() + File.separator + fileName;
     }
 }

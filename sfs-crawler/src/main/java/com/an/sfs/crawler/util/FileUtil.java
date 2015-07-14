@@ -1,4 +1,4 @@
-package com.an.sfs.crawler;
+package com.an.sfs.crawler.util;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -357,7 +357,6 @@ public class FileUtil {
         text.append("</body>\n");
         text.append("</html>");
 
-        LOGGER.info("Write file {}", filePath);
         FileUtil.writeFile(filePath, text.toString());
     }
 

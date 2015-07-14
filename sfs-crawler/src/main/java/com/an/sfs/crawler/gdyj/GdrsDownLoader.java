@@ -9,7 +9,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.an.sfs.crawler.GdrsMain;
+import com.an.sfs.crawler.SfsConf;
 
 public class GdrsDownLoader {
     private static final Logger LOGGER = LoggerFactory.getLogger(GdrsDownLoader.class);
@@ -35,7 +35,7 @@ public class GdrsDownLoader {
 
             boolean invalid = false;
             for (GdrsVo vo : list) {
-                if (vo.getDate().compareTo(GdrsMain.START_SEASON) >= 0) {
+                if (vo.getDate().compareTo(SfsConf.GDRS_START_SEASON) >= 0) {
                     if (vo.getShareholderCountChangeRate() > 1) {
                         invalid = true;
                         break;

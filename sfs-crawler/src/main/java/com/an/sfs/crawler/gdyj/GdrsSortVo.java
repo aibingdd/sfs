@@ -1,6 +1,6 @@
 package com.an.sfs.crawler.gdyj;
 
-import com.an.sfs.crawler.FileUtil;
+import com.an.sfs.crawler.util.FileUtil;
 
 public class GdrsSortVo implements Comparable<GdrsSortVo> {
     private String code;

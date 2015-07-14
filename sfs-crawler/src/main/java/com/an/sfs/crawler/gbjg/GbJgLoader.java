@@ -12,9 +12,9 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.an.sfs.crawler.AppFilePath;
-import com.an.sfs.crawler.AppUtil;
-import com.an.sfs.crawler.FileUtil;
+import com.an.sfs.crawler.SfsConf;
+import com.an.sfs.crawler.util.AppFile;
+import com.an.sfs.crawler.util.FileUtil;
 
 public class GbJgLoader {
     private static final Logger LOGGER = LoggerFactory.getLogger(GbJgLoader.class);
@@ -33,7 +33,7 @@ public class GbJgLoader {
 
     private void init() {
         List<File> files = new ArrayList<>();
-        FileUtil.getFilesUnderDir(AppFilePath.getOutputGbjgDir(), files);
+        FileUtil.getFilesUnderDir(AppFile.getOutputGbjgDir(), files);
         for (File f : files) {
             String stock = FileUtil.getFileName(f.getPath());
             List<GbjgVo> stockGbjgList = new ArrayList<>();
@@ -64,7 +64,7 @@ public class GbJgLoader {
                         stockGbjgList.add(vo);
                         gbjgList.add(vo);
 
-                        if (AppUtil.CURRENT_SEASON.equals(vo.getDate())) {
+                        if (SfsConf.CURRENT_SEASON.equals(vo.getDate())) {
                             curSeasonGbjgMap.put(stock, vo);
                         }
                     }

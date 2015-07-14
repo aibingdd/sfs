@@ -1,6 +1,5 @@
 package com.an.sfs.crawler;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,13 +14,15 @@ import com.an.sfs.crawler.gbjg.GbJgLoader;
 import com.an.sfs.crawler.gbjg.GbjgVo;
 import com.an.sfs.crawler.gdyj.GdyjVo;
 import com.an.sfs.crawler.tdx.StockLoader;
+import com.an.sfs.crawler.util.AppFile;
+import com.an.sfs.crawler.util.FileUtil;
 
 public class StockJgMain {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AppFilePath.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AppFile.class);
 
     public static void main(String[] args) {
         System.out.println("Stock Ji Gou Search.");
-        AppFilePath.initDirs();
+        AppFile.initDirs();
         run();
     }
 
@@ -78,12 +79,7 @@ public class StockJgMain {
         appendInfoList.add(jgTotalMap);
         appendInfoList.add(circulationMap);
 
-        String txt = AppFilePath.getOutputDir() + File.separator + "StockJg.txt";
-        LOGGER.info("Write file {}", txt);
-        FileUtil.exportStock(stockList, txt);
-
-        String html = AppFilePath.getOutputDir() + File.separator + "StockJg.html";
-        LOGGER.info("Write file {}", html);
-        FileUtil.exportHtml(stockList, appendInfoList, html);
+        FileUtil.exportStock(stockList, AppFile.getOutputFp("StockJg.txt"));
+        FileUtil.exportHtml(stockList, appendInfoList, AppFile.getOutputFp("StockJg.html"));
     }
 }

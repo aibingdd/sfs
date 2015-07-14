@@ -14,11 +14,12 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.an.sfs.crawler.AppFilePath;
-import com.an.sfs.crawler.AppUtil;
-import com.an.sfs.crawler.FileUtil;
+import com.an.sfs.crawler.SfsConf;
 import com.an.sfs.crawler.name.FundLoader;
 import com.an.sfs.crawler.name.FundVo;
+import com.an.sfs.crawler.util.AppFile;
+import com.an.sfs.crawler.util.AppUtil;
+import com.an.sfs.crawler.util.FileUtil;
 
 public class JjccFetcher {
     private static final Logger LOGGER = LoggerFactory.getLogger(JjccFetcher.class);
@@ -43,9 +44,9 @@ public class JjccFetcher {
     }
 
     private void analyze() {
-        for (String season : AppUtil.seasonList) {
+        for (String season : SfsConf.getSeasonList()) {
             List<File> fileList = new ArrayList<>();
-            String dir = AppFilePath.getInputJjccRawDir(season);
+            String dir = AppFile.getInputJjccRawDir(season);
             FileUtil.getFilesUnderDir(dir, fileList);
             for (File f : fileList) {
                 String fileName = FileUtil.getFileName(f.getPath());
@@ -62,7 +63,7 @@ public class JjccFetcher {
                                 String text = line.substring(startIndex + 1, endIndex);
                                 text = text.replaceAll("\",", "\n");
                                 text = text.replaceAll("\"", "");
-                                String fp = AppFilePath.getInputJjccTxtDir(season) + File.separator + fileName + ".txt";
+                                String fp = AppFile.getInputJjccTxtDir(season) + File.separator + fileName + ".txt";
                                 FileUtil.writeFile(fp, text);
                             }
                         }
@@ -87,7 +88,7 @@ public class JjccFetcher {
             boolean finished = false;
             String code = vo.getCode();
 
-            for (String season : AppUtil.seasonList) {
+            for (String season : SfsConf.getSeasonList()) {
                 if (earliestSeasons.containsKey(code)) {
                     if (season.compareTo(earliestSeasons.get(code)) <= 0) {
                         // Ignore earlier season
@@ -96,7 +97,7 @@ public class JjccFetcher {
                 }
 
                 String url = String.format(URL, season, code);
-                String filePath = AppFilePath.getInputJjccRawDir(season) + File.separator + code + ".html";
+                String filePath = AppFile.getInputJjccRawDir(season) + File.separator + code + ".html";
                 if (FileUtil.isFileExist(filePath)) {
                     continue;
                 }
@@ -147,6 +148,6 @@ public class JjccFetcher {
     }
 
     private String getEarliestSeaonFile() {
-        return AppFilePath.getOutputJjccDir() + File.separator + "earliestSeason.txt";
+        return AppFile.getOutputJjccDir() + File.separator + "earliestSeason.txt";
     }
 }

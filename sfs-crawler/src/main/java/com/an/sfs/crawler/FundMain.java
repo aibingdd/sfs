@@ -6,13 +6,14 @@ import com.an.sfs.crawler.jjcc.JjccLoader;
 import com.an.sfs.crawler.name.FundLoader;
 import com.an.sfs.crawler.name.FundVo;
 import com.an.sfs.crawler.tdx.StockLoader;
+import com.an.sfs.crawler.util.AppFile;
 
 public class FundMain {
     private static final String STOCK = "600551";
     private static final String FUND = "161825";
 
     public static void main(String[] args) {
-        AppFilePath.initDirs();
+        AppFile.initDirs();
         List<String> funds = JjccLoader.getInst().getFunds(STOCK);
         System.out.println("Search fund:");
         for (String fund : funds) {

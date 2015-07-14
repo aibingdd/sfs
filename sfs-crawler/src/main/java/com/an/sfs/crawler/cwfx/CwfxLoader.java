@@ -12,13 +12,12 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.an.sfs.crawler.AppFilePath;
-import com.an.sfs.crawler.AppUtil;
-import com.an.sfs.crawler.FileUtil;
+import com.an.sfs.crawler.util.AppFile;
+import com.an.sfs.crawler.util.AppUtil;
+import com.an.sfs.crawler.util.FileUtil;
 
 public class CwfxLoader {
     private static final Logger LOGGER = LoggerFactory.getLogger(CwfxLoader.class);
-
     private Map<String, List<CwfxVo>> cwfxMap = new HashMap<>();
 
     public Map<String, List<CwfxVo>> getCwfxMap() {
@@ -38,9 +37,8 @@ public class CwfxLoader {
     }
 
     private void init() {
-        String dir = AppFilePath.getOutputCwfxDir();
         List<File> files = new ArrayList<File>();
-        FileUtil.getFilesUnderDir(dir, files);
+        FileUtil.getFilesUnderDir(AppFile.getOutputCwfxDir(), files);
 
         for (File f : files) {
             String code = FileUtil.getFileName(f.toString());

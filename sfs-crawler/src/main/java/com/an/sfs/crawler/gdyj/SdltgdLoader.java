@@ -10,8 +10,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.an.sfs.crawler.AppFilePath;
-import com.an.sfs.crawler.FileUtil;
+import com.an.sfs.crawler.util.AppFile;
+import com.an.sfs.crawler.util.FileUtil;
 
 public class SdltgdLoader {
     private static final Logger LOGGER = LoggerFactory.getLogger(SdltgdLoader.class);
@@ -19,7 +19,7 @@ public class SdltgdLoader {
 
     private void init() {
         List<File> files = new ArrayList<>();
-        FileUtil.getFilesUnderDir(AppFilePath.getOutputGdyjSdltgdDir(), files);
+        FileUtil.getFilesUnderDir(AppFile.getOutputGdyjSdltgdDir(), files);
         for (File f : files) {
             try (BufferedReader br = new BufferedReader(new FileReader(f))) {
                 String line = null;

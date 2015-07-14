@@ -12,10 +12,10 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.an.sfs.crawler.AppFilePath;
-import com.an.sfs.crawler.AppUtil;
-import com.an.sfs.crawler.FileUtil;
 import com.an.sfs.crawler.tdx.StockLoader;
+import com.an.sfs.crawler.util.AppFile;
+import com.an.sfs.crawler.util.AppUtil;
+import com.an.sfs.crawler.util.FileUtil;
 
 public class CninfoFetcher {
     private static final Logger LOGGER = LoggerFactory.getLogger(CninfoFetcher.class);
@@ -32,7 +32,7 @@ public class CninfoFetcher {
     public void run() {
         stockCodeList = StockLoader.getInst().getStockCodeList();
         LOGGER.info("Fetch raw html.");
-        fetchRaw(URL, AppFilePath.getInputCninfoRawDir());
+        fetchRaw(URL, AppFile.getInputCninfoRawDir());
 
         LOGGER.info("Extract Page Count.");
         extractPageCount();
@@ -62,7 +62,7 @@ public class CninfoFetcher {
 
     private void extractPageCount() {
         List<File> files = new ArrayList<>();
-        FileUtil.getFilesUnderDir(AppFilePath.getInputCninfoRawDir(), files);
+        FileUtil.getFilesUnderDir(AppFile.getInputCninfoRawDir(), files);
         StringBuilder text = new StringBuilder();
         for (File f : files) {
             String filePath = f.getPath();
@@ -92,13 +92,13 @@ public class CninfoFetcher {
                 LOGGER.error("Error ", e);
             }
         }
-        FileUtil.writeFile(AppFilePath.getOutputCninfoDir() + File.separator + "pageCount.txt", text.toString());
+        FileUtil.writeFile(AppFile.getOutputCninfoDir() + File.separator + "pageCount.txt", text.toString());
     }
 
     private void fetchDetail(String url) {
         for (String stock : stockCodeList) {
-            String detailDir = AppFilePath.getInputCninfoDetailDir(stock);
-            AppFilePath.mkdirs(detailDir);
+            String detailDir = AppFile.getInputCninfoDetailDir(stock);
+            AppFile.mkdirs(detailDir);
             if (stock.startsWith("3") || stock.startsWith("0")) {
                 int pageCount = stockPageCountMap.get(stock);
                 for (int pageIndex = 1; pageIndex < pageCount + 1; pageIndex++) {
@@ -115,7 +115,7 @@ public class CninfoFetcher {
     private void extractAskAnswer() {
         for (String stock : stockCodeList) {
             List<File> files = new ArrayList<>();
-            FileUtil.getSortedFilesUnderDir(AppFilePath.getInputCninfoDetailDir(stock), files);
+            FileUtil.getSortedFilesUnderDir(AppFile.getInputCninfoDetailDir(stock), files);
 
             StringBuilder text = new StringBuilder();
             String askAnswer = null;
@@ -145,35 +145,37 @@ public class CninfoFetcher {
                     LOGGER.error("Error {}", line, e);
                 }
             }
-            String fp = AppFilePath.getInputCninfoTxtDir() + File.separator + stock + ".txt";
+            String fp = AppFile.getInputCninfoTxtDir() + File.separator + stock + ".txt";
             FileUtil.writeFile(fp, text.toString());
         }
     }
 
     private void extractGdrs() {
         List<File> files = new ArrayList<>();
-        FileUtil.getFilesUnderDir(AppFilePath.getInputCninfoTxtDir(), files);
+        FileUtil.getFilesUnderDir(AppFile.getInputCninfoTxtDir(), files);
         for (File f : files) {
-            try (BufferedReader br = new BufferedReader(new FileReader(f.getPath()))) {
-                String line = null;
-                boolean isGdrsLine = false;
-                StringBuilder text = new StringBuilder();
-                while ((line = br.readLine()) != null) {
-                    if (line.contains("人数")) {
-                        text.append(line).append("\n");
-                        isGdrsLine = true;
-                        continue;
+            String fileName = FileUtil.getFileNameFull(f.getPath());
+            if (fileName.startsWith("3") || fileName.startsWith("2")) {
+                try (BufferedReader br = new BufferedReader(new FileReader(f.getPath()))) {
+                    String line = null;
+                    boolean isGdrsLine = false;
+                    StringBuilder text = new StringBuilder();
+                    while ((line = br.readLine()) != null) {
+                        if (line.contains("人数")) {
+                            text.append(line).append("\n");
+                            isGdrsLine = true;
+                            continue;
+                        }
+                        if (isGdrsLine) {
+                            text.append(line).append("\n");
+                            isGdrsLine = false;
+                            continue;
+                        }
                     }
-                    if (isGdrsLine) {
-                        text.append(line).append("\n");
-                        isGdrsLine = false;
-                        continue;
-                    }
+                    FileUtil.writeFile(AppFile.getOutputCninfoGdrsDir() + File.separator + fileName, text.toString());
+                } catch (IOException e) {
+                    LOGGER.error("Error ", e);
                 }
-                String fileName = FileUtil.getFileNameFull(f.getPath());
-                FileUtil.writeFile(AppFilePath.getOutputCninfoGdrsDir() + File.separator + fileName, text.toString());
-            } catch (IOException e) {
-                LOGGER.error("Error ", e);
             }
         }
     }

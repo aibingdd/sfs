@@ -1,4 +1,4 @@
-package com.an.sfs.crawler;
+package com.an.sfs.crawler.util;
 
 import java.io.File;
 

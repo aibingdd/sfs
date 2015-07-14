@@ -10,7 +10,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.an.sfs.crawler.AppFilePath;
+import com.an.sfs.crawler.util.AppFile;
 
 public class GdrsFinishLoader {
     private static final Logger LOGGER = LoggerFactory.getLogger(GdrsFinishLoader.class);
@@ -25,7 +25,7 @@ public class GdrsFinishLoader {
     }
 
     private void init() {
-        try (BufferedReader br = new BufferedReader(new FileReader(AppFilePath.getConfDir() + "gdrs_finished.txt"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(AppFile.getConfDir() + "gdrs_finished.txt"))) {
             String line = null;
             while ((line = br.readLine()) != null) {
                 if (!line.isEmpty()) {

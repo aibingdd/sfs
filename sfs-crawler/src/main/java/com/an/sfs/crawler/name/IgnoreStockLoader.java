@@ -10,14 +10,14 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.an.sfs.crawler.AppFilePath;
+import com.an.sfs.crawler.util.AppFile;
 
 public class IgnoreStockLoader {
     private static final Logger LOGGER = LoggerFactory.getLogger(IgnoreStockLoader.class);
     private Set<String> stockSet = new HashSet<>();
 
     public static String getStockFile() {
-        return AppFilePath.getConfDir() + File.separator + "IgnoreStock.txt";
+        return AppFile.getConfDir() + File.separator + "IgnoreStock.txt";
     }
 
     public boolean isIgnore(String stock) {

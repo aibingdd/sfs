@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import com.an.sfs.crawler.AppFilePath;
+import com.an.sfs.crawler.util.AppFile;
 
 public class LinkMain {
     public static void main(String[] args) {
@@ -29,8 +29,8 @@ public class LinkMain {
 
         try {
             for (int i = 1; i < 8; i++) {
-                FileWriter fw = new FileWriter(new File(AppFilePath.getInputJjmcDir() + File.separator + "6-" + i
-                        + ".html"));
+                FileWriter fw = new FileWriter(
+                        new File(AppFile.getInputJjmcDir() + File.separator + "6-" + i + ".html"));
                 fw.write("");
                 fw.close();
             }

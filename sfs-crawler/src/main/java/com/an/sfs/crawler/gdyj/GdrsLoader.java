@@ -12,9 +12,10 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.an.sfs.crawler.AppFilePath;
-import com.an.sfs.crawler.AppUtil;
-import com.an.sfs.crawler.FileUtil;
+import com.an.sfs.crawler.SfsConf;
+import com.an.sfs.crawler.util.AppFile;
+import com.an.sfs.crawler.util.AppUtil;
+import com.an.sfs.crawler.util.FileUtil;
 
 public class GdrsLoader {
     private static final Logger LOGGER = LoggerFactory.getLogger(GdrsLoader.class);
@@ -27,7 +28,7 @@ public class GdrsLoader {
 
     private void init() {
         List<File> files = new ArrayList<File>();
-        FileUtil.getFilesUnderDir(AppFilePath.getOutputGdyjGdrsDir(), files);
+        FileUtil.getFilesUnderDir(AppFile.getOutputGdyjGdrsDir(), files);
         for (File f : files) {
             String stock = FileUtil.getFileName(f.toString());
             gdrsMap.put(stock, new ArrayList<>());
@@ -39,7 +40,7 @@ public class GdrsLoader {
                         String[] strs = line.split(";");
 
                         String date = "20" + strs[0];
-                        if (!AppUtil.isValidDate(date)) {
+                        if (!SfsConf.isValidSeason(date)) {
                             continue;
                         }
 

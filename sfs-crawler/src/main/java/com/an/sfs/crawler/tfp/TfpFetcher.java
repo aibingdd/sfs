@@ -17,9 +17,9 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.an.sfs.crawler.AppFilePath;
-import com.an.sfs.crawler.AppUtil;
-import com.an.sfs.crawler.FileUtil;
+import com.an.sfs.crawler.util.AppFile;
+import com.an.sfs.crawler.util.AppUtil;
+import com.an.sfs.crawler.util.FileUtil;
 
 public class TfpFetcher {
     private static final Logger LOGGER = LoggerFactory.getLogger(TfpFetcher.class);
@@ -33,12 +33,12 @@ public class TfpFetcher {
     public static final String TFP_FILE = "TFP.txt";
 
     public void run() {
-        fetchTfpUrls(TFP, AppFilePath.getInputTfpggDir());
+        fetchTfpUrls(TFP, AppFile.getInputTfpggDir());
     }
 
     private void fetchTfpUrls(String url, String fileDir) {
         // Load existing TFP url
-        String tfpUrlFile = AppFilePath.getOutputTfpggDir() + File.separator + TFP_URL_FILE;
+        String tfpUrlFile = AppFile.getOutputTfpggDir() + File.separator + TFP_URL_FILE;
         if (FileUtil.isFileExist(tfpUrlFile)) {
             try (BufferedReader br = new BufferedReader(new FileReader(tfpUrlFile))) {
                 String line = null;
@@ -102,7 +102,7 @@ public class TfpFetcher {
         // Download TFPGG web page
         for (String httpUrl : tfpUrlList) {
             String fileNameFull = FileUtil.getHttpUrlFileNameFull(httpUrl);
-            String filePath = AppFilePath.getInputTfpggDir() + File.separator + fileNameFull;
+            String filePath = AppFile.getInputTfpggDir() + File.separator + fileNameFull;
 
             if (!FileUtil.isFileExist(filePath)) {
                 AppUtil.download(httpUrl, filePath);
@@ -112,7 +112,7 @@ public class TfpFetcher {
         // Analyze
         StringBuilder allText = new StringBuilder();
         List<File> outFileList = new ArrayList<>();
-        FileUtil.getFilesUnderDir(AppFilePath.getInputTfpggDir(), null, ".htm", outFileList);
+        FileUtil.getFilesUnderDir(AppFile.getInputTfpggDir(), null, ".htm", outFileList);
         for (File f : outFileList) {
             String filePath = f.getPath();
             String fileName = FileUtil.getFileName(filePath);
@@ -152,14 +152,14 @@ public class TfpFetcher {
                 }
             }
 
-            String fp = AppFilePath.getOutputTfpggDir() + File.separator + fileName + ".txt";
+            String fp = AppFile.getOutputTfpggDir() + File.separator + fileName + ".txt";
             FileUtil.writeFile(fp, tfpText.toString());
             // Save to one file
             allText.append(fileName).append("\n");
             allText.append(tfpText.toString());
         }
 
-        FileUtil.writeFile(AppFilePath.getOutputDir() + File.separator + TFP_FILE, allText.toString());
+        FileUtil.writeFile(AppFile.getOutputDir() + File.separator + TFP_FILE, allText.toString());
     }
 
     private static final String VAL_PATTERN_1 = ".*\">(.*)</td>.*";

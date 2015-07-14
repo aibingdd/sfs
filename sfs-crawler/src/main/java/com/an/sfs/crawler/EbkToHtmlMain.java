@@ -11,17 +11,20 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.an.sfs.crawler.util.AppFile;
+import com.an.sfs.crawler.util.FileUtil;
+
 public class EbkToHtmlMain {
     private static final Logger LOGGER = LoggerFactory.getLogger(EbkToHtmlMain.class);
 
     public static void main(String[] args) {
-        AppFilePath.initDirs();
+        AppFile.initDirs();
         run();
     }
 
     private static void run() {
         List<File> outFileList = new ArrayList<>();
-        FileUtil.getFilesUnderDir(AppFilePath.getConfDir(), null, ".EBK", outFileList);
+        FileUtil.getFilesUnderDir(AppFile.getConfDir(), null, ".EBK", outFileList);
         for (File f : outFileList) {
             String ebkFilePath = f.getPath();
             String fileName = FileUtil.getFileName(ebkFilePath);
@@ -45,10 +48,7 @@ public class EbkToHtmlMain {
 
         Collections.sort(stockCodeList);
 
-        String txt = AppFilePath.getOutputDir() + File.separator + fileName + ".txt";
-        String html = AppFilePath.getOutputDir() + File.separator + fileName + ".html";
-
-        FileUtil.exportStock(stockCodeList, txt);
-        FileUtil.exportHtml(stockCodeList, null, html);
+        FileUtil.exportStock(stockCodeList, AppFile.getOutputFp(fileName + ".txt"));
+        FileUtil.exportHtml(stockCodeList, null, AppFile.getOutputFp(fileName + ".html"));
     }
 }

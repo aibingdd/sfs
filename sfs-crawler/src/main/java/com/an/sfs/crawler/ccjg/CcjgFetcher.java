@@ -12,10 +12,11 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.an.sfs.crawler.AppFilePath;
-import com.an.sfs.crawler.AppUtil;
-import com.an.sfs.crawler.FileUtil;
+import com.an.sfs.crawler.SfsConf;
 import com.an.sfs.crawler.tdx.StockLoader;
+import com.an.sfs.crawler.util.AppFile;
+import com.an.sfs.crawler.util.AppUtil;
+import com.an.sfs.crawler.util.FileUtil;
 
 public class CcjgFetcher {
     private static final Logger LOGGER = LoggerFactory.getLogger(CcjgFetcher.class);
@@ -43,7 +44,7 @@ public class CcjgFetcher {
         for (String stock : stockCodeList) {
             boolean finished = false;
 
-            for (String season : AppUtil.seasonList) {
+            for (String season : SfsConf.getSeasonList()) {
                 if (earliestSeasons.containsKey(stock)) {
                     if (season.compareTo(earliestSeasons.get(stock)) <= 0) {
                         break;// Ignore earlier season
@@ -51,7 +52,7 @@ public class CcjgFetcher {
                 }
 
                 String url = String.format(URL, stock, season);
-                String filePath = AppFilePath.getInputCcjgRawDir(season) + File.separator + stock + ".txt";
+                String filePath = AppFile.getInputCcjgRawDir(season) + File.separator + stock + ".txt";
                 if (FileUtil.isFileExist(filePath)) {
                     continue;
                 }
@@ -83,9 +84,9 @@ public class CcjgFetcher {
     }
 
     private void analyze() {
-        for (String season : AppUtil.seasonList) {
+        for (String season : SfsConf.getSeasonList()) {
             List<File> files = new ArrayList<>();
-            String dir = AppFilePath.getInputCcjgRawDir(season);
+            String dir = AppFile.getInputCcjgRawDir(season);
             FileUtil.getFilesUnderDir(dir, files);
             for (File f : files) {
                 String path = f.getPath();
@@ -102,7 +103,7 @@ public class CcjgFetcher {
                                 String text = line.substring(startIndex + 1, endIndex);
                                 text = text.replaceAll("\",", "\n");
                                 text = text.replaceAll("\"", "");
-                                String fp = AppFilePath.getInputCcjgTxtDir(season) + File.separator + fn + ".txt";
+                                String fp = AppFile.getInputCcjgTxtDir(season) + File.separator + fn + ".txt";
                                 FileUtil.writeFile(fp, text);
                             }
                         }
@@ -139,6 +140,6 @@ public class CcjgFetcher {
     }
 
     private String getEarliestSeasonFile() {
-        return AppFilePath.getOutputCcjgDir() + File.separator + "earliestSeason.txt";
+        return AppFile.getOutputCcjgDir() + File.separator + "earliestSeason.txt";
     }
 }

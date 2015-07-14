@@ -10,10 +10,10 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.an.sfs.crawler.AppFilePath;
-import com.an.sfs.crawler.AppUtil;
-import com.an.sfs.crawler.FileUtil;
 import com.an.sfs.crawler.tdx.StockLoader;
+import com.an.sfs.crawler.util.AppFile;
+import com.an.sfs.crawler.util.AppUtil;
+import com.an.sfs.crawler.util.FileUtil;
 
 public class FhrzFetcher {
     private static final Logger LOGGER = LoggerFactory.getLogger(FhrzFetcher.class);
@@ -21,7 +21,7 @@ public class FhrzFetcher {
     private static final String URL = "http://f10.eastmoney.com/f10_v2/BonusFinancing.aspx?code=%s%s";
 
     public void run() {
-        fetchRawHtml(URL, AppFilePath.getInputFhrzRawDir());
+        fetchRawHtml(URL, AppFile.getInputFhrzRawDir());
         LOGGER.info("Extract FHFA.");
         extractFhfa();
         LOGGER.info("Extract ZFMX.");
@@ -44,7 +44,7 @@ public class FhrzFetcher {
 
     private void extractFhfa() {
         List<File> files = new ArrayList<>();
-        FileUtil.getFilesUnderDir(AppFilePath.getInputFhrzRawDir(), files);
+        FileUtil.getFilesUnderDir(AppFile.getInputFhrzRawDir(), files);
         for (File f : files) {
             String filePath = f.getPath();
             String fileName = FileUtil.getFileName(filePath);
@@ -53,7 +53,7 @@ public class FhrzFetcher {
                 while ((line = br.readLine()) != null) {
                     if (line.contains("BonusDetailsTable")) {
                         String text = line.trim().replaceAll("><", ">\n<");
-                        String fp = AppFilePath.getInputFhrzFhfaDir() + File.separator + fileName + ".txt";
+                        String fp = AppFile.getInputFhrzFhfaDir() + File.separator + fileName + ".txt";
                         FileUtil.writeFile(fp, text);
                     }
                 }
@@ -65,7 +65,7 @@ public class FhrzFetcher {
 
     private void extractZfmx() {
         List<File> files = new ArrayList<>();
-        FileUtil.getFilesUnderDir(AppFilePath.getInputFhrzRawDir(), files);
+        FileUtil.getFilesUnderDir(AppFile.getInputFhrzRawDir(), files);
         for (File f : files) {
             String filePath = f.getPath();
             String fileName = FileUtil.getFileName(filePath);
@@ -87,7 +87,7 @@ public class FhrzFetcher {
                     }
                 }
                 if (text != null) {
-                    String fp = AppFilePath.getInputFhrzZfmxDir() + File.separator + fileName + ".txt";
+                    String fp = AppFile.getInputFhrzZfmxDir() + File.separator + fileName + ".txt";
                     FileUtil.writeFile(fp, text);
                 }
             } catch (IOException e) {
@@ -98,7 +98,7 @@ public class FhrzFetcher {
 
     private void analyzeFhfa() {
         List<File> files = new ArrayList<>();
-        FileUtil.getFilesUnderDir(AppFilePath.getInputFhrzFhfaDir(), files);
+        FileUtil.getFilesUnderDir(AppFile.getInputFhrzFhfaDir(), files);
         for (File f : files) {
             try (BufferedReader br = new BufferedReader(new FileReader(f.getPath()))) {
                 String line = null;
@@ -118,7 +118,7 @@ public class FhrzFetcher {
                     }
                 }
                 String fileName = FileUtil.getFileNameFull(f.getPath());
-                FileUtil.writeFile(AppFilePath.getOutputFhfaDir() + File.separator + fileName, text.toString());
+                FileUtil.writeFile(AppFile.getOutputFhfaDir() + File.separator + fileName, text.toString());
             } catch (IOException e) {
                 LOGGER.error("Error ", e);
             }

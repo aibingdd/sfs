@@ -1,6 +1,5 @@
 package com.an.sfs.crawler;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -14,23 +13,21 @@ import com.an.sfs.crawler.gdyj.GdrsSortVo;
 import com.an.sfs.crawler.gdyj.GdrsVo;
 import com.an.sfs.crawler.tdx.StockLoader;
 import com.an.sfs.crawler.tfp.TfpLoader;
+import com.an.sfs.crawler.util.AppFile;
+import com.an.sfs.crawler.util.FileUtil;
 
 /**
  * Search all stocks which holder's count is decreasing from START_DATE.
- * 
- * @author Anthony
  *
  */
 public class GdrsMain {
-    public static final String START_SEASON = "2014-06-30";
-
     public static void main(String[] args) {
-        AppFilePath.initDirs();
+        AppFile.initDirs();
 
         List<String> stockList = new ArrayList<>();
         Map<String, String> appendInfoMap = new HashMap<>();
         find(stockList, appendInfoMap);
-        List<Map<String, String>> appendInfoList = new ArrayList<Map<String, String>>();
+        List<Map<String, String>> appendInfoList = new ArrayList<>();
         appendInfoList.add(appendInfoMap);
 
         List<String> zfmxStockList = new ArrayList<>();
@@ -59,27 +56,14 @@ public class GdrsMain {
             list.add(stock);
         }
 
-        String txt = AppFilePath.getOutputDir() + File.separator + "Stock_Gdrs_Down.txt";
-        String txtZf = AppFilePath.getOutputDir() + File.separator + "Stock_Gdrs_Down_Zf.txt";
-        String tfpTxt = AppFilePath.getOutputDir() + File.separator + "Stock_Gdrs_Down_Tfp.txt";
-        String html = AppFilePath.getOutputDir() + File.separator + "Stock_Gdrs_Down.html";
-        String htmlZf = AppFilePath.getOutputDir() + File.separator + "Stock_Gdrs_Down_Zf.html";
-        String tfpHtml = AppFilePath.getOutputDir() + File.separator + "Stock_Gdrs_Down_Tfp.html";
-
-        FileUtil.exportStock(list, txt);
-        FileUtil.exportStock(zfmxStockList, txtZf);
-        FileUtil.exportStock(tfpStockList, tfpTxt);
-        FileUtil.exportHtml(list, appendInfoList, html);
-        FileUtil.exportHtml(zfmxStockList, zfList, htmlZf);
-        FileUtil.exportHtml(tfpStockList, tfpList, tfpHtml);
+        FileUtil.exportStock(list, AppFile.getOutputFp("Stock_Gdrs_Down.txt"));
+        FileUtil.exportHtml(list, appendInfoList, AppFile.getOutputFp("Stock_Gdrs_Down.html"));
     }
-
-    private static final boolean SORT_BY_COUNT_DIFFERENCE = true;
 
     private static void find(List<String> outStockList, Map<String, String> appendInfoMap) {
         List<String> targetStocklist = GdrsDownLoader.getInst().getStockList();
 
-        if (!SORT_BY_COUNT_DIFFERENCE) {
+        if (!SfsConf.GDRS_SORT_BY_COUNT_DIFF_VALUE) {
             outStockList.addAll(targetStocklist);
             return;
         }
@@ -91,10 +75,10 @@ public class GdrsMain {
             int startCount = 0;
             int currentCount = 0;
             for (GdrsVo vo : list) {
-                if (vo.getDate().equals(START_SEASON)) {
+                if (vo.getDate().equals(SfsConf.GDRS_START_SEASON)) {
                     startCount = vo.getShareholderCount();
                 }
-                if (vo.getDate().equals(AppUtil.CURRENT_SEASON)) {
+                if (vo.getDate().equals(SfsConf.CURRENT_SEASON)) {
                     currentCount = vo.getShareholderCount();
                 }
             }
