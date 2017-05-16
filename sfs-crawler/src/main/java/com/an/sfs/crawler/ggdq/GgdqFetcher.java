@@ -22,7 +22,7 @@ public class GgdqFetcher {
     }
 
     private void fetchGgdqData(String url, String fileDir) {
-        List<String> stockCodeList = StockLoader.getInst().getStockCodeList();
+        List<String> stockCodeList = StockLoader.getInst().getCodeList();
         for (String stock : stockCodeList) {
             downloadGgdq(url, 1, fileDir, stock);
         }

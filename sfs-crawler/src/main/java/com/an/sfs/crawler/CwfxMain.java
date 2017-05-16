@@ -164,10 +164,6 @@ public class CwfxMain {
             }
 
             StockVo stockVo = StockLoader.getInst().getStockVo(code);
-            if (stockVo.isSuspend()) {
-                continue;
-            }
-
             String publicDate = StockLoader.getInst().getPublicDate(code);
             if (publicDate.compareTo("2012-12-31") > 0) {
                 continue;

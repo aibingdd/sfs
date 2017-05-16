@@ -35,7 +35,7 @@ public class GdyjFetcher {
     }
 
     private void fetchHtml(String url) {
-        List<String> stockList = StockLoader.getInst().getStockCodeList();
+        List<String> stockList = StockLoader.getInst().getCodeList();
         for (String stock : stockList) {
             String typeStr = StockLoader.getTypeStr(stock);
             String httpUrl = String.format(url, typeStr, stock);

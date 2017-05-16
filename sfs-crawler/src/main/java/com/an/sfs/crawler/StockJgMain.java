@@ -47,7 +47,7 @@ public class StockJgMain {
 
         List<GdyjVo> gdyjList = new ArrayList<>();
 
-        List<String> stockCodeList = StockLoader.getInst().getStockCodeList();
+        List<String> stockCodeList = StockLoader.getInst().getCodeList();
         for (String stock : stockCodeList) {
             long totalL = 0L;
             if (stockJgTotalMap.containsKey(stock)) {

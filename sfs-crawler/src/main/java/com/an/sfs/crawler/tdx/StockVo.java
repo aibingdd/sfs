@@ -8,8 +8,7 @@ public class StockVo {
     private long totalVolume;
     private String name;
     private float pe;
-    // XiFenHangYe
-    private String industry;
+    private String industry;// XiFenHangYe
     private String region;
     private String publicDate;
     private long outstandingShare;
@@ -32,6 +31,7 @@ public class StockVo {
     }
 
     public boolean isSuspend() {
+        // TODO:
         return totalVolume == 0;
     }
 
@@ -56,14 +56,6 @@ public class StockVo {
 
     public void setCode(String code) {
         this.code = code;
-    }
-
-    public long getTotalVolume() {
-        return totalVolume;
-    }
-
-    public void setTotalVolume(long totalVolume) {
-        this.totalVolume = totalVolume;
     }
 
     public float getPrice() {

@@ -30,7 +30,7 @@ public class CninfoFetcher {
     private Map<String, Integer> stockPageCountMap = new HashMap<>();
 
     public void run() {
-        stockCodeList = StockLoader.getInst().getStockCodeList();
+        stockCodeList = StockLoader.getInst().getCodeList();
         LOGGER.info("Fetch raw html.");
         fetchRaw(URL, AppFile.getInputCninfoRawDir());
 

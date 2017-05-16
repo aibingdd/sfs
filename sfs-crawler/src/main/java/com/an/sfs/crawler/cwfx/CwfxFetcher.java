@@ -52,7 +52,7 @@ public class CwfxFetcher {
     }
 
     private void fetchCwfxData(String url, String fileDir) {
-        List<String> stockCodeList = StockLoader.getInst().getStockCodeList();
+        List<String> stockCodeList = StockLoader.getInst().getCodeList();
         for (String stock : stockCodeList) {
             String codeSuffix = StockLoader.getCodeSuffix(stock);
             String typeStr = StockLoader.getTypeStr(stock);

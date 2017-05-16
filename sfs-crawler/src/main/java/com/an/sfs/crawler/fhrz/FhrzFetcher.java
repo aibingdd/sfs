@@ -31,7 +31,7 @@ public class FhrzFetcher {
     }
 
     private void fetchRawHtml(String url, String fileDir) {
-        List<String> stockCodeList = StockLoader.getInst().getStockCodeList();
+        List<String> stockCodeList = StockLoader.getInst().getCodeList();
         for (String stock : stockCodeList) {
             String typeStr = StockLoader.getTypeStr(stock);
             String httpUrl = String.format(url, typeStr, stock);

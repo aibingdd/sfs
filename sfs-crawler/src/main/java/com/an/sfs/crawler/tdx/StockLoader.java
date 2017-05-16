@@ -19,20 +19,20 @@ import com.an.sfs.crawler.util.FileUtil;
 
 public class StockLoader {
     private static final Logger LOGGER = LoggerFactory.getLogger(StockLoader.class);
-    private List<String> stockCodeList = new ArrayList<>();
-    private Map<String, StockVo> tstockMap = new HashMap<>();
+    private List<String> codeList = new ArrayList<>();
+    private Map<String, StockVo> stockMap = new HashMap<>();
 
-    public List<String> getStockCodeList() {
-        return stockCodeList;
+    public List<String> getCodeList() {
+        return codeList;
     }
 
     public StockVo getStockVo(String stockCode) {
-        StockVo tStockVo = tstockMap.get(stockCode);
+        StockVo tStockVo = stockMap.get(stockCode);
         return tStockVo;
     }
 
     public String getStockName(String stockCode) {
-        StockVo tStockVo = tstockMap.get(stockCode);
+        StockVo tStockVo = stockMap.get(stockCode);
         if (tStockVo != null) {
             return tStockVo.getName();
         }
@@ -40,7 +40,7 @@ public class StockLoader {
     }
 
     public float getPrice(String stockCode) {
-        StockVo tStockVo = tstockMap.get(stockCode);
+        StockVo tStockVo = stockMap.get(stockCode);
         if (tStockVo != null) {
             return tStockVo.getPrice();
         }
@@ -48,7 +48,7 @@ public class StockLoader {
     }
 
     public String getIndustryName(String stockCode) {
-        StockVo tStockVo = tstockMap.get(stockCode);
+        StockVo tStockVo = stockMap.get(stockCode);
         if (tStockVo != null) {
             return tStockVo.getIndustry();
         }
@@ -56,7 +56,7 @@ public class StockLoader {
     }
 
     public String getPublicDate(String stockCode) {
-        StockVo tStockVo = tstockMap.get(stockCode);
+        StockVo tStockVo = stockMap.get(stockCode);
         if (tStockVo != null) {
             return tStockVo.getPublicDate();
         }
@@ -64,27 +64,19 @@ public class StockLoader {
     }
 
     public StockVo getTStockVo(String stockCode) {
-        return tstockMap.get(stockCode);
+        return stockMap.get(stockCode);
     }
 
     public Map<String, StockVo> getTstockMap() {
-        return tstockMap;
+        return stockMap;
     }
 
     public static String getTypeStr(String stockCode) {
-        if (stockCode.startsWith("6")) {
-            return "sh";
-        } else {
-            return "sz";
-        }
+        return stockCode.startsWith("6") ? "sh" : "sz";
     }
 
     public static String getCodeSuffix(String stockCode) {
-        if (stockCode.startsWith("6")) {
-            return "01";
-        } else {
-            return "02";
-        }
+        return stockCode.startsWith("6") ? "01" : "02";
     }
 
     private void init() {
@@ -103,9 +95,8 @@ public class StockLoader {
                 if (line.startsWith("代码")) {
                     String[] strs = line.split("\t");
                     if (!"代码".equals(strs[0]) || !"名称".equals(strs[1]) || !"现价".equals(strs[2])
-                            || !"总量".equals(strs[3]) || !"市盈(动)".equals(strs[4]) || !"细分行业".equals(strs[5])
-                            || !"地区".equals(strs[6]) || !"流通股本(万)".equals(strs[7]) || !"上市日期".equals(strs[8])
-                            || !"总股本(万)".equals(strs[9])) {
+                            || !"市盈(动)".equals(strs[3]) || !"细分行业".equals(strs[4]) || !"地区".equals(strs[5])
+                            || !"流通股本(万)".equals(strs[6]) || !"上市日期".equals(strs[7]) || !"总股本(万)".equals(strs[8])) {
                         LOGGER.error("Error exported headers of file {}", latestFile);
                         System.exit(1);
                     }
@@ -114,37 +105,47 @@ public class StockLoader {
                     String[] strs = line.split("\t");
                     String code = strs[0];// code
                     String name = strs[1];// name
-                    float price = Float.parseFloat(strs[2]);// price
-                    long totalVolume = Long.parseLong(strs[3]);
+                    String priceStr = strs[2].trim();// price
+                    String peStr = strs[3].trim();
+                    String industryStr = strs[4].trim();// industry
+                    String regionStr = strs[5].trim();// region
+                    String floatShareStr = strs[6].trim();// FloatShare
+                    String publicDateStr = strs[7].trim();// Public date
+                    String outstandingShareStr = strs[8].trim();// OutstandingShare
+
+                    float price = Float.parseFloat(priceStr);
                     float pe = 0f;
-                    if (!"--".equals(strs[4].trim())) {
-                        pe = Float.parseFloat(strs[4].trim());
+                    if (!"--".equals(peStr)) {
+                        pe = Float.parseFloat(peStr);
                     }
-                    String industry = strs[5];// industry
+                    String industry = industryStr;
                     if (industry.isEmpty()) {
                         continue;
                     }
-                    String region = strs[6];// region
-                    long floatShare = FileUtil.parseFloat(strs[7]);// FloatShare
-                    String publicDate = strs[8];// Public date
-                    String newPublicDate = publicDate.substring(0, 4) + "-" + publicDate.substring(4, 6) + "-"
-                            + publicDate.substring(6);
-                    long outstandingShare = FileUtil.parseFloat(strs[9]);// OutstandingShare
+                    String region = regionStr;
+                    long floatShare = 0;
+                    if (!"--".equals(floatShareStr)) {
+                        floatShare = FileUtil.parseFloat(floatShareStr);
+                    }
+                    String newPublicDate = "NULL";
+                    if (!"--".equals(publicDateStr)) {
+                        newPublicDate = publicDateStr.substring(0, 4) + "-" + publicDateStr.substring(4, 6) + "-"
+                                + publicDateStr.substring(6);
+                    }
+                    long outstandingShare = FileUtil.parseFloat(outstandingShareStr);
 
                     StockVo vo = new StockVo();
                     vo.setCode(code);
                     vo.setName(name);
                     vo.setPrice(price);
-                    vo.setTotalVolume(totalVolume);
                     vo.setPe(pe);
                     vo.setIndustry(industry);
                     vo.setRegion(region);
                     vo.setFloatShare(floatShare);
                     vo.setPublicDate(newPublicDate);
                     vo.setOutstandingShare(outstandingShare);
-
-                    stockCodeList.add(code);
-                    tstockMap.put(code, vo);
+                    codeList.add(code);
+                    stockMap.put(code, vo);
                 }
             }
         } catch (Exception e) {
@@ -154,6 +155,7 @@ public class StockLoader {
                 try {
                     br.close();
                 } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
         }

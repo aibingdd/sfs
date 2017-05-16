@@ -4,25 +4,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SfsConf {
-    // CWFX start date
-    public static final String CWFX_UP_START_DATE = "2012-01-01";
-    // Last year
-    public static final String LAST_YEAR = "2014-12-31";
-    // Last Season
-    public static final String LAST_SEASON = "2014-12-31";
-    // Current Season
-    public static final String CURRENT_SEASON = "2015-03-31";
-    // Current YJYG season
-    public static final String YJYG_SEASON = "2015-06-30";
-    // GDRS start season
-    public static final String GDRS_START_SEASON = "2014-06-30";
-    // YJYG compare by date
+    public static final String CWFX_UP_START_DATE = "2014-01-01";
+    public static final String LAST_YEAR = "2016-12-31";
+    public static final String LAST_SEASON = "2016-12-31";
+    public static final String CURRENT_SEASON = "2017-03-31";
+    public static final String YJYG_SEASON = "2017-06-30";
+    public static final String GDRS_START_SEASON = "2016-06-30";
+    public static final int MIN_SEASON_COUNT = 4;
+    public static final int MAX_GDRS_NUMBER = 20000;
+    public static final int MIN_FLOAT_SHARE = 4000;
     public static final boolean YJYG_COMPARE_BY_DATE = true;
-    // GDRS sort by count diff value
-    public static final boolean GDRS_SORT_BY_COUNT_DIFF_VALUE = true;
 
     private static List<String> seasonList = new ArrayList<>();
     static {
+        seasonList.add("2017-03-31");
+
+        seasonList.add("2016-12-31");
+        seasonList.add("2016-09-30");
+        seasonList.add("2016-06-30");
+        seasonList.add("2016-03-31");
+
+        seasonList.add("2015-12-31");
+        seasonList.add("2015-09-30");
+        seasonList.add("2015-06-30");
         seasonList.add("2015-03-31");
 
         seasonList.add("2014-12-31");

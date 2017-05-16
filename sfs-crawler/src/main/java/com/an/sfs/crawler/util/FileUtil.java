@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.an.sfs.crawler.cwfx.ReportVo;
+import com.an.sfs.crawler.gdyj.GdrsReportVo;
 import com.an.sfs.crawler.name.IndustryLoader;
 import com.an.sfs.crawler.tdx.StockLoader;
 import com.an.sfs.crawler.tdx.StockVo;
@@ -309,6 +310,37 @@ public class FileUtil {
         text.append("</html>");
 
         FileUtil.writeFile(filePath, text.toString());
+    }
+
+    public static void exportHtml(List<GdrsReportVo> reportList, String filePath) {
+        StringBuilder content = new StringBuilder();
+        content.append("<html>\n");
+        content.append("<head><meta charset=\"utf-8\"></head>\n");
+        content.append("<body>\n");
+
+        content.append("股票代码").append(" | 排名").append(" | 名称").append(" | 人数变化").append(" | 股东人数").append(" | 流通股本")
+                .append("<br>\n");
+
+        int i = 1;
+        for (GdrsReportVo rpt : reportList) {
+            // 1. Code
+            content.append(rpt.getDisplayCode());
+            // 2. Rank
+            content.append(" ").append(String.format("%04d", i++)).append(" ");
+            // 3. Name
+            content.append(rpt.getName());
+            // 4. Count down rate
+            content.append(" | " + rpt.getCountRateStr());
+            // 5. GDRS Number
+            content.append(" | " + rpt.getGdrsNum());
+            // 6. Net float share
+            content.append(" | " + rpt.getNetFloatShare());
+            content.append("<br>\n");
+        }
+        content.append("</body>\n");
+        content.append("</html>");
+
+        FileUtil.writeFile(filePath, content.toString());
     }
 
     /**

@@ -29,7 +29,7 @@ public class GbJgFetcher {
     }
 
     private void download() {
-        List<String> stockCodeList = StockLoader.getInst().getStockCodeList();
+        List<String> stockCodeList = StockLoader.getInst().getCodeList();
         for (String stock : stockCodeList) {
             String typeStr = StockLoader.getTypeStr(stock);
 
