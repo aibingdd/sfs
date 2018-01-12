@@ -152,8 +152,16 @@ public class AppFile {
         return getInputDir() + File.separator + "cwfx";
     }
 
+    private static String getInputGfDir() {
+        return getInputDir() + File.separator + "gf";
+    }
+
     public static String getInputCwfxRawDir() {
         return getInputCwfxDir() + File.separator + "raw";
+    }
+
+    public static String getInputGfRawDir() {
+        return getInputGfDir() + File.separator + "raw";
     }
 
     public static String getOutputCwfxDir() {
