@@ -4,10 +4,12 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -61,6 +63,53 @@ public class FileUtil {
             out.write(text);
         } catch (IOException e) {
             LOGGER.error("Error, filePath {}", filePath, e);
+        }
+    }
+
+    /**
+     * @param filepath
+     * @param content
+     * @param writeType
+     *            0-ignore exists<br>
+     *            1-create new<br>
+     *            2-append
+     * @param createEmptyFile
+     *            true-create file while empty content
+     * @throws IOException
+     */
+    public static void writeFile(String filepath, String content, int writeType, boolean createEmptyFile)
+            throws IOException {
+        if (filepath == null || filepath.isEmpty()) {
+            throw new IllegalArgumentException("Invalid filePath " + filepath);
+        }
+        if (content == null || content.isEmpty()) {
+            if (!createEmptyFile) {
+                return;
+            }
+        }
+        String dirName = filepath.substring(0, filepath.lastIndexOf(File.separator));
+        File dir = new File(dirName);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        File file = new File(filepath);
+        if (file.exists()) {
+            if (writeType == 0) {
+                return;
+            } else if (writeType == 1) {
+                file.delete();
+                file.createNewFile();
+            }
+        } else {
+            file.createNewFile();
+        }
+
+        if (!content.isEmpty()) {
+            System.out.println("Write file: " + filepath);
+            try (OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(new File(filepath)), "GB2312");) {
+                osw.write(content);
+                osw.flush();
+            }
         }
     }
 

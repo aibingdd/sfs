@@ -136,6 +136,18 @@ public class AppFile {
         return getInputGdyjDir() + File.separator + "sdltgd";
     }
 
+    public static String getInputYjbbRawDir() {
+        return getInputYjbbDir() + File.separator + "raw";
+    }
+
+    public static String getInputYjbbTxtDir() {
+        return getInputYjbbDir() + File.separator + "txt";
+    }
+
+    public static String getInputYjbbDir() {
+        return getInputDir() + File.separator + "yjbb";
+    }
+
     private static String getOutputGdyjDir() {
         return getOutputDir() + File.separator + "gdyj";
     }
